@@ -1,0 +1,922 @@
+package com.example.spgold;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.spgold.Util.BluetoothUtil;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FacturaseditActivity extends AppCompatActivity {
+
+    TextView textView_facturas;
+    TextView textView_fecha;
+    EditText editText_listar_facturas;
+    EditText edit_Text_numero_factura;
+    private int contador;
+    private String Loteria;
+    private String tipo_lot;
+    private String Horario;
+    private String dia;
+    private String mes;
+    private String anio;
+    private String mes_selectedS;
+    private String anio_selectedS;
+    private String fecha_selectedS;
+    private int mes_selected;
+    private int anio_selected;
+    private int fecha_selected;
+    private String hora_completa;
+    private String hora;
+    private String minuto;
+    private String Paga1;
+    private String Paga2;
+    private String num_factura;
+    private String player;
+    private String fecha;
+    private String total;
+    private String dispositivo;
+    private Map<String, Integer> meses = new HashMap<String, Integer>();
+    private Map<Integer, String> numero_de_facturas = new HashMap<Integer, String>();
+    private boolean flag_cad = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_facturasedit);
+
+        textView_facturas = (TextView) findViewById(R.id.textView_facturas);
+        textView_fecha = (TextView) findViewById(R.id.textView_fecha_facturas);
+        editText_listar_facturas = (EditText) findViewById(R.id.editText_listar_facturas);
+        edit_Text_numero_factura = (EditText) findViewById(R.id.edit_Text_numero_factura);
+        editText_listar_facturas.setFocusableInTouchMode(false);
+        dispositivo = check_device();
+
+        llenar_mapa_meses();
+
+
+        //###########################################################################################
+
+        Date now = Calendar.getInstance().getTime();
+        String ahora = now.toString();
+        //se separan los campos de la fecha y hora para verificar que si se pueda realizar la venta.
+        separar_fechaYhora(ahora);
+
+        mes_selected = Integer.parseInt(mes);
+        anio_selected = Integer.parseInt(anio);
+        fecha_selected = Integer.parseInt(fecha);
+
+        mes_selectedS = mes;
+        anio_selectedS = anio;
+        fecha_selectedS = fecha;
+
+        textView_fecha.setText(fecha + "/" + String.valueOf(meses.get(mes)) + "/" + anio);
+
+        //###########################################################################################
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        cargar_facturas(fecha_selected, mes_selected, anio_selected);
+
+        textView_facturas.setText("Lista de facturas del dia: ");
+
+    }
+
+    public void cambiar_fecha(View view) {
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, i, i1, i2) -> {
+            textView_fecha.setText(String.valueOf(i2) + "/" + String.valueOf(i1+1) + "/" + String.valueOf(i));
+            mes_selected = i1+1;
+            anio_selected = i;
+            fecha_selected = i2;
+
+            mes_selectedS = String.valueOf(mes_selected);
+            anio_selectedS = String.valueOf(anio_selected);
+            fecha_selectedS = String.valueOf(fecha_selected);
+
+            flag_cad = true;
+            cargar_facturas(fecha_selected, mes_selected, anio_selected);
+
+
+
+        },anio_selected,mes_selected-1,fecha_selected);
+
+
+        datePickerDialog.show();
+        cargar_facturas(fecha_selected, mes_selected, anio_selected);
+
+    }
+
+    private void separar_fechaYhora(String ahora) {
+        String[] split = ahora.split(" ");
+
+        mes = String.valueOf(meses.get(split[1]));
+        anio = split[5];
+        fecha = split[2];
+        dia = split[2];
+
+        hora = split[3];
+        split = hora.split(":");
+        minuto = split[1];
+        hora = split[0];
+    }
+
+    /*Personalizacion de la navegacion hacia atras!!
+    #################################################################################################*/
+    @Override
+    public void onBackPressed(){
+        boton_atras();
+    }
+
+    private void boton_atras() {
+        Intent Main = new Intent(this, ReportesActivity.class);
+        startActivity(Main);
+        finish();
+        System.exit(0);
+    }
+    //#################################################################################################
+
+    private void llenar_mapa_meses() {
+
+        meses.put("Jan",1);
+        meses.put("Feb",2);
+        meses.put("Mar",3);
+        meses.put("Apr",4);
+        meses.put("May",5);
+        meses.put("Jun",6);
+        meses.put("Jul",7);
+        meses.put("Aug",8);
+        meses.put("Sep",9);
+        meses.put("Oct",10);
+        meses.put("Nov",11);
+        meses.put("Dic",12);
+        meses.put("1",1);
+        meses.put("2",2);
+        meses.put("3",3);
+        meses.put("4",4);
+        meses.put("5",5);
+        meses.put("6",6);
+        meses.put("7",7);
+        meses.put("8",8);
+        meses.put("9",9);
+        meses.put("10",10);
+        meses.put("11",11);
+        meses.put("12",12);
+
+    }
+
+    private void cargar_facturas(int diaf, int mesf, int aniof) {
+
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput("invoice.txt"));//Se abre archivo de facturas
+            BufferedReader br = new BufferedReader(archivo);
+            String linea_imprimir = "";//Aqui se lee el contenido del tiquete guardado.
+            String linea = br.readLine();//Se lee archivo de facturacion
+            String[] split_cont = linea.split(" ");
+            contador = Integer.parseInt(split_cont[1]);
+            //imprimir_archivo("invoice.txt");
+
+            //Toast.makeText(this, "primera linea del archivo de facturas (Contador): " + linea + "\n\nContador = " + String.valueOf(contador), Toast.LENGTH_LONG).show();
+            linea = br.readLine();//Se lee la siguiente linea que corresponde a la primera factura.
+            numero_de_facturas.clear();
+            while (linea != null) {
+                if (linea.isEmpty()) {
+                    //Toast.makeText(this, "Ultima linea que esta vacia. ", Toast.LENGTH_LONG).show();
+                    //Do nothing.
+                } else {
+                    String[] split = linea.split(" ");//Se separa el numero de factura del nombre del archivo.
+                    String[] split2 = split[1].split("_separador_");//Se separan las partes del nombre del archivo.
+
+//Nombre del archivo: jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hora + "_separador_" + minuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+//                      split2[0]                  split2[1]                  split2[2]                 split2[3]               split2[4]              split2[5]                    split2[6]                    split2[7]              split2[8]              split2[9]                split2[10]               split2[11]             split2[12]                    split2[13]
+
+                    Loteria = split2[1];
+                    Horario = split2[2];
+                    dia = split2[3];
+                    mes = String.valueOf(meses.get(split2[8]));
+                    tipo_lot = split2[9];
+                    Paga1 = split2[10];
+                    Paga2 = split2[11];
+                    anio = split2[13];
+
+
+                    if (Integer.parseInt(dia) == diaf) {
+                        if (Integer.parseInt(mes) == mesf) {
+                            if (Integer.parseInt(anio) == aniof) {
+                                if (verificar_borrada(split[1])) {
+                                    linea_imprimir = linea_imprimir + "factura # " + split[0] + "   BORRADA\n";
+
+                                } else {
+                                    String Cliente_adap = split2[0];
+                                    Cliente_adap = Cliente_adap.replace("x_x"," ");
+                                    linea_imprimir = linea_imprimir + "factura # " + split[0] + "   " + split2[1] + " " + split2[2] + ". Cliente: " + Cliente_adap + "\n";
+
+                                }
+                                numero_de_facturas.put(Integer.parseInt(split[0]), "true");
+                            }
+                        }
+                    }
+                }
+                linea = br.readLine();
+            }
+            br.close();
+            archivo.close();
+            editText_listar_facturas.setText(linea_imprimir);
+        }catch (IOException e) {
+        }
+    }
+
+    private boolean verificar_borrada(String file) {
+        String archivos[] = fileList();
+        if (ArchivoExiste(archivos, file)) {//Archivo nombre_archivo es el archivo que vamos a imprimir
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput(file));//Se abre archivo
+                BufferedReader br = new BufferedReader(archivo);
+                String linea = br.readLine();//Se lee archivo
+                if (linea != null) {
+                    if (linea.equals("BORRADA")) {
+                        br.close();
+                        archivo.close();
+                        return true;
+                    } else {
+                        br.close();
+                        archivo.close();
+                        return false;
+                    }
+                } else {
+                    return false;
+                    //Do nothing.
+                }
+            }catch (IOException e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private void msm(String split) {
+        Toast.makeText(this, split, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, split, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, split, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, split, Toast.LENGTH_LONG).show();
+    }
+
+    private void imprimir_archivo(String nombre_archivo){
+        String archivos[] = fileList();
+        if (ArchivoExiste(archivos, nombre_archivo)) {//Archivo nombre_archivo es el archivo que vamos a imprimir
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput(nombre_archivo));//Se abre archivo
+                BufferedReader br = new BufferedReader(archivo);
+                String contenido = "";//Aqui se lee el contenido del archivo guardado.
+
+                String linea = br.readLine();//Se lee archivo
+                while (linea != null) {
+                    contenido = contenido + linea + "\n";
+                    linea = br.readLine();
+                    //return;
+                }
+                Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
+                br.close();
+                archivo.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    private boolean ArchivoExiste (String[] archivos, String Tiquet){
+        for (int i = 0; i < archivos.length; i++) {
+
+            if (Tiquet.equals(archivos[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void guardar (String Tcompleto, String nombre){
+        try {
+            File file = new File(nombre);
+            file.delete();
+            OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(nombre, Activity.MODE_PRIVATE));
+            archivo.write("");
+            archivo.write(Tcompleto);
+            archivo.flush();
+            //br.close();
+            archivo.close();
+        } catch (IOException e) {
+        }
+    }
+
+    private void contar(String monto_act, String numero_act, String archivo_contable) {
+        int valor = Integer.parseInt(monto_act);//Se parcea el monto del numero jugado.
+        String archivos[] = fileList();
+        if (ArchivoExiste(archivos, archivo_contable)) {//nombre del archivo CONTABle del dia
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput(archivo_contable));//Se abre archivo contable
+                BufferedReader br = new BufferedReader(archivo);
+                String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
+
+                String linea = br.readLine();//Se lee archivo contable
+                while (linea != null) {
+                    String[] split = linea.split("      ");//Se separa el monto del numero guardado.
+
+                    if (Integer.parseInt(split[0]) == Integer.parseInt(numero_act)){
+                        int monto_numero = Integer.parseInt(split[1]);
+                        monto_numero = monto_numero + valor;
+                        linea = numero_act + "      " + String.valueOf(monto_numero);
+                        //linea = String.valueOf(monto_numero) + "      " + numero_act;
+                        //return;
+                    }
+
+                    TiqueteContable = TiqueteContable + linea + "\n";
+                    linea = br.readLine();
+                    //return;
+                }
+                br.close();
+                archivo.close();
+                guardar(TiqueteContable, archivo_contable);
+            }catch (IOException e) {
+            }
+        }
+    }
+
+    private void contar_monazos(String monto_act, String numero_act, String file, String tipo_jogo) {
+
+        boolean flag_cont = true;//Bandera que ayuda a actualizar el archivo contable sin errores.
+
+        int valor = Integer.parseInt(monto_act);     //Se parcea el monto del numero jugado.
+        int num = Integer.parseInt(numero_act);
+        String desord_ord = tipo_jogo;
+
+        //imprimir_archivo(Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt");
+        String archivos[] = fileList();
+        if (ArchivoExiste(archivos, file)) {//nombre del archivo CONTABle del dia
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput(file));//Se abre archivo contable
+                BufferedReader br = new BufferedReader(archivo);
+                String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
+
+                String linea = br.readLine();//Se lee archivo contable
+                while (linea != null) {
+                    String ord_desord_paga = "";
+                    if (desord_ord.equals("Orden")) {
+                        ord_desord_paga = Paga1;
+                    } else if (desord_ord.equals("Desorden")) {
+                        ord_desord_paga = Paga2;
+                    } else {
+                        Toast.makeText(this, "Debugueo: Nunca deberia estar aqui\n*\n*\n*", Toast.LENGTH_LONG).show();
+                        //Do nothing. Se supone que nunca entraria aqui!!!
+                    }
+                    String[] split = linea.split("      ");//Se separa el monto del numero, del tipo de juego (orden o desorden) y el numero jugado.
+                    //Toast.makeText(this, "Debugueo (linea): " + linea + "\n\nSplit 1: " + split[0] + "\nSplit 2: " + split[1] + "\nSplit 3: " + split[2] + "\nSplit 4: " + split[3] + "\n\n", Toast.LENGTH_LONG).show();
+                    if (Integer.parseInt(split[0]) == num){
+                        //Toast.makeText(this, "Debugueo primera coinsidencia (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                        if (split[3].equals(desord_ord)) {
+                            //Toast.makeText(this, "Debugueo segunda coinsidencia (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                            flag_cont = false;
+                            int monto_numero = Integer.parseInt(split[1]);
+                            monto_numero = monto_numero + valor;
+                            linea = String.valueOf(num) + "      " + String.valueOf(monto_numero) + "      " + ord_desord_paga + "      " + desord_ord;
+                            TiqueteContable = TiqueteContable + linea + "\n";
+                        } else {
+                            TiqueteContable = TiqueteContable + linea + "\n";
+                        }
+                    } else {
+                        TiqueteContable = TiqueteContable + linea + "\n";
+                    }
+                    linea = br.readLine();
+                    //Toast.makeText(this, "Debugueo leyendo la segunda linea (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                }
+                br.close();
+                archivo.close();
+                guardar(TiqueteContable, file);
+            } catch (IOException e) {
+            }
+        }
+
+        if (ArchivoExiste(archivos, file)) {//nombre del archivo CONTABle del dia
+            if (flag_cont) {
+                try {
+                    InputStreamReader archivo = new InputStreamReader(openFileInput(file));//Se abre archivo contable
+                    BufferedReader br = new BufferedReader(archivo);
+                    String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
+
+                    String linea = br.readLine();//Se lee archivo contable
+                    while (linea != null) {
+
+                        //flag_cont = true;
+                        //Toast.makeText(this, "Debugueo guardar linea sin coinsidencias (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                        TiqueteContable = TiqueteContable + linea + "\n";
+                        linea = br.readLine();
+                    }
+                    br.close();
+                    archivo.close();
+                    String ord_desord_paga = "";
+                    if (desord_ord.equals("Orden")) {
+                        ord_desord_paga = Paga1;
+                    } else if (desord_ord.equals("Desorden")) {
+                        ord_desord_paga = Paga2;
+                    } else {
+                        //Do nothing. Se supone que nunca entraria aqui!!!
+                    }
+                    linea = String.valueOf(num) + "      " + String.valueOf(valor) + "      " + ord_desord_paga + "      " +  desord_ord;
+                    TiqueteContable = TiqueteContable + linea + "\n";
+                    guardar(TiqueteContable, file);
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    private void contarParley(String monto_act, String numero1_act, String numero2_act, String file) {
+
+        boolean flag_cont = true;//Bandera que ayuda a actualizar el archivo contable sin errores.
+
+        //Toast.makeText(this, "Parametros en contarParley:\n\nmonto_act: " + monto_act + "\nnumero1_act: " + numero1_act + "\nnumero2_act: " + numero2_act, Toast.LENGTH_LONG).show();
+
+        int valor = Integer.parseInt(monto_act);//Se parcea el monto del numero jugado.
+        int temp_val1 = Integer.parseInt(numero1_act);
+        int temp_val2 = Integer.parseInt(numero2_act);
+        int num1 = -1;
+        int num2 = -1;
+        if (temp_val1 > temp_val2) {// Se ordenan los numeros de menor a mayor
+            num1 = temp_val2;
+            num2 = temp_val1;
+        } else if (temp_val1 < temp_val2) {
+            num2 = temp_val2;
+            num1 = temp_val1;
+        } else if (temp_val2 == temp_val1) {
+            num1 = temp_val1;
+            num2 = temp_val2;
+        } else {
+            //Error!!!
+            Toast.makeText(this, "Error en datos de venta!!!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        //imprimir_archivo(Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt");
+        String archivos[] = fileList();
+        if (ArchivoExiste(archivos, file)) {//nombre del archivo CONTABle del dia
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput(file));//Se abre archivo contable
+                BufferedReader br = new BufferedReader(archivo);
+                String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
+
+                String linea = br.readLine();//Se lee archivo contable
+                while (linea != null) {
+                    String[] split = linea.split("      ");//Se separa el monto de los numeros guardados.
+                    //Toast.makeText(this, "Debugueo (linea): " + linea + "\n\nSplit 1: " + split[0] + "\nSplit 2: " + split[1] + "\nSplit 3: " + split[2] + "\n\n", Toast.LENGTH_LONG).show();
+                    if (Integer.parseInt(split[0]) == num1){
+                        //Toast.makeText(this, "Debugueo primera coinsidencia (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                        if (Integer.parseInt(split[1]) == num2) {
+                            //Toast.makeText(this, "Debugueo segunda coinsidencia (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                            flag_cont = false;
+                            int monto_numero = Integer.parseInt(split[2]);
+                            monto_numero = monto_numero + valor;
+                            linea = String.valueOf(num1) + "      " + String.valueOf(num2) + "      " +  String.valueOf(monto_numero);
+                            TiqueteContable = TiqueteContable + linea + "\n";
+                        } else {
+                            TiqueteContable = TiqueteContable + linea + "\n";
+                        }
+                    } else {
+                        TiqueteContable = TiqueteContable + linea + "\n";
+                    }
+                    linea = br.readLine();
+                    //Toast.makeText(this, "Debugueo leyendo la segunda linea (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                }
+                br.close();
+                archivo.close();
+                guardar(TiqueteContable, file);
+            } catch (IOException e) {
+            }
+        }
+
+        if (ArchivoExiste(archivos, file)) {//nombre del archivo CONTABle del dia
+            if (flag_cont) {
+                try {
+                    InputStreamReader archivo = new InputStreamReader(openFileInput(file));//Se abre archivo contable
+                    BufferedReader br = new BufferedReader(archivo);
+                    String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
+
+                    String linea = br.readLine();//Se lee archivo contable
+                    while (linea != null) {
+                        //flag_cont = true;
+                        //Toast.makeText(this, "Debugueo guardar linea sin coinsidencias (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                        TiqueteContable = TiqueteContable + linea + "\n";
+                        linea = br.readLine();
+                    }
+                    br.close();
+                    archivo.close();
+                    linea = String.valueOf(num1) + "      " + String.valueOf(num2) + "      " +  monto_act;
+                    TiqueteContable = TiqueteContable + linea + "\n";
+                    guardar(TiqueteContable, file);
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    private void des_contarParley(String factura) {//Funcion que acondiciona los datos que deben ser descontados del archivo contable del dia.
+        try {
+            InputStreamReader archivod = new InputStreamReader(openFileInput(factura));
+            BufferedReader brd = new  BufferedReader(archivod);
+            String linead = brd.readLine();
+
+
+
+            if (linead.equals("BORRADA")) {
+                Toast.makeText(this, "Factura ya se ha borrado!!! Intente de nuevo.", Toast.LENGTH_LONG).show();
+            } else {
+                //String temp_file = "";
+                while (linead != null) {
+                    if (linead.isEmpty()) {
+                        //Do nothing.
+                    } else {
+
+                        if (linead.isEmpty()) {
+
+                        } else {
+
+
+
+                            String[] splitd = linead.split("      ");
+
+
+                            //Toast.makeText(this, "Linead.split[0]: " + splitd[0], Toast.LENGTH_LONG).show();
+                            //Toast.makeText(this, "Linead.split[1]: " + splitd[1], Toast.LENGTH_LONG).show();
+                            //Toast.makeText(this, "Linead.split[2]: " + splitd[2], Toast.LENGTH_LONG).show();
+
+
+
+                            int monto = Integer.parseInt(splitd[2]);
+                            monto = monto * (-1);
+                            String cont_file = Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt";
+                            contarParley(String.valueOf(monto), splitd[0], splitd[1], cont_file);
+                            //temp_file = temp_file + linead + "\n";
+
+
+
+                        }
+                    }
+                    linead = brd.readLine();
+                }
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    private void des_contar(String factura) {//Funcion que acondiciona los datos que deben ser descontados del archivo contable del dia.
+        try {
+            InputStreamReader archivod = new InputStreamReader(openFileInput(factura));
+            BufferedReader brd = new  BufferedReader(archivod);
+            String linead = brd.readLine();
+            if (linead.equals("BORRADA")) {
+                Toast.makeText(this, "Factura ya se ha borrado!!! Intente de nuevo.", Toast.LENGTH_LONG).show();
+            } else {
+                //String temp_file = "";
+                while (linead != null) {
+                    if (linead.isEmpty()) {
+                        //Do nothing.
+                    } else {
+                        String[] splitd = linead.split("      ");
+                        //int numero = Integer.parseInt(splitd[0]);
+                        int monto = Integer.parseInt(splitd[1]);
+                        monto = monto*(-1);
+                        String cont_file = Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt";
+                        if (tipo_lot.equals("Monazos")) {
+
+                            contar_monazos(String.valueOf(monto), splitd[0], cont_file, splitd[2]);
+                        } else {
+                            contar(String.valueOf(monto), splitd[0], cont_file);
+                            //temp_file = temp_file + linead + "\n";
+                        }
+                    }
+                    linead = brd.readLine();
+                }
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    public void borrar(View view) {
+
+        String numero_fact = edit_Text_numero_factura.getText().toString();
+        if (numero_fact.isEmpty()) {
+            Toast.makeText(this, "Debe indicar un numero de factura! ", Toast.LENGTH_LONG).show();
+            //Do nothing.
+        } else {
+            int inv_number = Integer.parseInt(numero_fact);//Numero de factura introducido por el usuario
+            if (numero_de_facturas.get(inv_number) == null) {
+                Toast.makeText(this, "Debe ingresar un numero de factura que se encuentre en la lista de arriba.", Toast.LENGTH_LONG).show();
+            } else if (inv_number < 0) {
+                Toast.makeText(this, "Debe ingresar un numero de factura valido.", Toast.LENGTH_LONG).show();
+            } else {
+
+                //##########################################################################################
+
+                try {
+                    InputStreamReader archivo = new InputStreamReader(openFileInput("invoice.txt"));
+                    BufferedReader br = new BufferedReader(archivo);
+                    String linea = br.readLine();
+                    String linea_consecutivo = "";
+
+                    linea_consecutivo = linea_consecutivo + linea + "\n";
+                    linea = br.readLine();//Se lee la segunda linea del archivo
+                    while (linea != null) {
+                        if (linea.isEmpty()) {
+                            //Do nothing.
+                        } else {
+                            String[] split = linea.split(" ");
+                            if (Integer.parseInt(split[0]) == inv_number) {
+
+                                String[] split_nombre_archivo = split[1].split("_separador_");
+
+//Nombre del archivo: jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hora + "_separador_" + minuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+//                      split2[0]                  split2[1]                  split2[2]                 split2[3]               split2[4]              split2[5]                    split2[6]                    split2[7]              split2[8]              split2[9]                split2[10]               split2[11]             split2[12]                   split2[13]
+
+
+                                //Se actualizan los parametros que se usaran para ir a los archivos correctos.
+                                Loteria = split_nombre_archivo[1];
+                                Horario = split_nombre_archivo[2];
+                                dia = split_nombre_archivo[3];
+                                mes = String.valueOf(meses.get(split_nombre_archivo[8]));
+                                tipo_lot = split_nombre_archivo[9];
+                                Paga1 = split_nombre_archivo[10];
+                                Paga2 = split_nombre_archivo[11];
+                                anio = split_nombre_archivo[13];
+
+                                //Toast.makeText(this, "Tipo de loteria: " + tipo_lot, Toast.LENGTH_LONG).show();
+                                //mssen(tipo_lot);
+                                if (tipo_lot.equals("Parley")) {
+
+                                    //Toast.makeText(this, "Tipo de loteria: " + tipo_lot, Toast.LENGTH_LONG).show();
+                                    des_contarParley(split[1]);
+
+
+                                } else {
+
+                                    des_contar(split[1]);
+
+                                }
+
+                                //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
+                                guardar("BORRADA", split[1]);
+                                //break;
+                            }
+                        }
+
+                        linea_consecutivo = linea_consecutivo + linea + "\n";
+                        linea = br.readLine();
+                    }
+
+                    guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
+
+
+                    br.close();
+                    archivo.close();
+                    //imprimir_archivo("invoice.txt");
+                } catch (IOException e) {
+                }
+
+                //*** La siguiente linea se debe colocar despues de generar el nombre del archivo tiquete factura.
+                //agregar_linea_archivo("invoice.txt", consecutivo_str + " " + tempFile);
+
+                //##########################################################################################
+
+
+            }
+
+            /*final Calendar c = Calendar.getInstance();
+            mes_selected = (c.get(Calendar.MONTH)) + 1;
+            //Toast.makeText(this, "mes selected: " + mes_selected, Toast.LENGTH_LONG).show();
+            anio_selected = c.get(Calendar.YEAR);
+            fecha_selected = c.get(Calendar.DAY_OF_MONTH);*/
+
+            numero_de_facturas.clear();
+            cargar_facturas(fecha_selected, mes_selected, anio_selected);
+            edit_Text_numero_factura.setText("");
+
+        }
+
+
+    }
+
+    private void mssen(String mensaje) {
+        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
+    }
+
+    public void reimprimir(View view) {
+        String numero_fact = edit_Text_numero_factura.getText().toString();
+        if (numero_fact.isEmpty()) {
+            Toast.makeText(this, "Debe indicar un numero de factura! ", Toast.LENGTH_LONG).show();
+            //Do nothing.
+        } else {
+            int inv_number = Integer.parseInt(numero_fact);//Numero de factura introducido por el usuario
+            if (numero_de_facturas.get(inv_number) == null) {
+                Toast.makeText(this, "Debe ingresar un numero de factura que se encuentre en la lista de arriba.", Toast.LENGTH_LONG).show();
+            } else if (inv_number < 0) {
+                Toast.makeText(this, "Debe ingresar un numero de factura valido.", Toast.LENGTH_LONG).show();
+            } else {
+
+                //##########################################################################################
+
+                String tiquet = "";
+                try {
+                    InputStreamReader archivo = new InputStreamReader(openFileInput("invoice.txt"));
+                    BufferedReader br = new BufferedReader(archivo);
+                    String linea = br.readLine();//Esta es la primera linea, no nos interesa por ahora.
+                    linea = br.readLine();//se lee la segunda linea que si nos interesa!
+
+
+                    //Toast.makeText(this, "Debugueo:\nLinea: " + linea, Toast.LENGTH_LONG).show();
+                    while (linea != null) {
+                        String[] split = linea.split(" ");
+
+                        if (Integer.parseInt(split[0]) == inv_number) {
+
+
+                            //Se actualizan los parametros que se usaran para ir a los archivos correctos.
+
+//Nombre del archivo: jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hora + "_separador_" + minuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+//                      split2[0]                  split2[1]                  split2[2]                 split2[3]               split2[4]              split2[5]                    split2[6]                    split2[7]              split2[8]              split2[9]                split2[10]               split2[11]             split2[12]                   split2[13]
+
+
+                            String[] split_nombre_archivo = split[1].split("_separador_");
+                            Loteria = split_nombre_archivo[1];
+                            Horario = split_nombre_archivo[2];
+                            dia = split_nombre_archivo[3];
+                            mes = String.valueOf(meses.get(split_nombre_archivo[8]));
+                            tipo_lot = split_nombre_archivo[9];
+                            Paga1 = split_nombre_archivo[10];
+                            Paga2 = split_nombre_archivo[11];
+                            num_factura = split_nombre_archivo[6];
+                            player = split_nombre_archivo[0];
+                            fecha = split_nombre_archivo[3];
+                            total = split_nombre_archivo[12];
+                            anio = split_nombre_archivo[13];
+
+                            player = player.replace("\n", "");
+                            player = player.replace("x_x", " ");
+
+
+                            String pagar_print = "";
+                            if (Integer.parseInt(Paga2) == 0) {
+                                pagar_print = Paga1 + " veces";
+                            } else {
+                                pagar_print = Paga1 + " veces y " + Paga2 + " veces";
+                            }
+                            tiquet = "\nFactura # " + num_factura + "\n\nFecha: " + fecha + "/" + mes + "/" + anio +
+                                    "\nLoteria: " + Loteria + " " + Horario + "\nCliente: " + player + "\nPagamos: " +
+                                    pagar_print + "\n\n#######################\n";
+
+
+                            String lineaa = "";
+                            try {
+                                InputStreamReader archivoo = new InputStreamReader(openFileInput(split[1]));
+                                BufferedReader bro = new BufferedReader(archivoo);
+                                lineaa = bro.readLine();
+
+                                if (lineaa.equals("BORRADA")) {
+                                    lineaa = "Factura ha sido borrada!!!";
+                                    total = "0";
+                                    tiquet = tiquet + lineaa + "\n";
+                                } else {
+
+                                    while (lineaa != null) { //Se llena el tiquete que se va a imprimir con los datos que se requieren
+                                        if (lineaa.isEmpty()) {
+                                            //Do nothing.
+                                        } else {
+                                            tiquet = tiquet + lineaa + "\n";
+                                        }
+                                        lineaa = bro.readLine();
+                                    }
+
+                                }
+
+
+                            } catch (IOException e) {
+                            }
+
+                            tiquet = tiquet + "#######################\nTotal: " + total + "\n#######################\n\n\n\n";
+
+
+                        }
+
+                        //Toast.makeText(this, "Debugueo:\ntiquet: " + tiquet, Toast.LENGTH_LONG).show();
+
+                        //imprimir_archivo("invoice.txt");
+                        linea = br.readLine();
+                    }
+                    br.close();
+                    archivo.close();
+                    printIt(tiquet);
+                } catch (IOException e) {
+                }
+
+                //*** La siguiente linea se debe colocar despues de generar el nombre del archivo tiquete factura.
+                //agregar_linea_archivo("invoice.txt", consecutivo_str + " " + tempFile);
+
+                //##########################################################################################
+
+            }
+
+            /*final Calendar c = Calendar.getInstance();
+            mes_selected = (c.get(Calendar.MONTH)) + 1;
+            //Toast.makeText(this, "mes selected: " + mes_selected, Toast.LENGTH_LONG).show();
+            anio_selected = c.get(Calendar.YEAR);
+            fecha_selected = c.get(Calendar.DAY_OF_MONTH);*/
+
+            numero_de_facturas.clear();
+            cargar_facturas(fecha_selected, mes_selected, anio_selected);
+            edit_Text_numero_factura.setText("");
+
+        }
+    }
+
+    private String check_device() {
+        String archivos[] = fileList();
+        if (ArchivoExiste(archivos, "device.txt")) {
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput("device.txt"));
+                BufferedReader br = new BufferedReader(archivo);
+                String linea = br.readLine();
+                if (linea != null) {
+                    //Se lee el dispositivo guardado
+                    dispositivo = linea;
+                    dispositivo = dispositivo.replace("\n", "");
+                } else {
+                    //Error!!!
+                }
+                br.close();
+                archivo.close();
+            } catch (IOException e) {
+            }
+        }
+        return dispositivo;
+    }
+
+    public void printIt(String Mensaje) {
+
+        if (dispositivo.equals("Celular")) {
+
+            Intent Activity_ver = new Intent(this, VerActivity.class);
+            Activity_ver.putExtra("mensaje", Mensaje);
+            startActivity(Activity_ver);
+            //System.exit(0);
+
+        } else if (dispositivo.equals("Maquina")) {
+            BluetoothSocket socket;
+            socket = null;
+            byte[] data = Mensaje.getBytes();
+
+            //Get BluetoothAdapter
+            BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
+            if (btAdapter == null) {
+                Toast.makeText(getBaseContext(), "Open Bluetooth", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Get sunmi InnerPrinter BluetoothDevice
+            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
+            if (device == null) {
+                Toast.makeText(getBaseContext(), "Make Sure Bluetooth have InnterPrinter", Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+                socket = BluetoothUtil.getSocket(device);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                assert socket != null;
+                BluetoothUtil.sendData(data, socket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "Error en tipo de dispositivo", Toast.LENGTH_LONG).show();
+        }
+    }
+
+}

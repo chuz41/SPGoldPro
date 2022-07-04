@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AdministrarActivity">
+
+    <TextView
+        android:id="@+id/textView_titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/titulo_administrar"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/boton_ingresar_numeros"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="ingresar_numeros"
+        android:text="@string/ingrese_num_premio"
+        app:layout_constraintBottom_toTopOf="@+id/boton_ver_vendedor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/boton_ver_vendedor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="vendedores"
+        android:text="@string/vendedores"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.377" />
+
+    <Button
+        android:id="@+id/boton_generar_cierre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="Cierre"
+        android:text="@string/generar_cierre"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/boton_ver_vendedor"
+        app:layout_constraintVertical_bias="0.294" />
+
+    <Button
+        android:id="@+id/boton_editar_loterias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="editar_loterias"
+        android:text="@string/edit_loterias"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/boton_generar_cierre"
+        app:layout_constraintVertical_bias="0.46" />
+</androidx.constraintlayout.widget.ConstraintLayout>
