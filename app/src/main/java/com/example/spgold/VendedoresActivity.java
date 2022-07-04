@@ -572,22 +572,22 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         int monto_total = calcular_monto_total();
         int comision_total_vendedor = calcular_comision_vendedor();
         comision_vendedor = comision_total_vendedor;
-        int comision_total_banca = (int) (monto_total * 0.04);
-        comision_banca = comision_total_banca;
-        int comision_general = (int) (comision_total_vendedor + comision_total_banca);
+        //int comision_total_banca = (int) (monto_total * 0.04);
+        //comision_banca = comision_total_banca;
+        int comision_general = (int) (comision_total_vendedor);
         espaciado = espaciado - 19 - String.valueOf(comision_total_vendedor).length();
         String espaciado_str = "";
         //msg("Espaciado: >" + espaciado_str + "<");
         for (int o = 0; o < espaciado; o++) {
             espaciado_str = espaciado_str + " ";
         }
-        int espaciado2 = 30;
+        /*int espaciado2 = 30;
         espaciado2 = espaciado2 - 16 - String.valueOf(comision_total_banca).length();
         String espaciado2_str = "";
         //msg("Espaciado: >" + espaciado_str + "<");
         for (int o = 0; o < espaciado2; o++) {
             espaciado2_str = espaciado2_str + " ";
-        }
+        }*/
         int espaciado3 = 30;
         espaciado3 = espaciado3 - 16 - String.valueOf(comision_general).length();
         String espaciado3_str = "";
@@ -596,7 +596,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             espaciado3_str = espaciado3_str + " ";
         }
         vendedor_a_presentar = vendedor_a_presentar + "COMISIONES: \n\nComision vendedor: " + espaciado_str + comision_total_vendedor +
-                "\nComision Banca: " + espaciado2_str + comision_total_banca + "\n\nCOMISION TOTAL: " + espaciado3_str + comision_general +
+                "\n\nCOMISION TOTAL: " + espaciado3_str + comision_general +
                 "\n______________________________\n\nPREMIOS:\n\n";
         //printIt(vendedor_a_presentar);
         //cierre3.setVisibility(View.VISIBLE);
