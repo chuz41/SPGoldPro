@@ -2,7 +2,6 @@ package com.example.spgold;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,16 +10,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Cache;
 import com.android.volley.Network;
 import com.android.volley.Request;
@@ -32,9 +32,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.example.spgold.Util.BluetoothUtil;
-
 import org.json.JSONException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -45,17 +43,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class VendedoresActivity extends AppCompatActivity {
 
     private Spinner vendedores;
+    private Integer TOTAL_VENDEDORES = 0;
+    private String[] VENDEDORES;
+    private TextView letrero_spinner;
+    private TextView downloading;
     private String bandera_continuar = "abajo";
     private int contador_de_premios = 0;
     private int contador_de_premios_local = 0;
-    private Button cierre;
-    //private Button cierre2;
     private int comision_banca = 0;
-    //private Button cierre3;//boton premios
     private String mes;
     private String dia;
     private String anio;
@@ -84,54 +82,23 @@ public class VendedoresActivity extends AppCompatActivity {
     private int comision_vendedor = 0;
     private int getComision_banquero = 0;
     public int conta_ventas = 0;
-    public int cont_auxiliar = 0;
-
+    private ProgressBar progressBar;
+    private int var_maxima = 0;// Es la cantidad de loterias que tiene el vendedor. pero no debe cambiar, como en el caso del hashmap.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vendedores);
-        clear_all();
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.setMax(100);
         vendedores = (Spinner) findViewById(R.id.spinner_vendedores);
-        //cierre = (Button) findViewById(R.id.button_generar_cierre);
-        //cierre.setText("Calcular total de ventas");
-        //cierre.setVisibility(View.GONE);
-        //cierre2 = (Button) findViewById(R.id.button_generar_cierre2);
-        //cierre2.setText("Generar comisiones");
-        //cierre2.setVisibility(View.GONE);
-        //cierre3 = (Button) findViewById(R.id.button_generar_cierre3);
-        //cierre3.setText("Calcular premios");
-        //cierre3.setVisibility(View.GONE);
+        letrero_spinner = (TextView) findViewById(R.id.rot_vendedores);
+        downloading = (TextView) findViewById(R.id.downloading);
+        downloading.setText("Descargando...");
+        downloading.setVisibility(View.GONE);
+        clear_all();
         dispositivo = check_device();
-
         pre_config();
-
-        /*vendedores.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        if (vendedores.getSelectedItem().toString().equals("Elija el vendedor...") | vendedores.getSelectedItem().toString().equals("Elija un vendedor...")) {
-                            //msg("Escoja un vendedor...");
-                        } else {
-                            //clear_all();
-                            //pre_config();
-                            cierre.setVisibility(View.GONE);
-                            if (vendedores.getSelectedItem().toString().equals("Todos")){
-                                //TODO: Ver que hacer para manejar la opcion "Todos"
-                            } else {
-                                String[] split = vendedores.getSelectedItem().toString().split(" ");
-                                vendedor = split[0];
-                                maquina = split[1];
-                                presentar_vendedor(split[0], split[1]);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });*/
     }
 
     private void clear_all() {
@@ -146,9 +113,6 @@ public class VendedoresActivity extends AppCompatActivity {
         Comisiones.clear();
         contador_de_premios = 0;
         contador_de_premios_local = 0;
-        total_ventas = 0;
-        comision_vendedor = 0;
-        getComision_banquero = 0;
         bandera_continuar = "abajo";
         comision_banca = 0;
         total_premios = 0;
@@ -162,20 +126,19 @@ public class VendedoresActivity extends AppCompatActivity {
     }
 
     private void pre_config() {
+        vendedores.setVisibility(View.GONE);
+        letrero_spinner.setVisibility(View.GONE);
         contar_premios();
-        String[] s = new String[1];
-        s[0] = "Elija un vendedor...";
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, R.layout.spinner_item_loteria, s);
-        vendedores.setAdapter(adapter1);
+        Integer[] params = new Integer[2];
+        params[0] = 1000;
+        params[1] = 0;
+        new MyTask().execute(params);
+        spinner_put();
         gene_fecha_hoy();
-        //ver_vendedores();
-        //leer_premios();//Aqui rellenamos el hashmap Premios
-
-        //rellenar_contadorcito();
+        vendedores.setFocusableInTouchMode(true);
     }
 
     private void leer_premios() {
-        //Importar funcion que lee los premios.
         //Algoritmo para ver los resultados de hoy:
         if (verificar_internet()) {
             Ver_premios();
@@ -186,9 +149,6 @@ public class VendedoresActivity extends AppCompatActivity {
     }
 
     private void generar_cierre3() throws JSONException {//Parte de los premios...
-
-        //cierre3.setVisibility(View.GONE);
-
         for (String key : Premiados.keySet()) {
             String[] split = key.split("ojo-rojo_ojo-rojo");
 //                                              Tica                             dia                           90                                        500                                       25                               no                              no
@@ -204,8 +164,6 @@ public class VendedoresActivity extends AppCompatActivity {
             vendedor_a_presentar = vendedor_a_presentar + split[1] + " " + split[2] + ": " + espaciado3_str + Premiados.get(key) + "\n";
         }
         vendedor_a_presentar = vendedor_a_presentar + "\nSubidos a esta hora:\n" + hora + ":" + minuto + "\n\n";
-
-
         for (String key : premios_encontrados.keySet()) {
             vendedor_a_presentar = vendedor_a_presentar + key + " " + premios_encontrados.get(key) + "\n";
         }
@@ -217,7 +175,6 @@ public class VendedoresActivity extends AppCompatActivity {
         }
         vendedor_a_presentar = vendedor_a_presentar + "\nTOTAL EN PREMIOS: " + espaciado3_str + String.valueOf(total_premios);
         vendedor_a_presentar = vendedor_a_presentar + "\n______________________________\n\n";
-        //printIt(vendedor_a_presentar);
         saldo_del_dia();
     }
 
@@ -252,14 +209,13 @@ public class VendedoresActivity extends AppCompatActivity {
         vendedor_a_presentar = vendedor_a_presentar + "Saldo a la fecha: " + espaciado2_str + String.valueOf(saldo_total_a_la_fecha) + "\n";
         vendedor_a_presentar = vendedor_a_presentar + "\n\n------ ULTIMA --- LINEA ------\n\n\n\n";
         printIt(vendedor_a_presentar);
-
     }
 
     /*private void guardar_saldo() {
     //TODO
     }*/
 
-    private int leer_saldo_anterior() {
+    private int leer_saldo_anterior() {//TODO: HACER ESTO EN UNA SPREADSHEET
         int i = 0;
         String archivos[] = fileList();
         String ArchivoCompleto = "";//Aqui se lee el contenido del archivo guardado.
@@ -283,7 +239,10 @@ public class VendedoresActivity extends AppCompatActivity {
     }
 
     private void contar_premios() {
-        //int contador_de_premios = 0;
+
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+
         Premios.clear();
         RequestQueue requestQueue;
 
@@ -437,9 +396,13 @@ public class VendedoresActivity extends AppCompatActivity {
                                             if (vendedores.getSelectedItem().toString().equals("Todos")){
                                                 //TODO: Ver que hacer para manejar la opcion "Todos"
                                             } else {
+                                                progressBar.setProgress(0);
+                                                progressBar.setVisibility(View.VISIBLE);
                                                 String[] split = vendedores.getSelectedItem().toString().split(" ");
                                                 vendedor = split[0];
                                                 maquina = split[1];
+                                                downloading.setVisibility(View.GONE);
+                                                //vendedores.setFocusableInTouchMode(false);
                                                 presentar_vendedor(split[0], split[1]);
                                             }
                                         }
@@ -450,7 +413,6 @@ public class VendedoresActivity extends AppCompatActivity {
 
                                     }
                                 });
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -462,47 +424,22 @@ public class VendedoresActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue.
         requestQueue.add(stringRequest);
-
     }
-/*
-    public void rellenar_contadorcito() {
-        int param = 0;
-        for (String key : SpreadSheets_vendedor.keySet()) {
-            param++;
-        }
-        for (String key : SpreadSheets_vendedor.keySet()) {
-            String[] split4 = SpreadSheets_vendedor.get(key).split("ojo-rojo_ojo-rojo");//Loteria a presentar
-            String[] split5 = key.split("ojo-rojo_ojo-rojo");//SpreadSheet y sheet que se van a leer!
-            if (verificar_internet()) {
-                if (vendedores.getSelectedItem().toString().equals("Todos")) {
-                    //TODO: Ver que hacer para manejar la opcion "Todos"
-                } else {
-                    //Ej.                          SpreadSheet                 SHEET                        Tica              dia
-                    //msg("Debug:\nSpreadSheet: " + split4[1] + "\nSHEET: " + split4[2] + "\nLoteria: " + split5[1] + " " + split5[2]);
-                    llenar_contador(split4[1], split4[2], split5[1], split5[2], param);//aqui se cuentan las loterias que tienen ventas
-                }
-            } else {
-                //Do nothing.
-                return;
-            }
-        }
-
-    }
-
- */
 
     public String generar_cierre(HashMap<String, String> vendep, boolean vez) throws JSONException {
         //cierre.setVisibility(view.GONE);
+        vendedores.setVisibility(View.GONE);
+        letrero_spinner.setVisibility(View.GONE);
 
         if (vez) {
            // msg("Hola, estoy en el generar_cierre true!");
             vendedor_a_presentar = vendedor_a_presentar + "______________________________\nVENTAS: \n\n";
+            progressBar.setProgress(1);
         } else {
-           // msg("Hola, estoy en el generar_cierre false!");
+            int pro_cant = TOTAL_VENDEDORES - SpreadSheets_vendedor.size();
+            progressBar.setProgress(pro_cant);
             //Do nothing.
         }
-
-
         //msg("Bandera continuar: " + bandera_continuar);
         Log.v("Bandera continuar: ", bandera_continuar);
         //msg("SpreadSheets_vendedor: " + String.valueOf(SpreadSheets_vendedor.size()));
@@ -630,6 +567,8 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                     public void onResponse(String response) {
                         //msg("onResponse de leer_tabla");
                         // Do something with the response
+                        downloading.setVisibility(View.VISIBLE);
+                        downloading.setText("Descargando ventas de " + loteria + " " + horario + "...");
                         String[] splitt = response.toString().split("\"");
                         //msg(response);
                         int length_splitt = splitt.length;
@@ -1194,14 +1133,6 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                 Montos.put(nombre_loteria, monto_total);
             }
         }
-        //msg("Conta_ventas: " + conta_ventas + "\ncont_auxiliar: " + cont_auxiliar);
-        /*if (conta_ventas == cont_auxiliar){
-            //cierre2.setText("Generar cierre");
-            //cierre2.setVisibility(View.VISIBLE);
-
-        } else {
-            //Do nothing. Continue!ns
-        }*/
         llamar_al_cierre();
     }
 
@@ -1257,6 +1188,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                 //Aqui va el total de los algoritmos funcionales basados en una respuesta correcta!
                                 String[] split = response.split("vendedor");//Se separa el objeto Json
                                 String[] Vendedores = new String[split.length + 1];
+                                VENDEDORES = new String[split.length + 1];
                                 Vendedores[0] = "Elija el vendedor...";
 
                                 //Se llena un HashMap y el spinner con los vendedores, los cuales se bajan de la nube.
@@ -1275,8 +1207,15 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                         Vendedores[i] = split2[2] + " " + split2[6];
                                     }
                                 }
+                                Integer[] params = new Integer[2];
+                                params[0] = 1000;
+                                params[1] = 1;
+                                Log.v("Error100", "llener spinner vendedores\n\nResponse:\n\n" + response);
+                                //msg("Debug\nResponse: " + response);
+                                new MyTask().execute(params);
                                 Vendedores[split.length] = "Todos";
-                                llenar_spinner_vendedores(Vendedores);
+                                VENDEDORES = Vendedores;
+
 
                             } else {
                                 //Respuesta incorrecta!!!
@@ -1304,6 +1243,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                             //Respuesta incorrecta!!!
                         }
                          */
+
                         leer_premios();
                     }
 
@@ -1318,6 +1258,13 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         // Add the request to the RequestQueue.
         requestQueue.add(stringRequest);
 
+    }
+
+    private void spinner_put() {
+        String[] s = new String[1];
+        s[0] = "Elija un vendedor...";
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, R.layout.spinner_item_loteria, s);
+        vendedores.setAdapter(adapter1);
     }
 
     private void crear_archivo_vendedor(String vendedor, String maquina) {
@@ -1390,10 +1337,16 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
 
     private void presentar_vendedor(String vendedor, String maquina) {
         //iterar sobre el HashMap ...
+        //vendedores.setVisibility(View.GONE);
+        //letrero_spinner.setVisibility(View.GONE);
         if (vendedor.equals("Elija un vendedor...") | vendedor.equals("Elija el vendedor...")) {
             msg("Debe escoger un vendedor!");
+            //vendedores.setVisibility(View.VISIBLE);
+            //letrero_spinner.setVisibility(View.VISIBLE);
         } else if (vendedor.equals("Todos")) {
             //cuando se escogen todos! TODO: revisar viabilidad!
+            //vendedores.setVisibility(View.VISIBLE);
+            //letrero_spinner.setVisibility(View.VISIBLE);
         } else {//Se ha elegido un vendedor!
 
             vendedor_a_presentar = "****** REPORTE CONTABLE ******\n\nTiempos " + vendedor + ", maquina " + maquina + "\nFecha: " + fecha + "/" + mes + "/" + anio + " Hora: " + hora + ":" + minuto + "\n\n";
@@ -1486,6 +1439,10 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                 bandera_continuar = "listo";//Esta bandera indica que si aparece vacio el hashmap
                                                             // SpreadSheets_vendedor, el programa debe detener la
                                                             // ejecucion de este metodo y continuar con un paso siguiente.
+                                TOTAL_VENDEDORES = SpreadSheets_vendedor.size();
+                                progressBar.setMax(TOTAL_VENDEDORES);
+                                progressBar.setVisibility(View.VISIBLE);
+                                progressBar.setProgress(0);
                                 resul_cierre = generar_cierre(SpreadSheets_vendedor, true);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1574,7 +1531,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
         if (!isConnected) {
-            Toast.makeText(this, "Debe estar conectado a una red WiFi o datos mobiles.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Debe estar conectado a una red WiFi o datos mobiles.", Toast.LENGTH_LONG).show();
             return false;
         } else {
             //Si esta conectado a internet.
@@ -1676,13 +1633,13 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             //Get BluetoothAdapter
             BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
             if (btAdapter == null) {
-                Toast.makeText(getBaseContext(), "Open Bluetooth", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Abriendo Bluetooth", Toast.LENGTH_SHORT).show();
                 return;
             }
             // Get sunmi InnerPrinter BluetoothDevice
             BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
             if (device == null) {
-                Toast.makeText(getBaseContext(), "Make Sure Bluetooth have InnterPrinter", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Asegurese de tener la impresora BlueTooth emparejada con el dispositivo!", Toast.LENGTH_LONG).show();
                 return;
             }
             try {
@@ -1771,6 +1728,10 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
     }
     */
 
+    private void llenar_spinner_vendedores2() {
+        llenar_spinner_vendedores(VENDEDORES);
+    }
+
     //////////////////Personalizacion de la navegacion hacia atras!//////////////////
     @Override
     public void onBackPressed(){
@@ -1786,11 +1747,65 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
     }
     /////////////////////////////////////////////////////////////////////////////////
 
+    class MyTask extends AsyncTask<Integer, Integer, String> {
 
+        @Override
+        protected void onPreExecute() {
+            downloading.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+            downloading.setText("Iniciando descarga...");
+        }
 
+        @Override
+        protected String doInBackground(Integer... params) {
+            //vendedores.setVisibility(View.GONE);
+            //letrero_spinner.setVisibility(View.GONE);
+            letrero_spinner.setVisibility(View.GONE);
+            for (int count = 1; count <= params[0]; count = (count*2)) {
+                try {
+                    Thread.sleep(2000/count);
+                    publishProgress(count);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (params[1] == 0 | !verificar_internet()) {
+                if (!verificar_internet()) {
+                    return "Lectura de premios\nen progreso...\n\nDebe estar conectado a una red de Internet!!!";
+                } else {
+                    return "Lectura de premios\nen progreso...";
+                }
+            } else {
+                return "Lectura de premios\nterminada!!!";
+
+            }
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            //txt.setText("Running..."+ values[0]);
+            progressBar.setProgress(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //progressBar.setVisibility(View.GONE);
+            downloading.setText(result);
+            letrero_spinner.setVisibility(View.GONE);
+            //vendedores.setVisibility(View.VISIBLE);
+            //letrero_spinner.setVisibility(View.VISIBLE);
+            if (result.equals("Lectura de premios\nterminada!!!")) {
+                llenar_spinner_vendedores2();
+                letrero_spinner.setVisibility(View.VISIBLE);
+                vendedores.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+            //TODO: Aqui se puede hacer algo interesante.
+        }
+    }
 }
-
-
 
 
 

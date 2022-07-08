@@ -7,7 +7,7 @@
     tools:context=".VendedoresActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/rot_vendedores"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/vendedores2"
@@ -24,5 +24,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.222" />
+
+    <TextView
+        android:id="@+id/downloading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.412" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/downloading"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
