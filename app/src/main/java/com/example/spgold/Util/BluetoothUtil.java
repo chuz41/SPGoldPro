@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Created by Iushaheed on 1/14/2018. Modified by Ing. Jesus Barrantes Ramirez
+ * Created by Iushaheed on 1/14/2018. Modified by Ing. Jesus Barrantes Ramirez on 1/4/2022
  */
 
 public class BluetoothUtil {
