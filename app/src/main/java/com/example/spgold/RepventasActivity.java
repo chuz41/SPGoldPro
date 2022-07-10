@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -407,14 +408,20 @@ public class RepventasActivity extends AppCompatActivity {
 
                     String linea = br24.readLine();//Se lee la primera linea del archivo
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    int counter = 0;
-                    String linea_tempo = "";
-                    while (linea != null) {
+
+
+
+                    HashMap<String, String> vendi = new HashMap<String, String>();//Aqui se van a almacenar de manera temporal las ventas.
+                    while (linea != null) {//En este while se leen todas las ventas del dia
                         String[] split = linea.split("      ");//Se separa el monto del numero guardado.
-                        if (Integer.parseInt(split[1]) != 0) {
-                            total = total + Integer.parseInt(split[1]);//Se almacena la suma de las ventas
-                            String separacion_str = "";
-                            int separacion = 6 - split[1].length();//TODO NOW!!! 9/7/2022
+                        if (Integer.parseInt(split[1]) != 0) {//Si tiene algun valor distinto de cero significa que se han vendido tiquetes correspondientes a ese numero.
+                            total = total + Integer.parseInt(split[1]);//Se almacena la suma de las ventas total.
+                            //TODO NOW!!! Ordenar los numeros en ascendente. 9/7/2022
+
+                            vendi.put(split[0], split[1]);//key: numero, value: monto
+
+                            /*String separacion_str = "";
+                            int separacion = 6 - split[1].length();
                             for (int i = 0; i < separacion; i++) {
                                 separacion_str = separacion_str + " ";
                             }
@@ -429,11 +436,211 @@ public class RepventasActivity extends AppCompatActivity {
                             }
                             if (counter == 0) {
                                 //linea = linea_tempo;
-                                contenido = contenido + "\n" + linea_tempo;
-                            }
+                                contenido_temp = contenido_temp + "\n" + linea_tempo;
+                            }*/
                         }
                         linea = br24.readLine();
+                    }//Aqui termina el while!!!
+
+                    //Aqui haremos el acomodo de los numeros!!!
+                    int cosciente = 0;
+                    cosciente = (vendi.size())/3;//Numero entero de datos por columna (3 columnas)
+                    int modulo = 0;
+                    modulo = ((vendi.size())%3);//Resto de la division (modulo).
+                    //creamos un tree map
+                    TreeMap<String, String> treeMap = new TreeMap<String, String>();
+                    treeMap.putAll(vendi);
+
+                    int colum_size1, colum_size2, colum_size3;//Tamanio de cada columna
+
+                    if (modulo == 1) {
+                        colum_size1 = cosciente + 1;
+                        colum_size2 = cosciente;
+                        colum_size3 = cosciente;
+                    } else if (modulo == 2) {
+                        colum_size1 = cosciente + 1;
+                        colum_size2 = cosciente + 1;
+                        colum_size3 = cosciente;
+                    } else {
+                        colum_size1 = cosciente;
+                        colum_size2 = cosciente;
+                        colum_size3 = cosciente;
                     }
+
+
+
+                    //Crear 3 hashmaps.
+                    HashMap<String, String> hm1 = new HashMap<String, String>();
+                    HashMap<String, String> hm2 = new HashMap<String, String>();
+                    HashMap<String, String> hm3 = new HashMap<String, String>();
+
+                    //int param_for = 0;//Se usa como elemento de control de los ciclos for siguientes:
+                    for (int param_for = 0; param_for < colum_size1; param_for++) {
+                        for (String key : treeMap.keySet()) {
+                            hm1.put(key, treeMap.get(key));
+                            treeMap.remove(key);
+                            break;
+                        }
+                    }
+
+                    for (int param_for = 0; param_for < colum_size2; param_for++) {
+                        for (String key : treeMap.keySet()) {
+                            hm2.put(key, treeMap.get(key));
+                            treeMap.remove(key);
+                            break;
+                        }
+                    }
+
+                    for (int param_for = 0; param_for < colum_size3; param_for++) {
+                        for (String key : treeMap.keySet()) {
+                            hm3.put(key, treeMap.get(key));
+                            treeMap.remove(key);
+                            break;
+                        }
+                    }
+
+                    //creamos tres tree maps
+                    TreeMap<String, String> treeMap1 = new TreeMap<String, String>();
+                    treeMap1.putAll(hm1);
+                    TreeMap<String, String> treeMap2 = new TreeMap<String, String>();
+                    treeMap2.putAll(hm2);
+                    TreeMap<String, String> treeMap3 = new TreeMap<String, String>();
+                    treeMap3.putAll(hm3);
+                    int counter = 0;
+                    String linea_tempo = "";
+                    String contenido_temp = "";
+                    for (String key : treeMap1.keySet()) {
+                        String separacion_str = "";
+                        int separacion = 6 - treeMap1.get(key).length();
+                        for (int i = 0; i < separacion; i++) {
+                            separacion_str = separacion_str + " ";
+                        }
+                        counter++;
+                        linea_tempo = key + separacion_str + treeMap1.get(key) + "| ";
+                        for (String key2 : treeMap2.keySet()) {
+                            String separacion_str2 = "";
+                            int separacion2 = 6 - treeMap2.get(key2).length();
+                            for (int i = 0; i < separacion2; i++) {
+                                separacion_str2 = separacion_str2 + " ";
+                            }
+                            linea_tempo = linea_tempo + key2 + separacion_str + treeMap2.get(key2) + "| ";
+                            treeMap2.remove(key2);
+                            for (String key3 : treeMap3.keySet()) {
+                                linea_tempo = linea_tempo + key3 + separacion_str + treeMap3.get(key3);
+                                treeMap3.remove(key3);
+                                counter = 0;
+                                break;
+                            }
+                            break;
+                        }
+                        if (counter == 0) {
+                            //linea = linea_tempo;
+                            contenido_temp = contenido_temp + "\n" + linea_tempo;
+                        }
+                    }
+
+                    /*
+                    //HashMap<String, String> hmModulo = new HashMap<String, String>();
+                    int cont_dat_colum1 = 0;//contador_de_datos_columnares
+                    int cont_dat_colum2 = 0;//contador_de_datos_columnares
+                    int cont_dat_colum3 = 0;//contador_de_datos_columnares
+                    int parametro_divisor = 0;
+                    int retroceso = 0;
+                    for (String key : treeMap.keySet()) {
+                        parametro_divisor++;
+                        cont_dat_colum1++;
+                        cont_dat_colum2++;
+                        cont_dat_colum3++;
+                        if (parametro_divisor == 1) {//Columna 1
+                            hm1.put(key, treeMap.get(key));
+                        } else if (parametro_divisor == 2) {//Columna 2
+                            hm2.put(key, treeMap.get(key));
+                        } else if (parametro_divisor == 3) {//Columna 3
+                            hm3.put(key, treeMap.get(key));
+                            parametro_divisor = 0;
+                        } else {
+                            //Do nothing.
+                        }
+                    }
+
+                    //creamos tres tree maps
+                    TreeMap<String, String> treeMap1 = new TreeMap<String, String>();
+                    treeMap1.putAll(hm1);
+                    TreeMap<String, String> treeMap2 = new TreeMap<String, String>();
+                    treeMap2.putAll(hm2);
+                    TreeMap<String, String> treeMap3 = new TreeMap<String, String>();
+                    treeMap3.putAll(hm3);
+                    //treeMap1.putAll(treeMap2);
+                    //treeMap1.putAll(treeMap3);
+                    int counter = 0;
+                    String linea_tempo = "";
+                    String contenido_temp = "";
+                    for (String key : treeMap1.keySet()) {//key: numero, value: monto
+                        String separacion_str = "";
+                            int separacion = 6 - key.length();
+                            for (int i = 0; i < separacion; i++) {
+                                separacion_str = separacion_str + " ";
+                            }
+                            counter++;
+                            if (counter == 1) {
+                                linea_tempo = key + separacion_str + treeMap1.get(key) + "| ";
+                            } else if (counter == 2) {
+                                linea_tempo = linea_tempo + key + separacion_str + treeMap1.get(key) + "| ";
+                            } else if (counter == 3) {
+                                linea_tempo = linea_tempo + key + separacion_str + treeMap1.get(key);
+                                counter = 0;
+                            }
+                            if (counter == 0) {
+                                //linea = linea_tempo;
+                                contenido_temp = contenido_temp + "\n" + linea_tempo;
+                            }
+                    }
+                    counter = 0;
+                    for (String key : treeMap2.keySet()) {//key: numero, value: monto
+                        //linea_tempo = "";
+                        String separacion_str = "";
+                        int separacion = 6 - key.length();
+                        for (int i = 0; i < separacion; i++) {
+                            separacion_str = separacion_str + " ";
+                        }
+                        counter++;
+                        if (counter == 1) {
+                            linea_tempo = key + separacion_str + treeMap2.get(key) + "| ";
+                        } else if (counter == 2) {
+                            linea_tempo = linea_tempo + key + separacion_str + treeMap2.get(key) + "| ";
+                        } else if (counter == 3) {
+                            linea_tempo = linea_tempo + key + separacion_str + treeMap2.get(key);
+                            counter = 0;
+                        }
+                        if (counter == 0) {
+                            //linea = linea_tempo;
+                            contenido_temp = contenido_temp + "\n" + linea_tempo;
+                        }
+                    }
+                    counter = 0;
+                    for (String key : treeMap3.keySet()) {//key: numero, value: monto
+                        //linea_tempo = "";
+                        String separacion_str = "";
+                        int separacion = 6 - key.length();
+                        for (int i = 0; i < separacion; i++) {
+                            separacion_str = separacion_str + " ";
+                        }
+                        counter++;
+                        if (counter == 1) {
+                            linea_tempo = key + separacion_str + treeMap3.get(key) + "| ";
+                        } else if (counter == 2) {
+                            linea_tempo = linea_tempo + key + separacion_str + treeMap3.get(key) + "| ";
+                        } else if (counter == 3) {
+                            linea_tempo = linea_tempo + key + separacion_str + treeMap3.get(key);
+                            counter = 0;
+                        }
+                        if (counter == 0) {
+                            //linea = linea_tempo;
+                            contenido_temp = contenido_temp + "\n" + linea_tempo;
+                        }
+                    }*/
+                    contenido = contenido + contenido_temp;
+
                     if (counter == 1) {
                         contenido = contenido + "\n" + linea_tempo;
                     } else if (counter == 2) {
