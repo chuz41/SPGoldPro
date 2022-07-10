@@ -488,13 +488,13 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             //Get BluetoothAdapter
             BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
             if (btAdapter == null) {
-                Toast.makeText(getBaseContext(), "Open Bluetooth", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Bluetooth abierto!", Toast.LENGTH_SHORT).show();
                 return;
             }
             // Get sunmi InnerPrinter BluetoothDevice
             BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
             if (device == null) {
-                Toast.makeText(getBaseContext(), "Make Sure Bluetooth have InnterPrinter", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Asegurese de tener conectada una impresora!!!", Toast.LENGTH_LONG).show();
                 return;
             }
             try {
@@ -917,11 +917,11 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         if (flag_internet) {
             objeto_Json_a_subir = obtener_Json(consecutivo_str);
         } else {
-            Toast.makeText(this, "Error al subir factura #" + consecutivo_str + ". \nVerifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Error al subir factura #" + consecutivo_str + ". \nVerifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
         }
 
         if (!flag_internet) {
-            Toast.makeText(this, "-----*****************-----\n        NOTA DE SEGURIDAD:\n-----*****************-----\n\nError al cifrar archivo.\nArchivo no se sube!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "-----*****************-----\n        NOTA DE SEGURIDAD:\n-----*****************-----\n\nError al cifrar archivo.\nArchivo no se sube!", Toast.LENGTH_LONG).show();
         } else {
             subir_factura(objeto_Json_a_subir, consecutivo_str);
         }
@@ -1010,7 +1010,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     }
 
     private void mensaje_error_en_subida() {
-        Toast.makeText(this, "Error subiendo la factura a la base de datos!!!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Error subiendo la factura a la base de datos!!!", Toast.LENGTH_LONG).show();
     }
 
     private void cambiar_bandera (String Consecutivo) {
@@ -1113,11 +1113,11 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
         if (!isConnected) {
-            Toast.makeText(this, "Debe estar conectado a una red WiFi o datos mobiles.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Debe estar conectado a una red WiFi o datos mobiles.", Toast.LENGTH_LONG).show();
             return false;
         } else {
             //Si esta conectado a internet.
-            Toast.makeText(this, "Conectado a internet!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Conectado a internet!", Toast.LENGTH_LONG).show();
             return true;
         }
     }
@@ -1204,7 +1204,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     }
 
     private void imprimiendoAnim() {
-        Toast.makeText(getApplicationContext(), "    imprimiendo...",	Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "    imprimiendo...",	Toast.LENGTH_SHORT).show();
 
 
     }

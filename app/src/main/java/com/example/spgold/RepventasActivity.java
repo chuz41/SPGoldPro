@@ -414,7 +414,7 @@ public class RepventasActivity extends AppCompatActivity {
                         if (Integer.parseInt(split[1]) != 0) {
                             total = total + Integer.parseInt(split[1]);//Se almacena la suma de las ventas
                             String separacion_str = "";
-                            int separacion = 6 - split[1].length();
+                            int separacion = 6 - split[1].length();//TODO NOW!!! 9/7/2022
                             for (int i = 0; i < separacion; i++) {
                                 separacion_str = separacion_str + " ";
                             }
