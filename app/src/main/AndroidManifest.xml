@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SPgold">
         <activity
-            android:name=".EditonlineActivity"
+            android:name=".VerlistasActivity"
             android:exported="false" />
         <activity
             android:name=".CierreActivity"

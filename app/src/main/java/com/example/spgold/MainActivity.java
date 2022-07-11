@@ -824,7 +824,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Spread_Sheet_Id  " + "x");
         agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "x");
 
-        String lot_demo13 = "Prueba_parley";
+        String lot_demo13 = "Prueba_paarley";
         crear_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt");
         agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Paga1  " + "85");
         agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Paga2  " + "0");
@@ -849,7 +849,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Spread_Sheet_Id  " + "x");
         agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "x");
 
-        String lot_demo14 = "Prueba_monazos";
+        String lot_demo14 = "Prueba_moonazos";
         crear_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt");
         agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Paga1  " + "85");
         agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Paga2  " + "0");
@@ -874,7 +874,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Spread_Sheet_Id  " + "x");
         agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "x");
 
-        String lot_demo15 = "Prueba_reventados";
+        String lot_demo15 = "Prueba_reeventados";
         crear_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt");
         agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Paga1  " + "85");
         agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Paga2  " + "0");

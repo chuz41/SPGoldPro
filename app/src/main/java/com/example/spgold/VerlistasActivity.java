@@ -1,16 +1,15 @@
 package com.example.spgold;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 
-public class EditonlineActivity extends AppCompatActivity {
+public class VerlistasActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_editonline);
+        setContentView(R.layout.activity_cierre);
     }
 
     //////////////////Personalizacion de la navegacion hacia atras!//////////////////
@@ -27,5 +26,4 @@ public class EditonlineActivity extends AppCompatActivity {
         System.exit(0);
     }
     /////////////////////////////////////////////////////////////////////////////////
-
 }

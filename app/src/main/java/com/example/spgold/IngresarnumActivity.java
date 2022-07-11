@@ -283,7 +283,6 @@ public class IngresarnumActivity extends AppCompatActivity {
                     }
                 });
 
-
         num_premio1.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override

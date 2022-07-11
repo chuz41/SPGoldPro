@@ -50,8 +50,8 @@ public class AdministrarActivity extends AppCompatActivity {
         System.exit(0);
     }
 
-    public void editar_loterias(View view){
-        Intent Editar = new Intent(this, EditonlineActivity.class);
+    public void ver_listas(View view){
+        Intent Editar = new Intent(this, VerlistasActivity.class);
         startActivity(Editar);
         finish();
         System.exit(0);
