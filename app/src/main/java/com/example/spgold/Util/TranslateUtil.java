@@ -27,7 +27,7 @@ public class TranslateUtil {
             row.put(split2[2]);
             row.put(split2[3]);
             row.put(split2[4]);
-            row.put(id);
+            row.put(id);//TODO: Pensar como hacer para que el ID ayude con la eliminacion de facturas.
             rowsArray.put(row);
             cont++;
         }

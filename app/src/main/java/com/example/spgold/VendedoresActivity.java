@@ -229,8 +229,10 @@ public class VendedoresActivity extends AppCompatActivity {
     private void elegir () {
         //Hacer Visibles los 2 botones
         downloading.setText("Descargas completadas al 100%");
-        listas.setVisibility(View.VISIBLE);
-        cierre.setVisibility(View.VISIBLE);
+        //listas.setVisibility(View.VISIBLE);
+        //cierre.setVisibility(View.VISIBLE);
+        String string = vendedor_a_presentar + "\n\n" + listas_to_print;
+        printIt(string);
     }
 
     public void ver_listas(View view) {
@@ -311,7 +313,7 @@ public class VendedoresActivity extends AppCompatActivity {
 
                             //Se llena un HashMap con los premios, los cuales se bajan de la nube.
                             Premios.clear();
-                            for (int i = 1; i < split.length; i++) {//TODO: revisar el igual en <=
+                            for (int i = 1; i < split.length; i++) {
                                 contador_de_premios++;
                                 //Debug
                                 //msg(String.valueOf(contador_de_premios));
@@ -671,12 +673,14 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                     String[] split2 = split[i].split("\"");
                                     String nu1 = split2[2];
                                     String nu2 = split2[6];
-                                    String monto = split2[10];
-                                    String extra_info = split2[14];
+                                    String monto = split2[10];//10
+                                    String extra_info = split2[14];//14
                                     //String factura = split2[18];
                                     String iD = split2[22];
+                                    Log.v("Error106", "split[18]: " + split2[18] + "split[14]: " + split2[14]);
                                     String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo";
                                     String valor_factura = "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
+                                    Log.v("Error105", "Key: " + key_factura + "\nValue: " + valor_factura);
 
                                     //////////////////////////////////////////////////////////////////////////
                                     ///////Algoritmo que verifica si hay IDs iguales para omitirlos!//////////
@@ -740,9 +744,18 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
 
 
 
-
+        Log.v("Error102", "Loteria: " + loteria + " " + horario + "\nComision: " + comision + "\nPaga1: " + paga1 + " Paga2: " + paga2);
+        //msg("Loteria: " + loteria + " " + horario + "\nComision: " + comision + "\nPaga1: " + paga1 + " Paga2: " + paga2);
         HashMap<String, Integer> hashMap_local = crear_hasmap_local_ordenado();//Este hasmap tendra los numeros contenidos en hasMap pero sin repetir y sumados sus valores.
         Log.v("Error10", "iterar_mapa");
+
+        for (String key : hashMap.keySet()) {
+            String[] split_valor = hashMap.get(key).split("ojo-rojo_ojo-rojo");
+            Log.v("Error104", "Key: " + key + "\nValue: " + hashMap.get(key));
+            //Log.v("Error103", "Monto: " + split_valor[1]);
+            //msg("Monto: " + split_valor[1]);
+        }
+
         for (String key : hashMap.keySet()) {//Agregamos los valores de hashMap a hashMap_local pero ordenados y sumadas las apuestas de los numeros repetidos.
             /*
             Ejemplo:
@@ -752,6 +765,16 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             //Ejemplo de como reemplazar valores del HashMap:  if (hashMap.containsKey(loteria_actual)) { hashMap.replace(loteria_actual, premio_viejo, premio_actual) };
             String[] split_valor = hashMap.get(key).split("ojo-rojo_ojo-rojo");
             int monto = Integer.parseInt(split_valor[1]);
+           /* if (split_valor.length == 2) {//Es regular o reventados.
+                //
+            } else if (split_valor[1].equals("Orden") | split_valor[1].equals("Desorden")) {//Es monazos
+                //
+            } else if (Integer.parseInt(split_valor[0]) >= 0 & Integer.parseInt(split_valor[1]) >= 0 & split_valor.length == 3) {//Es parley
+                //
+            } else {
+                //Do nothing.
+            }*/
+
             //msg("Monto: " + String.valueOf(monto));
             String[] split_key = key.split("ojo-rojo_ojo-rojo");
             String new_key = "ojo-rojo_ojo-rojo" + split_key[1] + "ojo-rojo_ojo-rojo" + split_key[2] + "ojo-rojo_ojo-rojo" + split_key[3] + "ojo-rojo_ojo-rojo";//Se omite el ID ya que a este punto se ha pasado el filtro de IDs.

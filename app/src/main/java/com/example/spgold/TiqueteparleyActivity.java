@@ -352,7 +352,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
         Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
     }
 
-    private JSONObject generar_Json_resagadas(String file, String factura, String SSHHEETT, String SPREEADSHEET_ID) {
+    private JSONObject generar_Json_resagadas(String file, String factura, String SSHHEETT, String SPREEADSHEET_ID, String tipo_lote) {
         //boolean flag_subir = false;
         JSONObject jsonObject = new JSONObject();
 
@@ -366,8 +366,18 @@ public class TiqueteparleyActivity extends AppCompatActivity {
             String json_string = "";
             while (linea != null) {
                 String[] split = linea.split("      ");
-                //                            #1                #2             monto          ext. info         factura
-                json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + "no" + "_n_" + factura + "_l_";
+                if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
+                    //                            #1                #2             monto          ext. info         factura
+                    json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + "no" + "_n_" + factura + "_l_";
+                } else if (tipo_lote.equals("Monazos")) {
+                    //                            #1                #2             monto            ext. info           factura
+                    json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + split[2] + "_n_" + factura + "_l_";
+                } else if (tipo_lote.equals("Parley")) {
+                    //                            #1                #2                 monto           ext. info        factura
+                    json_string = json_string + split[0] + "_n_" + split[1] + "_n_" + split[2] + "_n_" + "no" + "_n_" + factura + "_l_";
+                } else {
+                    //Do nothing. Nunca llega aqui!
+                }
                 linea = br.readLine();
             }
             br.close();
@@ -394,15 +404,18 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                     //String[] split_hor = split[1].split("_separador_");
                     String[] split_name = split[1].split("_separador_");
                     String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
-
+                    String tipo_lote = split_name[9];
                     String SSHHEETT = split[3];
                     String SSPPRREEAADDSSHHEETT = split[2];
-                    objeto_json = generar_Json_resagadas(split[1], factura, SSHHEETT, SSPPRREEAADDSSHHEETT);
+                    objeto_json = generar_Json_resagadas(split[1], factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lote);
                     //objeto_json = generar_Json_resagadas(split[1], factura, SSHHEETT);
                     subir_factura_resagadas(objeto_json);
-                } else {
-                    //Do nothing. No deberia llegar aqui.
-                    //Toast.makeText(this, "Debug:\nNo deberia llegar aqui!!!", Toast.LENGTH_LONG).show();
+                } else if (split[0].equals("BORRADA")) {
+                    //TODO: Pensar que hacer!!!
+                } else if (split[0].equals("arriba")) {
+                    //TODO: Pensar que hacer!!!
+                }  else {
+                    //Do nothing.
                 }
                 linea = br.readLine();
             }
@@ -1029,10 +1042,12 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                     } else {
                         //Do nothing.
                     }
-
-                } else {
-                    //Do nothing. No deberia llegar aqui.
-                    Toast.makeText(this, "Debug:\nNo deberia llegar aqui!!!", Toast.LENGTH_LONG).show();
+                } else if (split[0].equals("BORRADA")) {
+                    //TODO: Pensar que hacer!!!
+                } else if (split[0].equals("arriba")) {
+                    //TODO: Pensar que hacer!!!
+                }  else {
+                    //Do nothing.
                 }
                 linea = br.readLine();
             }
@@ -1096,17 +1111,18 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                     String[] split_name = split[1].split("_separador_");
                     String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
                     if (factura.equals(Consecutivo)) {
-                        //Do nothing. Aqui se elimina la linea que contiene la factura que se acaba de subir.
+                        linea = linea.replace("abajo", "arriba");
+                        contenido = contenido + linea;
                     } else {
                         contenido = contenido + linea;
                     }
 
+                } else if (split[0].equals("BORRADA")) {
+                    //TODO: Pensar que hacer!!!
+                } else if (split[0].equals("arriba")) {
+                    //TODO: Pensar que hacer!!!
                 } else {
                     //Do nothing. No deberia llegar aqui.
-                    Toast.makeText(this, "ERROR!!!:\nNo deberia llegar aqui!!!", Toast.LENGTH_LONG).show();
-                    Toast.makeText(this, "ERROR!!!:\nNo deberia llegar aqui!!!", Toast.LENGTH_LONG).show();
-                    Toast.makeText(this, "ERROR!!!:\nNo deberia llegar aqui!!!", Toast.LENGTH_LONG).show();
-                    //contenido = contenido + linea;
                 }
                 linea = br.readLine();
             }
