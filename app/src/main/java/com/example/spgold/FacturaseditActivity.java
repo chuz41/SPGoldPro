@@ -979,6 +979,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 }
 
                                 //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
+                                borrar_archivo(split[1]);
                                 guardar("BORRADA", split[1]);
                                 //break;
                             }
@@ -1129,6 +1130,8 @@ public class FacturaseditActivity extends AppCompatActivity {
     private void agregar_fact_online(String file, String spid, String sheet, String tip_lot) {
         String linea_agrgar = "abajo " + file + " " + spid + " " + sheet + " " + tip_lot;//agregar_linea_archivo("facturas_online.txt", "abajo " + file + " " + SPREADSHEET_ID + " " + SHEET + " " + tipo_lot);
         agregar_linea_archivo(linea_agrgar, "facturas_online.txt");
+        //debug
+        imprimir_archivo(file);
     }
 
     private void verificar_facturas_online(String file) {

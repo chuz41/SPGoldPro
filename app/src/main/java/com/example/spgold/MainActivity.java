@@ -537,6 +537,413 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Numero_maquina  " + "25");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Comision_vendedor  " + "5");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Spread_Sheet_Id  " + "18tZu3c2sWugGgGFXRgX1_uPg-kCEAIyOKeSZ9nJjlI0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1Naf0UZeQ2KvujDe9to5ZfD66OwORmFXO9fxtFKGT9rM");
+
+        String lot_demo5 = "Primera";
+        crear_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_juego_M  " + "10:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_lista_M  " + "0955");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Dia  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_juego_D  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_lista_D  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_juego_T  " + "18:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_lista_T  " + "1755");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Noche  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_juego_N  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Hora_lista_N  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Spread_Sheet_Id  " + "1Lws5DHQ7wOqwfW_xwmruldHNDsOJ9p57T2QYeGswf7Y");
+        agregar_linea_archivo("loteria_sfile" + lot_demo5 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1Sug8WPQ1I4rOXTIpFqNIVRXVAEMsr5lceV-LfxAu40U");
+
+        String lot_demo6 = "New_York";
+        crear_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_juego_D  " + "12:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_lista_D  " + "1224");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Tarde  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_juego_T  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_lista_T  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_juego_N  " + "20:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Hora_lista_N  " + "2024");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Spread_Sheet_Id  " + "1LuEvywgRHVQYkr7ef1TxFhZgD0SJfjqod5B3O4J2ixk");
+        agregar_linea_archivo("loteria_sfile" + lot_demo6 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1QT2-nuiVpfNlewxaaTQpR_8HKcrOxSQAxOcwImuyzbw");
+
+        String lot_demo7 = "Domi";
+        crear_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_juego_D  " + "12:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_lista_D  " + "1224");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_juego_T  " + "16:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_lista_T  " + "1554");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_juego_N  " + "19:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Hora_lista_N  " + "1854");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Spread_Sheet_Id  " + "1lNUcB-FoNjSmwaYlnM-2mqjmUma6b2kRn-p06IisZsg");
+        agregar_linea_archivo("loteria_sfile" + lot_demo7 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1b106cwghfxwsRT09RhG0Pa37g6V5RH0ixT_6O0lw1hw");
+
+        String lot_demo8 = "Panama";
+        crear_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_juego_D  " + "12:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_lista_D  " + "1154");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Tarde  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_juego_T  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_lista_T  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Noche  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_juego_N  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Hora_lista_N  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Spread_Sheet_Id  " + "1FrJGxFh4KZXhDu60KIc5oT5UbpsjlZVM-hBBP1YVxRg");
+        agregar_linea_archivo("loteria_sfile" + lot_demo8 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1upj7tHs2PMs-YcL4umkVkUp02Z1AjGeeCM9qbX5-cqk");
+
+        String lot_demo9 = "Loteka";
+        crear_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Dia  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_juego_D  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_lista_D  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_juego_T  " + "17:55");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_lista_T  " + "1749");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Noche  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_juego_N  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Hora_lista_N  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Spread_Sheet_Id  " + "1S0lN-mowVTtzAXPsYmNpLTJLi-aMXtDCTMCPUF3Aj_s");
+        agregar_linea_archivo("loteria_sfile" + lot_demo9 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1QT2-nuiVpfNlewxaaTQpR_8HKcrOxSQAxOcwImuyzbw");
+
+        String lot_demo10 = "Honduras";
+        crear_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_juego_M  " + "11:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_lista_M  " + "1054");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Dia  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_juego_D  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_lista_D  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_juego_T  " + "15:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_lista_T  " + "1454");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_juego_N  " + "21:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Hora_lista_N  " + "2054");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Spread_Sheet_Id  " + "1T1lSXClnnvZr3gARo_rkC8e4aKhFTqZpe_xctUqdXtY");
+        agregar_linea_archivo("loteria_sfile" + lot_demo10 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1w44ESJFAM9e67ho8_V_XijTOD9MBbV9qprqmq3TEEvY");
+
+
+        String lot_demo1 = "Reventados";
+        crear_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt");
+        //agregar_linea_archivo("loteria_s" + lot_demo + "_s.txt", "Nombre: " + "Reventados");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Paga1  " + "200");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Paga2  " + "80");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_juego_D  " + "12:55");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_juego_T  " + "16:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_T  " + "1624");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_juego_N  " + "19:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_N  " + "1924");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Limite_maximo  " + "25000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Tipo_juego  " + "Reventados");//Puede ser monazos, parley, reventados o regular
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Spread_Sheet_Id  " + "1qA6GozxLA9P4P7O_FSG5GYac5ZVXxouDAwfGF03NKWU");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1_Se9Dc5qBNG4azqY-cXXJnibuHD61s3S-865nN6Kme0");
+
+        String lot_demo2 = "Nica";
+        crear_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt");
+        //agregar_linea_archivo("loteria_s" + lot_demo + "_s.txt", "Nombre: " + "Tica");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_juego_M  " + "11:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_lista_M  " + "1054");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_juego_D  " + "15:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_lista_D  " + "1454");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_juego_T  " + "18:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_lista_T  " + "1754");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_juego_N  " + "21:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Hora_lista_N  " + "2054");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Spread_Sheet_Id  " + "1u0o5K6AHCl666WNYd_p8ekUn1BWsTgUolTaW2J8eRSs");
+        agregar_linea_archivo("loteria_sfile" + lot_demo2 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1KcjNINPy9s1y5vXZ5PsoG1BQP5-4uX1xF6CMSV3_ocQ");
+
+
+        String lot_demo3 = "Parley";
+        crear_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt");
+        //agregar_linea_archivo("loteria_s" + lot_demo + "_s.txt", "Nombre: " + "Tica");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Paga1  " + "500");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_juego_D  " + "12:55");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_juego_T  " + "16:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_T  " + "1624");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_juego_N  " + "19:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_N  " + "1924");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Limite_maximo  " + "25000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Tipo_juego  " + "Parley");//Puede ser monazos, parley, reventados o regular
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Spread_Sheet_Id  " + "1hq75pRHQ-u0owb83CBaiz2OQOm9eLFgsK-A-CFxBvDo");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1obZ7uWljU-265O5saZCoRDRAnC5cGnD25ScI5F4P4X4");
+
+
+
+
+        String lot_demo4 = "Monazos";
+        crear_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt");
+        //agregar_linea_archivo("loteria_s" + lot_demo + "_s.txt", "Nombre: " + "Tica");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Paga1  " + "700");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Paga2  " + "115");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_juego_D  " + "12:55");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_juego_T  " + "16:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_T  " + "1624");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_juego_N  " + "19:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_N  " + "1924");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Limite_maximo  " + "25000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Tipo_juego  " + "Monazos");//Puede ser monazos, parley, reventados o regular
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Spread_Sheet_Id  " + "1tH2cO2ivsLYP0fRPVktlezEN-1Vyl2hY0XRN0ttDd60");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "13_uhLbZjC7Li_JaKMYIuzKape8E9tUpHQNd4JuN1DLE");
+
+
+        String lot_demo11 = "Revancha";
+        crear_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_juego_D  " + "12:55");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_juego_T  " + "16:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_lista_T  " + "1624");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_juego_N  " + "19:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Hora_lista_N  " + "1924");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Spread_Sheet_Id  " + "1D3uSXT_uppdwqdXUgo2qyA3anhaZ80cRzwtBM_vvCfg");
+        agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "17Y5mPY6J5QmATEtJdE56Kzv7NGNpMl3jwR5cerIj6gs");
+
+        String lot_demo12 = "Prueba_regular";
+        crear_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Paga1  " + "85");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_juego_M  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_lista_M  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_juego_D  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_lista_D  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_juego_T  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_lista_T  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_juego_N  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Hora_lista_N  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Spread_Sheet_Id  " + "18tZu3c2sWugGgGFXRgX1_uPg-kCEAIyOKeSZ9nJjlI0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1Naf0UZeQ2KvujDe9to5ZfD66OwORmFXO9fxtFKGT9rM");
+
+        String lot_demo13 = "Prueba_paarley";
+        crear_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Paga1  " + "500");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_juego_M  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_lista_M  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_juego_D  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_lista_D  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_juego_T  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_lista_T  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_juego_N  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Hora_lista_N  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Tipo_juego  " + "Parley");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Spread_Sheet_Id  " + "1hq75pRHQ-u0owb83CBaiz2OQOm9eLFgsK-A-CFxBvDo");
+        agregar_linea_archivo("loteria_sfile" + lot_demo13 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1obZ7uWljU-265O5saZCoRDRAnC5cGnD25ScI5F4P4X4");
+
+        String lot_demo14 = "Prueba_moonazos";
+        crear_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Paga1  " + "700");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Paga2  " + "115");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_juego_M  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_lista_M  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_juego_D  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_lista_D  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_juego_T  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_lista_T  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_juego_N  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Hora_lista_N  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Tipo_juego  " + "Monazos");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Spread_Sheet_Id  " + "1tH2cO2ivsLYP0fRPVktlezEN-1Vyl2hY0XRN0ttDd60");
+        agregar_linea_archivo("loteria_sfile" + lot_demo14 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "13_uhLbZjC7Li_JaKMYIuzKape8E9tUpHQNd4JuN1DLE");
+
+        String lot_demo15 = "Prueba_reeventados";
+        crear_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Paga1  " + "200");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Paga2  " + "80");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Maniana  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_juego_M  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_lista_M  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_juego_D  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_lista_D  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_juego_T  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_lista_T  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_juego_N  " + "23:59");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Hora_lista_N  " + "2358");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Comision_vendedor  " + "10");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Tipo_juego  " + "Reventados");//Puede ser monazos, parley, reventados o regular
+
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Spread_Sheet_Id  " + "1qA6GozxLA9P4P7O_FSG5GYac5ZVXxouDAwfGF03NKWU");
+        agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1_Se9Dc5qBNG4azqY-cXXJnibuHD61s3S-865nN6Kme0");
+/*
+    private void crear_loteria_demo() {
+        String lot_demo = "Tica";
+        crear_archivo("loteria_sfile" + lot_demo + "_sfile.txt");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Paga1  " + "90");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Paga2  " + "0");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Maniana  " + "false");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_juego_M  " + "00:00");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_M  " + "0000");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Dia  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_juego_D  " + "12:55");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Tarde  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_juego_T  " + "16:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_T  " + "1624");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Noche  " + "true");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_juego_N  " + "19:30");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_N  " + "1924");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Limite_maximo  " + "99999");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Nombre_puesto  " + "Chuz");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Numero_maquina  " + "25");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Comision_vendedor  " + "5");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Tipo_juego  " + "Regular");//Puede ser monazos, parley, reventados o regular
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Spread_Sheet_Id  " + "x");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "x");
 
@@ -922,7 +1329,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Spread_Sheet_Id  " + "x");
         agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "x");
 
-
+*/
 
     }
 
