@@ -26,6 +26,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -622,7 +623,7 @@ public class TiqueteActivity extends AppCompatActivity {
         linea_temp = "     ** Tiempos " + Nombre_puesto + " **  \n";
         contenido = contenido + linea_temp + "\n";
         if (tipo_lot.equals("Reventados")) {
-            linea_temp = "Pagamos " + Paga1 + " veces bolita roja!\n    y " + Paga2 + " veces bolita gris!\n";
+            linea_temp = "Pagamos " + Paga1 + " veces bolita roja!\n    y " + Paga2 + " veces bolita verde!\n";
         } else {
             linea_temp = "       Pagamos " + Paga1 + " veces!!!\n";
         }
@@ -677,7 +678,8 @@ public class TiqueteActivity extends AppCompatActivity {
                         //linea = linea_tempo;
                         contenido = contenido + "\n" + linea_tempo;
                     }
-                    agregar_linea_archivo(tempFile, linea);
+                    String liniesilla = linea + "      " + SPREADSHEET_ID + "      " + SHEET;
+                    agregar_linea_archivo(tempFile, liniesilla);
                     linea = br24.readLine();
                 }
                 if (counter == 1) {
@@ -839,6 +841,7 @@ public class TiqueteActivity extends AppCompatActivity {
 
         //Debug:
         //imprimir_archivo(file);
+        boolean flagsita = true;
 
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput(file));
@@ -847,7 +850,10 @@ public class TiqueteActivity extends AppCompatActivity {
             String json_string = "";
             while (linea != null) {
                 String[] split = linea.split("      ");
-                if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
+                if (linea.equals("BORRADA")) {
+                    Log.v("ErrorBorrada", "Factura esta borrada, no hacer nada!!!");
+                    flagsita = false;
+                } else if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
                     //                            #1                #2             monto          ext. info         factura
                     json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + "no" + "_n_" + factura + "_l_";
                 } else if (tipo_lote.equals("Monazos")) {
@@ -863,7 +869,12 @@ public class TiqueteActivity extends AppCompatActivity {
             }
             br.close();
             archivo.close();
-            jsonObject = TranslateUtil.string_to_Json(json_string, SPREEADSHEET_ID, SSHHEETT, factura);
+            if (flagsita) {
+                jsonObject = TranslateUtil.string_to_Json(json_string, SPREEADSHEET_ID, SSHHEETT, factura);
+            }
+            else {
+                Log.v("Error21", "Factura ha sido borrada!!!");
+            }
         } catch (IOException | JSONException e) {
         }
         return jsonObject;

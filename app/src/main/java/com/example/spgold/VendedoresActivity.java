@@ -834,8 +834,13 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             } else {
                 //Do nothing.
             }
-            monto_contado = monto_contado + monto_apuesta;
-            listas_to_print = listas_to_print + par1 + par2 + par3 + "  -->  " + String.valueOf(monto_apuesta) + "\n";
+
+            if (monto_apuesta <= 0) {
+                //Do nothing. Significa que se borro una loteria.
+            } else {
+                monto_contado = monto_contado + monto_apuesta;
+                listas_to_print = listas_to_print + par1 + par2 + par3 + "  -->  " + String.valueOf(monto_apuesta) + "\n";
+            }
         }
         listas_to_print = listas_to_print + "\nTotal:  " + String.valueOf(monto_contado) + " colones.\n";
         listas_to_print = listas_to_print + "\n******************************\n\n";

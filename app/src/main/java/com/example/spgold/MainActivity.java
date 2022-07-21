@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -160,7 +161,9 @@ public class MainActivity extends AppCompatActivity {
             while (linea != null) {
                 String[] split = linea.split("      ");
 
-                if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
+                if (linea.equals("BORRADA")) {
+                    Log.v("ErrorBorrada", "Factura esta borrada, no hacer nada!!!");
+                } else if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
                     //                            #1                #2             monto          ext. info         factura
                     json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + "no" + "_n_" + factura + "_l_";
                 } else if (tipo_lote.equals("Monazos")) {
@@ -179,7 +182,16 @@ public class MainActivity extends AppCompatActivity {
             }
             br.close();
             archivo.close();
-            jsonObject = TranslateUtil.string_to_Json(json_string, SPREEADSHEET_ID, SSHHEETT, factura);
+            Log.v("Error56", "Json String: " + json_string);
+            if (json_string.isEmpty()) {
+                Log.v("Error57", "Linea esta vacia.");
+            } else if (json_string.equals(null)) {
+                Log.v("Error57", "Linea es nula.");
+            } else {
+                Log.v("Error57", "Linea no esta vacia ni nula.");
+                jsonObject = TranslateUtil.string_to_Json(json_string, SPREEADSHEET_ID, SSHHEETT, factura);
+            }
+
         } catch (IOException | JSONException e) {
         }
         return jsonObject;
@@ -525,7 +537,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_M  " + "0000");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Dia  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_juego_D  " + "12:55");
-        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_D  " + "2359");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Tarde  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_juego_T  " + "16:30");
         agregar_linea_archivo("loteria_sfile" + lot_demo + "_sfile.txt", "Hora_lista_T  " + "1624");
@@ -701,7 +713,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_M  " + "0000");
         agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Dia  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_juego_D  " + "12:55");
-        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_D  " + "2359");
         agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Tarde  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_juego_T  " + "16:30");
         agregar_linea_archivo("loteria_sfile" + lot_demo1 + "_sfile.txt", "Hora_lista_T  " + "1624");
@@ -753,7 +765,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_M  " + "0000");
         agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Dia  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_juego_D  " + "12:55");
-        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_D  " + "2359");
         agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Tarde  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_juego_T  " + "16:30");
         agregar_linea_archivo("loteria_sfile" + lot_demo3 + "_sfile.txt", "Hora_lista_T  " + "1624");
@@ -781,7 +793,7 @@ public class MainActivity extends AppCompatActivity {
         agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_M  " + "0000");
         agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Dia  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_juego_D  " + "12:55");
-        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_D  " + "1249");
+        agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_D  " + "2359");
         agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Tarde  " + "true");
         agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_juego_T  " + "16:30");
         agregar_linea_archivo("loteria_sfile" + lot_demo4 + "_sfile.txt", "Hora_lista_T  " + "1624");
@@ -821,7 +833,7 @@ public class MainActivity extends AppCompatActivity {
 
         agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Spread_Sheet_Id  " + "1D3uSXT_uppdwqdXUgo2qyA3anhaZ80cRzwtBM_vvCfg");
         agregar_linea_archivo("loteria_sfile" + lot_demo11 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "17Y5mPY6J5QmATEtJdE56Kzv7NGNpMl3jwR5cerIj6gs");
-
+/*
         String lot_demo12 = "Prueba_regular";
         crear_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt");
         agregar_linea_archivo("loteria_sfile" + lot_demo12 + "_sfile.txt", "Paga1  " + "85");
@@ -921,7 +933,9 @@ public class MainActivity extends AppCompatActivity {
 
         agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Spread_Sheet_Id  " + "1qA6GozxLA9P4P7O_FSG5GYac5ZVXxouDAwfGF03NKWU");
         agregar_linea_archivo("loteria_sfile" + lot_demo15 + "_sfile.txt", "Spread_Sheet_Id_maniana  " + "1_Se9Dc5qBNG4azqY-cXXJnibuHD61s3S-865nN6Kme0");
-/*
+*/
+
+        /*
     private void crear_loteria_demo() {
         String lot_demo = "Tica";
         crear_archivo("loteria_sfile" + lot_demo + "_sfile.txt");
