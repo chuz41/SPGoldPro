@@ -500,10 +500,15 @@ public class RepventasActivity extends AppCompatActivity {
                             for (int i = 0; i < separacion2; i++) {
                                 separacion_str2 = separacion_str2 + " ";
                             }
-                            linea_tempo = linea_tempo + key2 + separacion_str + treeMap2.get(key2) + "| ";
+                            linea_tempo = linea_tempo + key2 + separacion_str2 + treeMap2.get(key2) + "| ";
                             treeMap2.remove(key2);
                             for (String key3 : treeMap3.keySet()) {
-                                linea_tempo = linea_tempo + key3 + separacion_str + treeMap3.get(key3);
+                                String separacion_str3 = "";
+                                int separacion3 = 6 - treeMap3.get(key3).length();
+                                for (int i = 0; i < separacion3; i++) {
+                                    separacion_str3 = separacion_str3 + " ";
+                                }
+                                linea_tempo = linea_tempo + key3 + separacion_str3 + treeMap3.get(key3);
                                 treeMap3.remove(key3);
                                 counter = 0;
                                 break;

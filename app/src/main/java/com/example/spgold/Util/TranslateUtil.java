@@ -19,7 +19,8 @@ public class TranslateUtil {
         int cont = 0;
         for (int i = 0; i < split.length; i++) {
             String id = "";
-            id = factura + String.valueOf(cont);//Primer venta genera la primera fila, cuyo ID debe ser 10. Segunda venta: ID = 20
+            int preId = Integer.parseInt(factura)*100;
+            id = preId + String.valueOf(cont) + preId;//Primer venta genera la primera fila, cuyo ID debe ser 10. Segunda venta: ID = 20
             String[] split2 = split[i].split("_n_");// la letra "n" representa los numeros de cada linea
             JSONArray row = new JSONArray();
             row.put(split2[0]);

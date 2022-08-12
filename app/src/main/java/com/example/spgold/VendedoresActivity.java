@@ -677,7 +677,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                     String extra_info = split2[14];//14
                                     //String factura = split2[18];
                                     String iD = split2[22];
-                                    Log.v("Error106", "split[18]: " + split2[18] + "split[14]: " + split2[14]);
+                                    Log.v("Error106", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
                                     String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo";
                                     String valor_factura = "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
                                     Log.v("Error105", "Key: " + key_factura + "\nValue: " + valor_factura);

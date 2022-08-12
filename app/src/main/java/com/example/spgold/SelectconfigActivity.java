@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -135,19 +136,34 @@ public class SelectconfigActivity extends AppCompatActivity {
             BufferedReader br = new BufferedReader(Archivo);
             String linea = br.readLine();//Se lee la primera linea del archivo
             //Toast.makeText(this, "Linea: " + linea, Toast.LENGTH_LONG).show();
-            Pattern pattern = Pattern.compile("BORRADA", Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(linea);//Se verifica si la loteria se ha borrado
-            boolean matchFound = matcher.find();
-            if (matchFound) {
+            Log.v("Error31", "Archivo: " + archivo + "\n\nLinea: " + linea + "\n");
+            while (linea != null){
+                Pattern pattern = Pattern.compile("BORRADA", Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(linea);//Se verifica si la loteria se ha borrado
+                boolean matchFound = matcher.find();
+                if (matchFound) {
+                    br.close();
+                    Archivo.close();
+                    return false;
+                }
+                else {
+                    return true;
+                }
+                //linea = br.readLine();
+            }
+            if (linea == null) {
+                //Do nothing.
+                return false;
+            } else {
                 br.close();
                 Archivo.close();
-                return false;
+                return true;
             }
-            br.close();
-            Archivo.close();
+
         }catch (IOException e) {
+            return false;
         }
-        return true;
+        //return true;
     }
 
     public void boton_accion (View view) {

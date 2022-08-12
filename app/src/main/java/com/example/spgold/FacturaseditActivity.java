@@ -1,5 +1,6 @@
 package com.example.spgold;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +31,7 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.spgold.Util.BluetoothUtil;
 import com.example.spgold.Util.TranslateUtil;
@@ -123,13 +126,13 @@ public class FacturaseditActivity extends AppCompatActivity {
         cargar_facturas(fecha_selected, mes_selected, anio_selected);
 
         textView_facturas.setText("Lista de facturas del dia: ");
-
+/*
         try {
             subir_facturas_resagadas();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+*/
     }
 
     private boolean verificar_internet() {
@@ -148,10 +151,9 @@ public class FacturaseditActivity extends AppCompatActivity {
         }
     }
 
-    private JSONObject obtener_Json_otras_facturas() {
+    private void obtener_Json_otras_facturas() throws JSONException {
 
         JSONObject objeto_json = null;
-
 
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput("facturas_online.txt"));
@@ -159,54 +161,282 @@ public class FacturaseditActivity extends AppCompatActivity {
             BufferedReader br = new BufferedReader(archivo);
             String linea = br.readLine();
             //String contenido = "";
-            int contador = 0;
+            abajos2.clear();
+            Integer countercito = 0;
             while (linea != null) {
+                countercito++;
+                String count = String.valueOf(countercito);
                 String[] split = linea.split(" ");
                 if (split[0].equals("abajo")) {
-                    contador++;
-                    //String[] split_hor = split[1].split("_separador_");
-                    String[] split_name = split[1].split("_separador_");
-                    String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
-                    String tipo_lote = split_name[9];
-                    String SSHHEETT = split[3];
-                    String SSPPRREEAADDSSHHEETT = split[2];
-                    objeto_json = generar_Json_resagadas(split[1], factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lote);
-                    //subir_factura_resagadas(objeto_json);
-                    abajos.put(contador, objeto_json);
+                    Log.v("OJOF_abajo: ", "\n\nLinea: " + linea + " Fin de linea!!!");
+                    abajos2.put(count, split[1]);
                 } else if (split[0].equals("BORRADA")) {
-                    //TODO: Pensar que hacer!!! Somthing like this: Nothin!!!
-                } else if (split[0].equals("arriba")) {
+                    Log.v("OJOF_BORRADA: ", "\n\nLinea: " + linea + " Fin de linea!!!");
                     //TODO: Pensar que hacer!!!
-                } else {
-                    //Do nothing. No deberia llegar aqui.
-                    //Toast.makeText(this, "Debug:\nNo deberia llegar aqui!!!", Toast.LENGTH_LONG).show();
+                } else if (split[0].equals("arriba")) {
+                    Log.v("OJOF_arriba: ", "\n\nLinea: " + linea + " Fin de linea!!!");
+                    //TODO: Pensar que hacer!!!
+                }  else {
+                    Log.v("OJOF_(error): ", "\n\n(No deberia llegar aqui!!!\n\nLinea: " + linea + " Fin de linea!!!");
+                    //Do nothing.
                 }
                 linea = br.readLine();
             }
+
+            //abajiar();
+
+
             br.close();
             archivo.close();
+        } catch (IOException e) {
+        }
 
-            if (contador > 0) {
-                pre_subir_facturas_resagadas();
-            } else {
+        abajiar();
+        //return objeto_json;
+    }
+
+    private void abajiar() throws JSONException {
+
+        for (String key : abajos2.keySet()) {
+            JSONObject objeto_json = new JSONObject();
+            String SSHHEETT = "";
+            String SSPPRREEAADDSSHHEETT = "";
+            String tipo_lot = "";
+            String factura = "";
+            String file = abajos2.get(key);
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput(abajos2.get(key)));
+                //imprimir_archivo("facturas_online.txt");
+                BufferedReader br = new BufferedReader(archivo);
+                String linea = br.readLine();
+
+                if (linea != null){
+                    String[] split = linea.split("      ");
+                    String[] split_name = abajos2.get(key).split("_separador_");
+                    Log.v("ERROR9001_facturas", "Linea leida: " + linea);
+                    if (linea.equals("BORRADA")) {
+                        Log.v("abajiar_linea_borrada", "\n\nLinea: " + linea);
+                        //Do nothing.
+                    } else if (linea.isEmpty()) {
+                        Log.v("abajiar_linea_empty", "\n\nLinea: " + linea);
+                        //Do nothing.
+                    } else if (split_name[14].equals("equi.txt")) {
+                        Log.v("abajiar_nombre_equi.txt", "\n\nLinea: " + linea);
+                        tipo_lot= split_name[9];
+                        if (tipo_lot.equals("Monazos")) {
+                            SSPPRREEAADDSSHHEETT = split[3];
+                            SSHHEETT = split[4];
+                        } else if (tipo_lot.equals("Parley")) {
+                            SSPPRREEAADDSSHHEETT = split[3];
+                            SSHHEETT = split[4];
+                        } else if (tipo_lot.equals("Reventados")) {
+                            SSPPRREEAADDSSHHEETT = split[2];
+                            SSHHEETT = split[3];
+                        } else if (tipo_lot.equals("Regular")) {
+                            SSPPRREEAADDSSHHEETT = split[2];
+                            SSHHEETT = split[3];
+                        } else {
+                            //Nothing here never
+                        }
+                        factura = split_name[6];
+                        //file = abajos2.get(key);
+                        Log.v("Errequilibrar_facturas", "\n\nFinal del nombre del archivo: " + split_name[14] + "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
+                        br.close();
+                        archivo.close();
+                        equilibrar(SSPPRREEAADDSSHHEETT, SSHHEETT, file, factura, tipo_lot, key);
+                        break;
+                    } else if (split_name[14].equals("null.txt")) {
+                        Log.v("abajiar_nombre_null.txt", "\n\nLinea: " + linea);
+                        tipo_lot= split_name[9];
+                        if (tipo_lot.equals("Monazos")) {
+                            SSPPRREEAADDSSHHEETT = split[3];
+                            SSHHEETT = split[4];
+                        } else if (tipo_lot.equals("Parley")) {
+                            SSPPRREEAADDSSHHEETT = split[3];
+                            SSHHEETT = split[4];
+                        } else if (tipo_lot.equals("Reventados")) {
+                            SSPPRREEAADDSSHHEETT = split[2];
+                            SSHHEETT = split[3];
+                        } else if (tipo_lot.equals("Regular")) {
+                            SSPPRREEAADDSSHHEETT = split[2];
+                            SSHHEETT = split[3];
+                        } else {
+                            //Nothing here never
+                        }
+                        factura = split_name[6];
+                        //file = abajos2.get(key);\n
+                        Log.v("Error9003_pre", "\n\nTipo_lot: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\n\n.");
+                        objeto_json = generar_Json_resagadas(file, factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lot);
+                        Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
+                        abajos2.remove(key);
+                        br.close();
+                        archivo.close();
+                        subir_factura_resagadas(objeto_json);
+                        break;
+                    } else {
+                        Log.v("abajiar_ninguna_opcion", " Error!!! Nunca deberia llegar aqui!!!\n\nLinea: " + linea);
+                        //Do nothing.
+                    }
+                }
+                br.close();
+                archivo.close();
+            } catch (IOException e) {
 
             }
-
-
-        } catch (IOException | JSONException e) {
-        }
-        return objeto_json;
-    }
-
-    private void pre_subir_facturas_resagadas() throws JSONException {
-        for (Integer key : abajos.keySet()) {
-            JSONObject jsonObject = abajos.get(key);
-            subir_factura_resagadas(jsonObject, key);
-            break;
         }
     }
 
-    private void subir_factura_resagadas(JSONObject jsonObject, Integer key) throws JSONException {
+    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {//Este metodo revisa si se ha subido parte del tiquete a la nube.
+
+        //Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
+
+        RequestQueue requestQueue;
+
+        // Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+        // Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+
+        // Instantiate the RequestQueue with the cache and network.
+        requestQueue = new RequestQueue(cache, network);
+
+        // Start the queue
+        requestQueue.start();
+
+        String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=" + SpreadSheet +"&sheet=" + Sheet;
+
+        String url = readRowURL;
+
+        // Formulate the request and handle the response.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onResponse(String response) {
+                        // Do something with the response
+                        //ML_ver.setText(response);
+                        //msg(response);
+
+                        //HashMap<String, String> premios = new HashMap<String, String>();
+                        //msg("Response: " + response);
+                        if (response != null) {
+                            //response.replace("loteria", "_sepa_");
+
+                            //String[] split = response.split("loteria");//Se separa el objeto Json
+                            //TODO: Algoritmo que revisa la spreadsheet para ver si se ha subido de manera parcial un tiquete cualquiera, pero que no se ha terminado de subir, por lo tanto aparece como "abajo"
+                            Log.v("Equilibrar onResponse", " Response: \n\n" + response);
+                            //debug:
+                            //msg("Response: (Debe ser toda la SpreadSheet a la cual se ha subido el tiquete anterior, mostrado en \"Atencion1\"\n\n" + response);
+                            //TODO: Se debe modificar el archivo "file" con la informacion de numeros negativizados encontrados en la spreadsheet con el mismo numero de factura.
+
+                            boolean flagsitilla = false;
+
+                            String[] split = response.split("numero1");//Se separa el objeto Json "response"
+                            //Se llena un HashMap local con las ventas, las cuales se bajan de la nube.
+                            HashMap<String, String> hashMap = new HashMap<String, String>();
+                            int new_monto = 0;
+                            for (int i = 1; i < split.length; i++) {//En este loop se filtran los valores repetidos en la tabla.
+
+                                String[] split2 = split[i].split("\"");
+                                String nu1 = split2[2];
+                                String nu2 = split2[6];
+                                String monto = split2[10];//10
+                                String extra_info = split2[14];//14
+                                String factura_leida = split2[18];//Numero de factura
+                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
+                                String iD = split2[22];
+                                Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
+                                String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
+                                String valor_factura = factura_leida;//numero de factura
+                                //Debug:
+                                //msg("Key: " + key_factura + "\nValue: " + valor_factura);
+
+                                //////////////////////////////////////////////////////////////////////////
+                                ///////Algoritmo que verifica si hay IDs iguales para omitirlos!//////////
+                                //////////////////////////////////////////////////////////////////////////
+                                if (hashMap.containsKey(key_factura)) {
+                                    Log.v("equilibrar ID repetido", "\n\nID: " + iD + ". (No se hace nada!)\n\n");
+                                    //Do nothing!
+                                    //Si llega aqui significa que ha encontrado una linea repetida en la spreadsheet, por lo tanto la omite.
+                                } else {//   numeros jugados  monto jugado
+
+                                    int un_fact = Integer.parseInt(factura);
+                                    int dos_fact = Integer.parseInt(factura_leida);
+                                    Log.v("equilibrar en el for", "\n\nFactura: " + un_fact + " Factura leida: " + dos_fact);
+                                    if (un_fact == dos_fact) {
+                                        new_monto = new_monto + Integer.parseInt(monto);
+                                        hashMap.put(key_factura, valor_factura);//Lo que hay en este hashMap es la informacion que se pudo haber subido de manera parcial y haber dejado el mensaje: "abajo"
+                                    } else {
+                                        //Do nothing.
+                                    }
+                                }
+                                //////////////////////////////////////////////////////////////////////////
+                            }
+
+                            borrar_archivo(file);
+
+                            String[] splityto = file.split("_separador_");
+                            String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
+                            String montitito = String.valueOf(new_monto * -1);
+                            String new_name = splityto[0] + "_separador_" + splityto[1] + "_separador_" + splityto[2] + "_separador_" + splityto[3] + "_separador_" + splityto[4] + "_separador_" + splityto[5] + "_separador_" + factoura + "_separador_" + splityto[7] + "_separador_" + splityto[8] + "_separador_" + splityto[9] + "_separador_" + splityto[10] + "_separador_" + splityto[11] + "_separador_" + montitito + "_separador_" + splityto[13] + "_separador_" + "null.txt";
+                            crear_archivo(new_name);
+                            //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);
+                            //Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                            for (String key : hashMap.keySet()) {
+                                Log.v("E0 for hashMap", "\nKey: " + key + "\nValue: " + hashMap.get(key) + "\ntipo_lot: " + tipo_lot + "\n");
+                                String[] splity = key.split("ojo-rojo_ojo-rojo");
+                                //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
+                                int otnom = Integer.parseInt(splity[5]) * -1;
+                                if (tipo_lot.equals("Monazos")) {
+                                    agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
+                                    flagsitilla = true;
+                                } else if(tipo_lot.equals("Parley")) {
+                                    agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                    flagsitilla = true;
+                                } else if (tipo_lot.equals("Reventados")) {
+                                    agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                    flagsitilla = true;
+                                } else if (tipo_lot.equals("Regular")) {
+                                    agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                    flagsitilla = true;
+                                } else {
+                                    //Do nothing.
+                                }
+                            }
+
+                            if (flagsitilla) {
+                                //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                                agregar_fact_online(new_name, SpreadSheet, Sheet, tipo_lot);
+                                //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
+                                int factur = Integer.parseInt(factura) * -1;
+                                JSONObject objeto_json = generar_Json_resagadas(new_name, String.valueOf(factur), Sheet, SpreadSheet, tipo_lot);
+                                abajos2.remove(key);
+                                //cambiar_bandera(String.valueOf(factur), "equi");
+                                Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
+                                try {
+                                    subir_factura_resagadas(objeto_json);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+                                //Todo or do nothing! I don't know right now :-|
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error
+                    }
+                });
+        // Add the request to the RequestQueue.
+        requestQueue.add(stringRequest);
+    }
+
+    private void subir_factura_resagadas(JSONObject jsonObject) throws JSONException {
         //flag_file_arriba = false;
 
         //msg("Json: 123 " + jsonObject);
@@ -231,19 +461,6 @@ public class FacturaseditActivity extends AppCompatActivity {
 
         // Start the queue
         requestQueue.start();
-        /*
-        if (Horario.equals("Maniana")) {
-                    SHEET = "maniana";
-                } else if (Horario.equals("Dia")) {
-                    SHEET = "dia";
-                } else if (Horario.equals("Tarde")) {
-                    SHEET = "tarde";
-                } else if (Horario.equals("Noche")) {
-                    SHEET = "noche";
-                } else {
-                    //Nunca debe llegar aqui. !!!
-                }
-         */
 
         //Toast.makeText(this, "Debug:\nConsecutivo: " + Consecutivo + "\nconsecutivo: " + consecutivo + "\nDeben ser iguales.", Toast.LENGTH_LONG).show();
 
@@ -257,15 +474,17 @@ public class FacturaseditActivity extends AppCompatActivity {
                         String[] split = response.toString().split("\"");
                         //msg("Json: 123 " + response.toString());
                         int length_split = split.length;
+                        Log.v("info_sub_fact_resag: ", "\n\n" + response + "\n\n");
                         if (length_split > 3) {
                             if (split[2].equals(":")) {
                                 //mensaje_confirma_subida(response.toString());
                                 String factura_num = split[15];
-                                Log.v("Error605", "factura #" + factura_num + " se ha subido correctamente!");
-                                cambiar_bandera (factura_num);
-                                abajos.remove(key);
+
+                                //mensaje_confirma_subida("factura #" + factura_num + " se ha subido correctamente!");
+                                cambiar_bandera (factura_num, "nothing");
                                 try {
-                                    pre_subir_facturas_resagadas();
+                                    abajiar();
+                                    //equilibrar();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -298,33 +517,88 @@ public class FacturaseditActivity extends AppCompatActivity {
 
     }
 
-    private void cambiar_bandera (String Consecutivo) {
+    private void cambiar_bandera (String Consecutivo, String tag) {
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput("facturas_online.txt"));
             //imprimir_archivo("facturas_online.txt");
             BufferedReader br = new BufferedReader(archivo);
             String linea = br.readLine();
+
             String contenido = "";
             while (linea != null) {
+                //String[] split_perreo = linea.split(" ");
+                Log.v("cambiar_bandera_fact", "  Linea: " + linea + "\nTag: " + tag + "\n\n");
+                //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
                 String[] split = linea.split(" ");
-                if (split[0].equals("abajo")) {
-                    String[] split_name = split[1].split("_separador_");
-                    String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
-                    if (factura.equals(Consecutivo)) {
-                        linea = linea.replace("abajo", "arriba");
-                        contenido = contenido + linea;
+                String[] split_perreo = split[1].split("_separador_");
+                if (split_perreo[14].equals("equi.txt")) {
+                    Log.v("Cambiar_band_equi", " Se ha intentado cambiar bandera a archivo \"equi.txt\"\nLinea: " + linea + "\n\n               Tag: " + tag + "\n\n");
+                    //Do nothing for now!! maybe later do a TODO.
+                    if (tag.equals("equi")) {
+                        if (split[0].equals("BORRADA")) {
+                            //TODO: Pensar que hacer!!!
+                        } else if (split[0].equals("abajo")) {
+                            String[] split_name = split[1].split("_separador_");
+                            String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
+                            if (factura.equals(Consecutivo)) {
+                                linea = linea.replace("abajo", "arriba");
+                                contenido = contenido + linea + "\n";
+                            } else {
+                                contenido = contenido + linea + "\n";
+                            }
+                        } else if (split[0].equals("arriba")) {
+                            //TODO: Pensar que hacer!!!
+                        } else {
+                            //Do nothing. No deberia llegar aqui.
+                        }
                     } else {
-                        contenido = contenido + linea;
+                        contenido = contenido + linea + "\n";
                     }
 
-                } else if (split[0].equals("BORRADA")) {
-                    contenido = contenido + linea;
-                    //TODO: Pensar que hacer!!!
-                } else if (split[0].equals("arriba")) {
-                    contenido = contenido + linea;
-                    //TODO: Pensar que hacer!!!
                 } else {
-                    //Do nothing. No deberia llegar aqui.
+                    Log.v("Cambiar_band_no_equi", " Se intentara cambiar bandera a archivo \"null.txt\"\nLinea: " + linea);
+                    if (tag.equals("BORRADA")) {
+                        if (split[0].equals("BORRADA")) {
+                            //Do nothing.
+                        } else if (split[0].equals("abajo")) {
+                            String[] split_name = split[1].split("_separador_");
+                            String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
+                            if (factura.equals(Consecutivo)) {
+                                linea = linea.replace("abajo", tag);
+                                contenido = contenido + linea + "\n";
+                            } else {
+                                contenido = contenido + linea + "\n";
+                            }
+                        } else if (split[0].equals("arriba")) {
+                            String[] split_name = split[1].split("_separador_");
+                            String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
+                            if (factura.equals(Consecutivo)) {
+                                linea = linea.replace("arriba", tag);
+                                contenido = contenido + linea + "\n";
+                            } else {
+                                contenido = contenido + linea + "\n";
+                            }
+                        } else {
+                            //Do nothing. No deberia llegar aqui.
+                        }
+                    } else {
+                        if (split[0].equals("BORRADA")) {
+                            //TODO: Pensar que hacer!!!
+                        } else if (split[0].equals("abajo")) {
+                            String[] split_name = split[1].split("_separador_");
+                            String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
+                            if (factura.equals(Consecutivo)) {
+                                linea = linea.replace("abajo", "arriba");
+                                contenido = contenido + linea + "\n";
+                            } else {
+                                contenido = contenido + linea + "\n";
+                            }
+                        } else if (split[0].equals("arriba")) {
+                            //TODO: Pensar que hacer!!!
+                        } else {
+                            //Do nothing. No deberia llegar aqui.
+                        }
+                    }
                 }
                 linea = br.readLine();
             }
@@ -333,9 +607,8 @@ public class FacturaseditActivity extends AppCompatActivity {
             archivo.close();
             borrar_archivo("facturas_online.txt");
             //imprimir_archivo("facturas_online.txt");
-            String s = devolver_archivo("facturas_online.txt");
             guardar(contenido, "facturas_online.txt");//Aqui se eliminan las lineas que corresponden a archivos que ya se han subido.
-            Log.v("Error1001", "facturas_online.txt: \n\n" + s + "\n\n");
+            Log.v("cambiar_band_result", "\n\nArchivo \"facturas_online.txt\":\n\n" + imprimir_archivo("facturas_online.txt"));
             //imprimir_archivo("facturas_online.txt");
 
         } catch (IOException e) {
@@ -393,7 +666,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                     json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + "no" + "_n_" + factura + "_l_";
                 } else if (tipo_lote.equals("Monazos")) {
                     //                            #1                #2             monto            ext. info           factura
-                    json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[2] + "_n_" + split[1] + "_n_" + factura + "_l_";
+                    json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + split[2] + "_n_" + factura + "_l_";
                 } else if (tipo_lote.equals("Parley")) {
                     //                            #1                #2                 monto           ext. info        factura
                     json_string = json_string + split[0] + "_n_" + split[1] + "_n_" + split[2] + "_n_" + "no" + "_n_" + factura + "_l_";
@@ -415,24 +688,13 @@ public class FacturaseditActivity extends AppCompatActivity {
         return jsonObject;
     }
 
-    private void revisar_tiquetes_abajo() {
-        try {
-            subir_facturas_resagadas();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void subir_facturas_resagadas() throws JSONException {
         boolean flag_internet = verificar_internet();
-        JSONObject objeto_Json_a_subir = null;
+        //JSONObject objeto_Json_a_subir = null;
         if (flag_internet) {
-            objeto_Json_a_subir = obtener_Json_otras_facturas();
-            //msg("Json object:\n\n" + objeto_Json_a_subir.toString());
-            //subir_factura_resagadas(objeto_Json_a_subir);
-            //msg("Json object:\n\n" + objeto_Json_a_subir.toString());
+            obtener_Json_otras_facturas();
         } else {
-            //Toast.makeText(this, "Error al subir factura #" + consecutivo_str + ". \nVerifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -961,7 +1223,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         }
     }
 
-    public void borrar(View view) {
+    public void borrar(View view) {//TODO: Verificar caducidad. Si la loteria ya caduco, entonces no se pueda borrar.
 
         String numero_fact = edit_Text_numero_factura.getText().toString();
         if (numero_fact.isEmpty()) {
@@ -1000,12 +1262,28 @@ public class FacturaseditActivity extends AppCompatActivity {
 
                                 try {
                                     InputStreamReader archivod = new InputStreamReader(openFileInput(file_name));
-                                    BufferedReader brr = new  BufferedReader(archivod);
+                                    BufferedReader brr = new BufferedReader(archivod);
                                     String linearr = brr.readLine();
                                     if (linearr != null) {
+                                        String lot_tipo = split_nombre_archivo[9];
                                         String[] splite = linearr.split("      ");
-                                        SPREADSHEET_ID = splite[2];
-                                        SHEET = splite[3];
+                                        Log.v("Error_borrar01", "Tipo lot: " + lot_tipo);
+                                        if (lot_tipo.equals("Monazos")) {
+                                            SPREADSHEET_ID = splite[3];
+                                            SHEET = splite[4];
+                                        } else if (lot_tipo.equals("Parley")) {
+                                            SPREADSHEET_ID = splite[3];
+                                            SHEET = splite[4];
+                                        } else if (lot_tipo.equals("Reventados")) {
+                                            SPREADSHEET_ID = splite[2];
+                                            SHEET = splite[3];
+                                        } else if (lot_tipo.equals("Regular")) {
+                                            SPREADSHEET_ID = splite[2];
+                                            SHEET = splite[3];
+                                        } else {
+                                            //Nothing here never
+                                        }
+                                        Log.v("Error borrando 1 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\n.");
                                     }
                                 } catch (IOException e) {
                                     //Handle the error!
@@ -1013,6 +1291,21 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 }
 
                                 //Se actualizan los parametros que se usaran para ir a los archivos correctos.
+                                Date now = Calendar.getInstance().getTime();
+                                String ahora = now.toString();
+                                //se separan los campos de la fecha y hora para verificar que si se pueda realizar la venta.
+                                separar_fechaYhora(ahora);
+                                int comp_hora_actual = Integer.parseInt(anio) - 2020;// queda solo el 22
+                                comp_hora_actual = comp_hora_actual * 100;
+                                comp_hora_actual = comp_hora_actual + Integer.parseInt(mes);
+                                comp_hora_actual = comp_hora_actual * 100;
+                                comp_hora_actual = comp_hora_actual + Integer.parseInt(dia);
+                                comp_hora_actual = comp_hora_actual * 100;
+                                comp_hora_actual = comp_hora_actual + Integer.parseInt(hora);
+                                comp_hora_actual = comp_hora_actual * 100;
+                                comp_hora_actual = comp_hora_actual + Integer.parseInt(minuto);
+                                Log.v("Debug_fecha_borrar", ".\nanio: " + anio + "\nmes: " + mes + "\ndia: " + dia + "\nhora: " + hora + "\nminuto: " + minuto);
+
                                 String file = split[1];
                                 Loteria = split_nombre_archivo[1];
                                 Horario = split_nombre_archivo[2];
@@ -1022,37 +1315,62 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 Paga1 = split_nombre_archivo[10];
                                 Paga2 = split_nombre_archivo[11];
                                 anio = split_nombre_archivo[13];
-                                //SPREADSHEET_ID = split_nombre_archivo[14];
-                                //SHEET = split_nombre_archivo[15];
+                                String horita = split_nombre_archivo[4];
+                                String minutito = split_nombre_archivo[5];
+                                String coonsecut = split_nombre_archivo[6];
 
-                                //Toast.makeText(this, "Tipo de loteria: " + tipo_lot, Toast.LENGTH_LONG).show();
-                                //mssen(tipo_lot);
-                                if (tipo_lot.equals("Parley")) {
-                                    Log.v("Error3000", "if:\nTipo parley. Archivo: " + split[1]);
-                                    //Toast.makeText(this, "Tipo de loteria: " + tipo_lot, Toast.LENGTH_LONG).show();
-                                    borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);
-                                    //verificar_facturas_online(split[1]);
-                                    //verificar_online(split[1]);
-                                    des_contarParley(split[1]);
+                                int comp_hora_lote = Integer.parseInt(anio) - 2020;// queda solo el 22
+                                comp_hora_lote = comp_hora_lote * 100;
+                                comp_hora_lote = comp_hora_lote + Integer.parseInt(mes);
+                                comp_hora_lote = comp_hora_lote * 100;
+                                comp_hora_lote = comp_hora_lote + Integer.parseInt(dia);
+                                comp_hora_lote = comp_hora_lote * 100;
+                                comp_hora_lote = comp_hora_lote + Integer.parseInt(horita);
+                                comp_hora_lote = comp_hora_lote * 100;
+                                comp_hora_lote = comp_hora_lote + Integer.parseInt(minutito);
 
+                                Log.v("Debug_fecha_borrar", ".\nanio: " + anio + "\nmes: " + mes + "\ndia: " + dia + "\nhora: " + horita + "\nminuto: " + minutito);
+
+                                //Verificar caducidad de tiquete que se intenta borrar:
+
+                                Log.v("Error_caducidad", ".\nCom hora actual: " + comp_hora_actual + "\ncomp hora loteria: " + comp_hora_lote + "\n\n.");
+                                if (comp_hora_actual >= comp_hora_lote) {
+                                    Toast.makeText(this, "ERROR!!!", Toast.LENGTH_SHORT);
+                                    Toast.makeText(this, "Loteria ya ha jugado o se encuentra jugando!!", Toast.LENGTH_LONG);
+                                    Toast.makeText(this, "Factura #" + coonsecut + " no se puede borrar!", Toast.LENGTH_SHORT);
                                 } else {
-                                    Log.v("Error3000", "else:\nTipo parley. Archivo: " + split[1]);
-                                    borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);
-                                    //verificar_facturas_online(split[1]);
-                                    //verificar_online(split[1]);
-                                    des_contar(split[1]);
 
+                                    //Toast.makeText(this, "Tipo de loteria: " + tipo_lot, Toast.LENGTH_LONG).show();
+                                    //mssen(tipo_lot);
+                                    if (tipo_lot.equals("Parley")) {
+                                        Log.v("Error3000", "if:\nTipo parley. Archivo: " + split[1]);
+                                        //Toast.makeText(this, "Tipo de loteria: " + tipo_lot, Toast.LENGTH_LONG).show();
+                                        borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);//Funcion que crea el anti-archivo.
+                                        //verificar_facturas_online(split[1]);
+                                        //verificar_online(split[1]);
+                                        des_contarParley(file);//TODO: Si es un equi.txt no hay que mandarlo a descontar!!!
+
+                                    } else {
+                                        Log.v("Error3000", "else:\nTipo no parley. Archivo: " + split[1]);
+                                        borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);//Metodo que crea el anti archivo.
+                                        //verificar_facturas_online(split[1]);
+                                        //verificar_online(split[1]);
+                                        des_contar(file);
+
+                                    }
+
+                                    //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
+                                    //cambiar_bandera(String.valueOf(inv_number), "BORRADA");
+                                    borrar_archivo(file);
+                                    guardar("BORRADA", file);
+                                    //break;
                                 }
-
-                                //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
-                                borrar_archivo(split[1]);
-                                guardar("BORRADA", split[1]);
-                                //break;
                             }
                         }
 
                         linea_consecutivo = linea_consecutivo + linea + "\n";
                         linea = br.readLine();
+                        
                     }
 
                     guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
@@ -1098,111 +1416,222 @@ public class FacturaseditActivity extends AppCompatActivity {
 
     private void borrar_de_la_nube(String file, String spid, String sheet, String tip_lot) {
 
-        String estado_online = "";
+        //String estado_online = "emp";//TODO: No se puede consultar el estado online abajo, por fuerza hay que ver la nube.
 
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput("facturas_online.txt"));
             BufferedReader br = new BufferedReader(archivo);
             String linea = br.readLine();
             while (linea != null) {
+                String estado_online = "emp";
+                Log.v("Borrar de la nube: ", "\n\nLinea: " + linea);
+                //msg("- rr 00 -\n\nLinea: " + linea);
                 String[] split = linea.split(" ");
                 if (split[1].equals(file)) {
                     if (split[0].equals("abajo")) {
-                        estado_online = "abajo";
+                        String[] spliteo = split[1].split("_separador_");
+                        if (spliteo[14].equals("null.txt")) {
+                            estado_online = "abajo";
+                            Log.v("Error99", "bandera estado_online: " + estado_online);
+                        } else {
+                            //Do nothing.
+                        }
+                    } else if (split[0].equals("arriba")) {
+                        String[] spliteo = split[1].split("_separador_");
+                        if (spliteo[14].equals("null.txt")) {
+                            estado_online = "arriba";
+                            Log.v("Error99", "bandera estado_online: " + estado_online);
+                        } else {
+                            //Do nothing.
+                        }
+                    } else if (split[0].equals("BORRADA")) {
+                        String[] spliteo = split[1].split("_separador_");
+                        if (spliteo[14].equals("null.txt")) {
+                            estado_online = "BORRADA";
+                            Log.v("Error99", "bandera estado_online: " + estado_online);
+                        } else {
+                            //Do nothing.
+                        }
                     } else {
                         //Do nothing.
                     }
                 } else {
                     //Do nothing.
                 }
-                linea = br.readLine();
-            }
-        } catch (IOException e) {
 
-        }
+                if (estado_online.equals("abajo")) {
 
-        if (estado_online.equals("abajo")) {
-            //Do nothing.
-        } else {
+                    //Se analizan las loterias con etiqueta: "abajo"
+                    String[] split_nombre_archivo = file.split("_separador_");
+                    String awLoteria = split_nombre_archivo[1];
+                    String awHorario = split_nombre_archivo[2];
+                    String awdia = split_nombre_archivo[7];
+                    String awmes = split_nombre_archivo[8];
+                    String awtipo_lot = split_nombre_archivo[9];
+                    String awPaga1 = split_nombre_archivo[10];
+                    String awPaga2 = split_nombre_archivo[11];
+                    String awnum_factura = String.valueOf(Integer.parseInt(split_nombre_archivo[6]));
+                    String awplayer = split_nombre_archivo[0];
+                    String awfecha = split_nombre_archivo[3];
+                    String awtotal = String.valueOf(Integer.parseInt(split_nombre_archivo[12]));
+                    String awanio = split_nombre_archivo[13];
+                    String anti_nombre = awplayer + "_separador_" + awLoteria + "_separador_" + awHorario + "_separador_" + awfecha + "_separador_" + split_nombre_archivo[4] + "_separador_" + split_nombre_archivo[5] + "_separador_" + awnum_factura + "_separador_" + awdia + "_separador_" + awmes + "_separador_" + awtipo_lot + "_separador_" + awPaga1 + "_separador_" + awPaga2 + "_separador_" + awtotal + "_separador_" + awanio + "_separador_equi.txt";
+                    Log.v("Error600", "Antinombre:\n" + anti_nombre);
 
-            //Naming convention...
+                    if (split_nombre_archivo[14].equals("equi.txt")) {
+                        Log.v("Prueba NULL", "Nunca va a llegar aqui!!!");
+                        //Do nothing.
+                    } else {
+                        crear_archivo(anti_nombre);
+                        Log.v("Borrar de la nube", " Se borrara: " + anti_nombre);
+                        //try {
+                        //InputStreamReader archivo = new InputStreamReader(openFileInput(file));
+                        //BufferedReader br = new BufferedReader(archivo);
+                        //String linea = br.readLine();//Se lee la primera linea.
+                        String linea_escribir = "";
+                        Log.v("pre-equilibrar0: ", "Linea leida:\n\n" + "linea jiji");
+                        //while (linea != null) {
+                        //String[] split = linea.split("      ");
+                        Log.v("pre-equilibrar1: ", "Tipo_lot: " + awtipo_lot);
+                        if (awtipo_lot.equals("Regular")) {
+                            //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                            int numero = 0;
+                            int anti_monto = 0;//Monto de cada numero
+                            linea_escribir = linea_escribir + String.valueOf(numero) + "      " + String.valueOf(anti_monto) + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
+                            Log.v("pre-equilibrar2: ", "Linea_escribir:\n" + linea_escribir);
+                        } else if (awtipo_lot.equals("Reventados")) {
+                            //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                            int numero = 0;
+                            int anti_monto = 0;//Monto de cada numero
+                            linea_escribir = linea_escribir + String.valueOf(numero) + "      " + String.valueOf(anti_monto) + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
+                            Log.v("pre-equilibrar2: ", "Linea_escribir:\n" + linea_escribir);
+                        } else if (awtipo_lot.equals("Monazos")) {
+                            //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                            int numero = 0;
+                            String ord_desord = "Orden";
+                            int anti_monto = 0;//Monto de cada numero
+                            linea_escribir = linea_escribir + String.valueOf(numero) + "      " + String.valueOf(anti_monto) + "      " + ord_desord + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
+
+                        } else if (awtipo_lot.equals("Parley")) {
+                            //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                            int numero1 = 0;
+                            int numero2 = 0;
+                            int anti_monto = 0;//Monto de cada numero
+                            linea_escribir = linea_escribir + String.valueOf(numero1) + "      " + String.valueOf(numero2) + "      " + String.valueOf(anti_monto) + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
+
+                        } else {
+                            Log.v("pre-equilibrar3: ", "No deberia estar aqui!!!\n\nParametros:\n\nNumero1:" + "split[0]" + ", Numero2: " + "split[1]" + ", Antimonto: " + "split[2]" + "jiji");
+                            //Do nothing. Nunca llega aqui!
+                        }
+                        //br.close();
+                        //archivo.close();
+                        guardar(linea_escribir, anti_nombre);
+                        Log.v("pre-equilibrar4: ", "Nombre del archivo: " + anti_nombre + "\n\n" + "Archivo creado: " + "\n\n" + imprimir_archivo(anti_nombre) + "\n\n");
+                        Log.v("pre-equilibrar5: ", "Spid: " + spid + ", sheet: " + sheet + ", tip_lot: " + tip_lot + "\n\n");
+                        agregar_fact_online(anti_nombre, spid, sheet, tip_lot);
+                        //break;
+                        //}
+                /*} catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+                    }
+                    Log.v("Error_camb_band_0", "Se va a cambiar la bandera de una loteria abajo");
+                    Log.v("Error_camb_band_1", "Factura numero: " + awnum_factura);
+                    cambiar_bandera(awnum_factura, "nada");
+
+                } else if (estado_online.equals("arriba")) {
+
+                    //Naming convention...
 
 //Nombre del archivo: jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hora + "_separador_" + minuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
 //                      split2[0]                  split2[1]                  split2[2]                 split2[3]               split2[4]              split2[5]                    split2[6]                    split2[7]              split2[8]              split2[9]                split2[10]               split2[11]             split2[12]                   split2[13]
 
 
-            String[] split_nombre_archivo = file.split("_separador_");
-            String awLoteria = split_nombre_archivo[1];
-            String awHorario = split_nombre_archivo[2];
-            String awdia = split_nombre_archivo[7];
-            String awmes = split_nombre_archivo[8];
-            String awtipo_lot = split_nombre_archivo[9];
-            String awPaga1 = split_nombre_archivo[10];
-            String awPaga2 = split_nombre_archivo[11];
-            String awnum_factura = String.valueOf(Integer.parseInt(split_nombre_archivo[6]) * -1);
-            String awplayer = split_nombre_archivo[0];
-            String awfecha = split_nombre_archivo[3];
-            String awtotal = String.valueOf(Integer.parseInt(split_nombre_archivo[12]) * -1);
-            String awanio = split_nombre_archivo[13];
-            String anti_nombre = awplayer + "_separador_" + awLoteria + "_separador_" + awHorario + "_separador_" + awfecha + "_separador_" + split_nombre_archivo[4] + "_separador_" + split_nombre_archivo[5] + "_separador_" + awnum_factura + "_separador_" + awdia + "_separador_" + awmes + "_separador_" + awtipo_lot + "_separador_" + awPaga1 + "_separador_" + awPaga2 + "_separador_" + awtotal + "_separador_" + awanio + "_separador_null.txt";
-            Log.v("Error600", "Antinombre:\n" + anti_nombre);
-            crear_archivo(anti_nombre);
+                    String[] split_nombre_archivo = file.split("_separador_");
+                    String awLoteria = split_nombre_archivo[1];
+                    String awHorario = split_nombre_archivo[2];
+                    String awdia = split_nombre_archivo[7];
+                    String awmes = split_nombre_archivo[8];
+                    String awtipo_lot = split_nombre_archivo[9];
+                    String awPaga1 = split_nombre_archivo[10];
+                    String awPaga2 = split_nombre_archivo[11];
+                    String awnum_factura = String.valueOf(Integer.parseInt(split_nombre_archivo[6]) * -1);
+                    String awplayer = split_nombre_archivo[0];
+                    String awfecha = split_nombre_archivo[3];
+                    String awtotal = String.valueOf(Integer.parseInt(split_nombre_archivo[12]) * -1);
+                    String awanio = split_nombre_archivo[13];
+                    String anti_nombre = awplayer + "_separador_" + awLoteria + "_separador_" + awHorario + "_separador_" + awfecha + "_separador_" + split_nombre_archivo[4] + "_separador_" + split_nombre_archivo[5] + "_separador_" + awnum_factura + "_separador_" + awdia + "_separador_" + awmes + "_separador_" + awtipo_lot + "_separador_" + awPaga1 + "_separador_" + awPaga2 + "_separador_" + awtotal + "_separador_" + awanio + "_separador_null.txt";
+                    Log.v("Error600", "Antinombre:\n" + anti_nombre);
+                    crear_archivo(anti_nombre);
 
-            try {
-                InputStreamReader archivo = new InputStreamReader(openFileInput(file));
-                BufferedReader br = new BufferedReader(archivo);
-                String linea = br.readLine();//Se lee la primera linea.
-                String linea_escribir = "";
-                Log.v("Error601", "Linea leida:\n\n" + linea);
-                while (linea != null) {
-                    String[] split = linea.split("      ");
+                    try {
+                        InputStreamReader archivow = new InputStreamReader(openFileInput(file));
+                        BufferedReader brw = new BufferedReader(archivow);
+                        String lineaw = brw.readLine();//Se lee la primera linea.
+                        String linea_escribir = "";
+                        Log.v("Error601", "Linea leida:\n\n" + lineaw);
+                        while (lineaw != null) {
+                            String[] splitw = lineaw.split("      ");
+                            Log.v("error1000", "Tipo_lot: " + awtipo_lot);
+                            if (awtipo_lot.equals("Regular") | awtipo_lot.equals("Reventados")) {
+                                //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                                int numero = Integer.parseInt(splitw[0]);
+                                int anti_monto = Integer.parseInt(splitw[1]) * -1;//Monto de cada numero
+                                linea_escribir = linea_escribir + String.valueOf(numero) + "      " + String.valueOf(anti_monto) + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
+                                Log.v("Error700", "Linea_escribir:\n" + linea_escribir);
 
-                    Log.v("error1000", "Tipo_lot: " + awtipo_lot);
-                    if (awtipo_lot.equals("Regular") | awtipo_lot.equals("Reventados")) {
-                        //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
-                        int numero = Integer.parseInt(split[0]);
-                        int anti_monto = Integer.parseInt(split[1]) * -1;//Monto de cada numero
-                        linea_escribir = linea_escribir + String.valueOf(numero) + "      " + String.valueOf(anti_monto) + "\n";//TODO: Debe ser para cada tipo_lot
-                        Log.v("Error700", "Linea_escribir:\n" + linea_escribir);
+                            } else if (awtipo_lot.equals("Monazos")) {
+                                //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                                int numero = Integer.parseInt(splitw[0]);
+                                String ord_desord = splitw[2];
+                                int anti_monto = Integer.parseInt(splitw[1]) * -1;//Monto de cada numero
+                                linea_escribir = linea_escribir + String.valueOf(numero) + "      " + String.valueOf(anti_monto) + "      " + ord_desord + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
 
-                    } else if (awtipo_lot.equals("Monazos")) {
-                        //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
-                        int numero = Integer.parseInt(split[0]);
-                        String ord_desord = split[2];
-                        int anti_monto = Integer.parseInt(split[1]) * -1;//Monto de cada numero
-                        linea_escribir = linea_escribir + String.valueOf(numero) + "      " + ord_desord + "      " + String.valueOf(anti_monto) + "\n";//TODO: Debe ser para cada tipo_lot
+                            } else if (awtipo_lot.equals("Parley")) {
+                                //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
+                                int numero1 = Integer.parseInt(splitw[0]);
+                                int numero2 = Integer.parseInt(splitw[1]);
+                                int anti_monto = Integer.parseInt(splitw[2]) * -1;//Monto de cada numero
+                                linea_escribir = linea_escribir + String.valueOf(numero1) + "      " + String.valueOf(numero2) + "      " + String.valueOf(anti_monto) + "      " + spid + "      " + sheet + "\n";//TODO: Debe ser para cada tipo_lot
 
-                    } else if (awtipo_lot.equals("Parley")) {
-                        //Log.v("Error700", "Si puede estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
-                        int numero1 = Integer.parseInt(split[0]);
-                        int numero2 = Integer.parseInt(split[1]);
-                        int anti_monto = Integer.parseInt(split[2]) * -1;//Monto de cada numero
-                        linea_escribir = linea_escribir + String.valueOf(numero1) + "      " + String.valueOf(numero2) + "      " + String.valueOf(anti_monto) + "\n";//TODO: Debe ser para cada tipo_lot
+                            } else {
+                                Log.v("Error700", "No deberia estar aqui!!!\n\nParametros:\n\nNumero1:" + splitw[0] + ", Numero2: " + splitw[1] + ", Antimonto: " + splitw[2]);
+                                //Do nothing. Nunca llega aqui!
+                            }
+                            lineaw = brw.readLine();
+                        }
+                        guardar(linea_escribir, anti_nombre);
+                        Log.v("Error701", "Nombre del archivo: " + anti_nombre + "\n\n" + "Archivo creado: " + "\n\n" + imprimir_archivo(anti_nombre) + "\n\n");
+                        Log.v("Error702", "Spid: " + spid + ", sheet: " + sheet + ", tip_lot: " + tip_lot + "\n\n");
+                        agregar_fact_online(anti_nombre, spid, sheet, tip_lot);
 
-                    } else {
-                        Log.v("Error700", "No deberia estar aqui!!!\n\nParametros:\n\nNumero1:" + split[0] + ", Numero2: " + split[1] + ", Antimonto: " + split[2]);
-                        //Do nothing. Nunca llega aqui!
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    linea = br.readLine();
+                } else if (estado_online.equals("BORRADA")) {
+                    //TODO: Pensar que hacer!!!
+                } else if (estado_online.equals("emp")) {
+                    Log.v("borrar de la nube emp", "No encontro archivos. Estado online: " + estado_online + "\n");
+                } else {
+                    //Never come here!!!
+                    Log.v("borrar de la nube false", "Prueba de que aqui nunca llega.\n\nEstado online: " + estado_online + "\n");
                 }
-                guardar(linea_escribir, anti_nombre);
-                Log.v("Error701", "Nombre del archivo: " + anti_nombre + "\n\n" + "Archivo creado: " + "\n\n" + imprimir_archivo(anti_nombre));
-                Log.v("Error702", "Spid: " + spid + ", sheet: " + sheet + ", tip_lot: " + tip_lot);
-                agregar_fact_online(anti_nombre, spid, sheet, tip_lot);
 
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                linea = br.readLine();
             }
+        } catch (IOException e) {
+
         }
     }
 
     private void agregar_linea_archivo (String file_name, String new_line) {
         String archivos[] = fileList();
         String ArchivoCompleto = "";//Aqui se lee el contenido del archivo guardado.
-
+        Log.v("Agreagar Linea", "\n\nArchivo al que se le agregara una linea: \n             " + file_name + "\n\nLinea a agregar: " + new_line + "\n\n");
         if (ArchivoExiste(archivos, file_name)) {
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(file_name));
