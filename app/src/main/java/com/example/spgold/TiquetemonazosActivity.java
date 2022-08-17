@@ -31,6 +31,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -58,6 +59,9 @@ import java.util.regex.Pattern;
 
 public class TiquetemonazosActivity extends AppCompatActivity {
 
+    private TextView textView_esperar;
+    private Button button_mona;
+    private Button button4_mona;
     private String mes;
     private String anio;
     private String dia;
@@ -131,6 +135,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         cliente = (EditText)findViewById(R.id.et_cliente_mona);
         gen_tiquete = (TextView)findViewById(R.id.tv_gentiquete_mona);
         FECHA = (TextView)findViewById(R.id.textView_fecha_mona);
+        textView_esperar = (TextView) findViewById(R.id.textView_esperar);
 
         Paga1 = getIntent().getStringExtra("Paga1");
         Paga2 = getIntent().getStringExtra("Paga2");
@@ -157,6 +162,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         Spread_Sheet_Id = getIntent().getStringExtra("Spread_Sheet_Id");
         Spread_Sheet_Id_maniana = getIntent().getStringExtra("Spread_Sheet_Id_maniana");
         flag_cad = Boolean.parseBoolean(flag_cadS);
+        button_mona = (Button) findViewById(R.id.button_mona);
+        button4_mona = (Button) findViewById(R.id.button4_mona);
 
         fecha_selectedS = getIntent().getStringExtra("fecha_selected");
         mes_selectedS = getIntent().getStringExtra("mes_selected");
@@ -218,7 +225,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         comprobar_archivo();
 
         try {
-            subir_facturas_resagadas();
+            subir_facturas_resagadas("nada");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -256,9 +263,41 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         });
     }
 
-    private void obtener_Json_otras_facturas() throws JSONException {
+    private void mostrar_todo() {
 
-        JSONObject objeto_json = null;
+        textView_esperar.setText("");
+        textView_esperar.setVisibility(View.INVISIBLE);
+
+        monto.setVisibility(View.VISIBLE);
+        numero.setVisibility(View.VISIBLE);
+        spinner_or_desor.setVisibility(View.VISIBLE);
+        tiquete.setVisibility(View.VISIBLE);
+        cliente.setVisibility(View.VISIBLE);
+        gen_tiquete.setVisibility(View.VISIBLE);
+        FECHA.setVisibility(View.VISIBLE);
+        button_mona.setVisibility(View.VISIBLE);
+        button4_mona.setVisibility(View.VISIBLE);
+
+    }
+
+    private void ocultar_todo() {
+
+        textView_esperar.setVisibility(View.VISIBLE);
+        textView_esperar.setText("   Conectando...\n\nPor favor espere...");
+
+        monto.setVisibility(View.INVISIBLE);
+        numero.setVisibility(View.INVISIBLE);
+        spinner_or_desor.setVisibility(View.INVISIBLE);
+        tiquete.setVisibility(View.INVISIBLE);
+        cliente.setVisibility(View.INVISIBLE);
+        gen_tiquete.setVisibility(View.INVISIBLE);
+        FECHA.setVisibility(View.INVISIBLE);
+        button_mona.setVisibility(View.INVISIBLE);
+        button4_mona.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void obtener_Json_otras_facturas(String conteni) throws JSONException {
 
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput("facturas_online.txt"));
@@ -268,6 +307,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             //String contenido = "";
             abajos2.clear();
             Integer countercito = 0;
+            boolean flag = true;
             while (linea != null) {
                 countercito++;
                 String count = String.valueOf(countercito);
@@ -275,6 +315,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 if (split[0].equals("abajo")) {
                     Log.v("OJOF_abajo: ", "\n\nLinea: " + linea + " Fin de linea!!!");
                     abajos2.put(count, split[1]);
+                    flag = false;
                 } else if (split[0].equals("BORRADA")) {
                     Log.v("OJOF_BORRADA: ", "\n\nLinea: " + linea + " Fin de linea!!!");
                     //TODO: Pensar que hacer!!!
@@ -288,19 +329,26 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 linea = br.readLine();
             }
 
-            //abajiar();
+            if (flag) {
+                mostrar_todo();
+                return;
+            } else {
+                //Do nothing. Continue with the work
+            }
 
-
-            br.close();
             archivo.close();
+            br.close();
+
         } catch (IOException e) {
         }
 
-        abajiar();
+        abajiar(conteni);
         //return objeto_json;
     }
 
-    private void abajiar() throws JSONException {
+    private void abajiar(String conteni) throws JSONException {
+
+        //ocultar_todo();
 
         for (String key : abajos2.keySet()) {
             JSONObject objeto_json = new JSONObject();
@@ -376,7 +424,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                         abajos2.remove(key);
                         br.close();
                         archivo.close();
-                        subir_factura_resagadas(objeto_json);
+                        subir_factura_resagadas(objeto_json, "nothing", conteni);
                         break;
                     } else {
                         Log.v("abajiar_ninguna_opcion", " Error!!! Nunca deberia llegar aqui!!!\n\nLinea: " + linea);
@@ -389,9 +437,10 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
             }
         }
+        //mostrar_todo();
     }
 
-    private void subir_factura_resagadas(JSONObject jsonObject) throws JSONException {
+    private void subir_factura_resagadas(JSONObject jsonObject, String tag, String conteni) throws JSONException {
         //flag_file_arriba = false;
 
         //msg("Json: 123 " + jsonObject);
@@ -421,6 +470,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
         String url = addRowURL;
 
+        ocultar_todo();
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
 
@@ -436,10 +487,15 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 String factura_num = split[15];
 
                                 //mensaje_confirma_subida("factura #" + factura_num + " se ha subido correctamente!");
-                                cambiar_bandera (factura_num, "nothing");
+                                cambiar_bandera (factura_num, tag);
+                                mostrar_todo();
+                                if (conteni.equals("nada")) {
+                                    //Do nothing.
+                                } else {
+                                    impmir_tiquete(conteni);
+                                }
                                 try {
-                                    abajiar();
-                                    //equilibrar();
+                                    abajiar("nada");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -518,13 +574,19 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         return jsonObject;
     }
 
-    private void subir_facturas_resagadas() throws JSONException {
+    private void subir_facturas_resagadas(String conteni) throws JSONException {
         boolean flag_internet = verificar_internet();
         //JSONObject objeto_Json_a_subir = null;
         if (flag_internet) {
-            obtener_Json_otras_facturas();
+            ocultar_todo();
+            obtener_Json_otras_facturas(conteni);
         } else {
-            //Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            if (conteni.equals("nada")) {
+                //Do nothing.
+            } else {
+                impmir_tiquete(conteni);
+            }
         }
     }
 
@@ -1041,12 +1103,12 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         }
 
         try {
-            subir_facturas_resagadas();
+            subir_facturas_resagadas(contenido);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        impmir_tiquete(contenido);
+        //impmir_tiquete(contenido);
 
         //**************************************************************************************************************
 
@@ -1129,11 +1191,9 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         archivo.delete();
     }
 
-    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {
-        //Este metodo revisa si se ha subido parte del tiquete a la nube.
+    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {//Este metodo revisa si se ha subido parte del tiquete a la nube.
         //Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
         RequestQueue requestQueue;
-
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
@@ -1149,6 +1209,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=" + SpreadSheet +"&sheet=" + Sheet;
 
         String url = readRowURL;
+
+        ocultar_todo();
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -1216,7 +1278,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 //////////////////////////////////////////////////////////////////////////
                             }
 
-                            borrar_archivo(file);
+                            //borrar_archivo(file);
 
                             String[] splityto = file.split("_separador_");
                             String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
@@ -1257,14 +1319,21 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 //cambiar_bandera(String.valueOf(factur), "equi");
                                 Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
                                 try {
-                                    subir_factura_resagadas(objeto_json);
+                                    subir_factura_resagadas(objeto_json, "equi", "nada");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
+
                             } else {
                                 //Todo or do nothing! I don't know right now :-|
                             }
+                            //cambiar_bandera(String.valueOf(factura), "equi");
+                            //cambiar_bandera(String.valueOf(factura), "equi");
+
+                        } else {
+                            Log.v("Error de respuesta", ".\nResponse:\n--> " + response + " <--\n\n.");
+                            //Respuesta es null. No deberia pasar nunca.
                         }
                     }
                 },
@@ -1312,7 +1381,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 contenido = contenido + linea + "\n";
                             }
                         } else if (split[0].equals("arriba")) {
-                            //TODO: Pensar que hacer!!!
+                            //No hacer nada garantiza que se borra la linea que ya esta arriba
                         } else {
                             //Do nothing. No deberia llegar aqui.
                         }
@@ -1321,10 +1390,10 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    Log.v("Cambiar_band_no_equi", " Se intentara cambiar bandera a archivo \"null.txt\"\nLinea: " + linea);
+                    Log.v("Cambiar_band_null.txt", " Se intentara cambiar bandera a archivo \"null.txt\"\nLinea: " + linea);
                     if (tag.equals("BORRADA")) {
                         if (split[0].equals("BORRADA")) {
-                            //Do nothing.
+                            //Do nothing guaranties that the line will be erased
                         } else if (split[0].equals("abajo")) {
                             String[] split_name = split[1].split("_separador_");
                             String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
@@ -1335,20 +1404,21 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 contenido = contenido + linea + "\n";
                             }
                         } else if (split[0].equals("arriba")) {
-                            String[] split_name = split[1].split("_separador_");
+                            /*String[] split_name = split[1].split("_separador_");
                             String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
                             if (factura.equals(Consecutivo)) {
                                 linea = linea.replace("arriba", tag);
                                 contenido = contenido + linea + "\n";
                             } else {
                                 contenido = contenido + linea + "\n";
-                            }
+                            }*/
+                            //No hacer nada garantiza el borrado de la linea que contiene "arriba"
                         } else {
                             //Do nothing. No deberia llegar aqui.
                         }
                     } else {
                         if (split[0].equals("BORRADA")) {
-                            //TODO: Pensar que hacer!!!
+                            //No hacer nada para eliminar la linea!
                         } else if (split[0].equals("abajo")) {
                             String[] split_name = split[1].split("_separador_");
                             String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
@@ -1359,7 +1429,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 contenido = contenido + linea + "\n";
                             }
                         } else if (split[0].equals("arriba")) {
-                            //TODO: Pensar que hacer!!!
+                            //No hacer nada para eliminar la linea!
                         } else {
                             //Do nothing. No deberia llegar aqui.
                         }
@@ -1495,7 +1565,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     }
 
     private void impmir_tiquete(String s) {
-
 
         imprimiendoAnim();
         printIt(s);
