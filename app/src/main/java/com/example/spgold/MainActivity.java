@@ -595,6 +595,7 @@ public class MainActivity extends AppCompatActivity {
                             if (flagsitilla) {
                                 //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
                                 agregar_fact_online(new_name, SpreadSheet, Sheet, tipo_lot);
+                                Log.v("flagsitilla: ", "se cambiara la bandera de la factura # " + String.valueOf((Integer.parseInt(splityto[6]))));
                                 cambiar_bandera(String.valueOf((Integer.parseInt(splityto[6]))), "equi");
                                 //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
                                 int factur = Integer.parseInt(factura) * -1;
