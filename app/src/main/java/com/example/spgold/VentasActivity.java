@@ -381,7 +381,7 @@ public class VentasActivity extends AppCompatActivity {
 
     private void agregar_fact_online(String file, String spid, String sheet, String tip_lot) {
         String linea_agrgar = "abajo " + file + " " + spid + " " + sheet + " " + tip_lot;//agregar_linea_archivo("facturas_online.txt", "abajo " + file + " " + SPREADSHEET_ID + " " + SHEET + " " + tipo_lot);
-        Log.v("Error800", "Algo raro pasa, linea agrgar:\n\n" + linea_agrgar);
+        Log.v("Error800", "Agregar a facturas_online.txt :\n\n" + imprimir_archivo(file));
         agregar_linea_archivo("facturas_online.txt", linea_agrgar);
         Log.v("Error111", "SpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
         //msg("Error111 SpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
