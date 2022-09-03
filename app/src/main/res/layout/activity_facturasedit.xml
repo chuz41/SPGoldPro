@@ -17,8 +17,8 @@
 
     <EditText
         android:id="@+id/editText_listar_facturas"
-        android:layout_width="356dp"
-        android:layout_height="542dp"
+        android:layout_width="357dp"
+        android:layout_height="439dp"
         android:layout_marginTop="12dp"
         android:ems="10"
         android:gravity="start|top"
@@ -32,12 +32,13 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:hint="@string/ingresar_factura"
         android:inputType="number"
         android:textAllCaps="false"
         android:textIsSelectable="false"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="599dp" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_listar_facturas" />
 
     <Button
         android:id="@+id/button_reimprimir"
@@ -92,5 +93,40 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonauxi1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="aux_button"
+        android:text="facturas_online.txt"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_aux"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_archivos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="archivos"
+        android:text="Ver archivos"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.642" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

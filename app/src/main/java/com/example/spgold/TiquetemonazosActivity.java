@@ -60,6 +60,8 @@ import java.util.regex.Pattern;
 public class TiquetemonazosActivity extends AppCompatActivity {
 
     private TextView textView_esperar;
+    private String fecha_poner;
+    private String fecha_realistic;
     private Button button_mona;
     private Button button4_mona;
     private String mes;
@@ -122,6 +124,31 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     private String SPREADSHEET_ID;
     private HashMap<String, String> abajos2 = new HashMap<String, String>();
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
+    private String spreadSheet_loterias = "1qJhZ_5nnLHHMlOCFywxPTzDbvJnT_fKf7EuvTOmCbU0";
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            subir_facturas_resagadas("nada");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        try {
+            subir_facturas_resagadas("nada");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,7 +290,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         });
     }
 
-    private void mostrar_todo() {
+    private void mostrar_todito() {
 
         textView_esperar.setText("");
         textView_esperar.setVisibility(View.INVISIBLE);
@@ -280,7 +307,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
     }
 
-    private void ocultar_todo() {
+    private void ocultar_todito() {
 
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("   Conectando...\n\nPor favor espere...");
@@ -295,6 +322,40 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         button_mona.setVisibility(View.INVISIBLE);
         button4_mona.setVisibility(View.INVISIBLE);
 
+    }
+
+    private void mostrar_todo() {
+/*
+        textView_esperar.setText("");
+        textView_esperar.setVisibility(View.INVISIBLE);
+
+        monto.setVisibility(View.VISIBLE);
+        numero.setVisibility(View.VISIBLE);
+        spinner_or_desor.setVisibility(View.VISIBLE);
+        tiquete.setVisibility(View.VISIBLE);
+        cliente.setVisibility(View.VISIBLE);
+        gen_tiquete.setVisibility(View.VISIBLE);
+        FECHA.setVisibility(View.VISIBLE);
+        button_mona.setVisibility(View.VISIBLE);
+        button4_mona.setVisibility(View.VISIBLE);
+*/
+    }
+
+    private void ocultar_todo() {
+/*
+        textView_esperar.setVisibility(View.VISIBLE);
+        textView_esperar.setText("   Conectando...\n\nPor favor espere...");
+
+        monto.setVisibility(View.INVISIBLE);
+        numero.setVisibility(View.INVISIBLE);
+        spinner_or_desor.setVisibility(View.INVISIBLE);
+        tiquete.setVisibility(View.INVISIBLE);
+        cliente.setVisibility(View.INVISIBLE);
+        gen_tiquete.setVisibility(View.INVISIBLE);
+        FECHA.setVisibility(View.INVISIBLE);
+        button_mona.setVisibility(View.INVISIBLE);
+        button4_mona.setVisibility(View.INVISIBLE);
+*/
     }
 
     private void obtener_Json_otras_facturas(String conteni) throws JSONException {
@@ -471,6 +532,11 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         String url = addRowURL;
 
         ocultar_todo();
+        if (conteni.equals("nada")) {
+            //Do nothing.
+        } else {
+            //impmir_tiquete(conteni);
+        }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
@@ -492,7 +558,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 if (conteni.equals("nada")) {
                                     //Do nothing.
                                 } else {
-                                    impmir_tiquete(conteni);
+                                    //impmir_tiquete(conteni);
                                 }
                                 try {
                                     abajiar("nada");
@@ -581,7 +647,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             ocultar_todo();
             obtener_Json_otras_facturas(conteni);
         } else {
-            Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
             if (conteni.equals("nada")) {
                 //Do nothing.
             } else {
@@ -848,11 +914,353 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 Toast.makeText(this, "Total: " + Integer.toString(monto_venta), Toast.LENGTH_SHORT).show();
                 TiqueteCompleto = "";
                 tiquete.setText(TiqueteCompleto);
+                pre_generar();
                 generar_tiquete_venta();
             }catch (IOException | JSONException e) {
             }
         } else {
             Toast.makeText(this, "Error!!!\nDebe ingresar datos", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void abajoniar() {
+        try {//Se analiza el archivo a ver si ya hay ventas de la loteria en cuestion.
+
+            InputStreamReader archivio = new InputStreamReader(openFileInput("fileloterias_vendidasfile.txt"));
+            BufferedReader br = new BufferedReader(archivio);
+            String new_line = "";//Aqui se escribe el nuevo contenido del archivo.
+            String linea = br.readLine();
+            Log.v("abajoniar ", "Archivo: " + "fileloterias_vendidasfile.txt" + "\n\nContenido de archivio: \n\n" + imprimir_archivo("fileloterias_vendidasfile.txt"));
+            //int log_file = 0;
+            while (linea != null) {
+                //linea_archivo(fund_file, "abajo   " + Loteria + "   " + Horario + "   " + fecha_poner);
+                String[] split = linea.split("   ");
+                //Log.v("linea #" + log_file + " Archivio: ", linea + "\n");
+                Log.v("fecha_realistic: ", fecha_realistic + "\n");
+                Log.v("fecha_poner: ", fecha_poner + "\n");
+                Log.v("fecha_selectedS: ", fecha_selectedS + "\n");
+                Log.v("split[3]: ", split[3] + ", puede ser mayor, menor o igual a fecha_realistic. \nfecha_realistic: " + fecha_realistic + "\n");
+                if (Integer.parseInt(split[3]) < Integer.parseInt(fecha_realistic)) {
+                    //Do nothin. Con esto se hace que la linea sea borrada. Es una factura vieja.
+                } else if (Integer.parseInt(split[3]) > Integer.parseInt(fecha_realistic)) {//Se deja la linea igual. Es una factura futura.
+                    new_line = new_line + linea + "\n";
+                } else if (Integer.parseInt(split[3]) == Integer.parseInt(fecha_realistic)) {//Se modifica, se elimina o se deja igual.
+                    if (split[0].equals("abajo")) {
+                        if (verificar_internet()) {
+                            //if (split[1].equals(Loteria) & split[2].equals(Horario)) {
+
+                            //#################Vamos a tratar de subir la informacion a la nube: #######################################
+
+                            RequestQueue queue;
+                            queue = Volley.newRequestQueue(this);
+
+                            //Debug:
+                            //mensaje_confirma_subida(jsonObject.toString());
+
+                            //Llamada POST usando Volley:
+                            RequestQueue requestQueue;
+
+                            // Instantiate the cache
+                            Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+                            // Set up the network to use HttpURLConnection as the HTTP client.
+                            Network network = new BasicNetwork(new HurlStack());
+
+                            // Instantiate the RequestQueue with the cache and network.
+                            requestQueue = new RequestQueue(cache, network);
+
+                            // Start the queue
+                            requestQueue.start();
+
+                            //Toast.makeText(this, "Debug:\nConsecutivo: " + Consecutivo + "\nconsecutivo: " + consecutivo + "\nDeben ser iguales.", Toast.LENGTH_LONG).show();
+
+                            String url = addRowURL;
+
+                            JSONObject jsonObject = TranslateUtil.vendidas_to_Json(split[1], split[2], spreadSheet_loterias);
+
+                            ocultar_todito();
+                            br.close();
+                            archivio.close();
+
+                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                                    (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            Log.v("info_vendidas: ", "Response:\n\n" + response.toString() + "\n\n");
+                                            try {//Se analiza el archivo a ver si ya hay ventas de la loteria en cuestion.
+                                                InputStreamReader archivioo = new InputStreamReader(openFileInput("fileloterias_vendidasfile.txt"));
+                                                BufferedReader bro = new BufferedReader(archivioo);
+                                                String new_lineo = "";//Aqui se escribe el nuevo contenido del archivo.
+                                                String lineao = bro.readLine();
+
+                                                while (lineao != null) {
+                                                    String[] splity = lineao.split("   ");
+                                                    if (Integer.parseInt(splity[3]) < Integer.parseInt(fecha_realistic)) {
+                                                        //Do nothin. Con esto se hace que la linea sea borrada. Es una factura vieja.
+                                                    } else if (Integer.parseInt(splity[3]) > Integer.parseInt(fecha_realistic)) {//Se deja la linea igual. Es una factura futura
+                                                        new_lineo = new_lineo + lineao + "\n";
+                                                    } else if (Integer.parseInt(splity[3]) == Integer.parseInt(fecha_realistic)) {//Se modifica, se elimina o se deja igual.
+                                                        if (splity[1].equals(split[1]) & splity[2].equals(split[2])) {
+                                                            if (splity[0].equals("abajo")) {
+                                                                lineao = lineao.replace("abajo", "arriba");
+                                                                new_lineo = new_lineo + lineao + "\n";
+                                                            } else {
+                                                                new_lineo = new_lineo + lineao + "\n"; //Es una factura "arriba"
+                                                            }
+                                                        } else {
+                                                            new_lineo = new_lineo + lineao + "\n";
+                                                        }
+                                                    } else {
+                                                        //Do nothing here!!!
+                                                    }
+                                                    lineao = bro.readLine();
+                                                }
+
+                                                bro.close();
+                                                archivioo.close();
+                                                borrar_archivo("fileloterias_vendidasfile.txt");
+                                                crear_archivo("fileloterias_vendidasfile.txt");
+                                                guardar(new_lineo, "fileloterias_vendidasfile.txt");
+                                                mostrar_todito();
+                                                pre_generar();
+                                            } catch (IOException | JSONException e) {
+                                            }
+                                        }
+                                    }, new Response.ErrorListener() {
+
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            // TODO: Handle error
+                                            //mensaje_error_en_subida();
+                                            mostrar_todito();
+                                            try {
+                                                pre_generar();
+                                            } catch (FileNotFoundException e) {
+                                                e.printStackTrace();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+
+                            // Add the request to the RequestQueue.
+                            requestQueue.add(jsonObjectRequest);
+                            break;
+                            //##########################################################################################################
+                        } else {
+                            new_line = new_line + linea + "\n";//Si no hay internet, se queda como este, aunque sea "abajo".
+                            //Continue. Do nothing here!
+                        }
+
+                    } else {
+                        new_line = new_line + linea + "\n"; //Se dejan las "arribas"
+                    }
+                } else {
+                    //Do nothing here!!!
+                }
+                linea = br.readLine();
+            }
+
+            br.close();
+            archivio.close();
+        } catch (IOException | JSONException e) {}
+    }
+
+    private void pre_generar() throws FileNotFoundException, JSONException {
+
+        String archivos[] = fileList();
+        boolean crear_file = true;
+        String fund_file = "fileloterias_vendidasfile.txt";
+        for (int i = 0; i < archivos.length; i++){
+            Log.v("pre_generar #" + String.valueOf(i), "Archivo: " + archivos[i] + "\n");
+            Pattern pattern = Pattern.compile("loterias_vendidas", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(archivos[i]);
+            boolean matchFound = matcher.find();
+            if (matchFound){
+                //marcar bandera crear_file.
+                Log.v("ErrorCrearfile", "Archivo encontrado: " + archivos[i] + "\nContenido del archivo:\n\n" + imprimir_archivo(archivos[i]));
+                crear_file = false;
+                break;
+            }
+        }
+        Log.v("pre_gen_ cambio flag", "Bandera crear archivo: " + crear_file + "\n");
+        if (crear_file){
+            crear_archivo(fund_file);
+        }
+
+        boolean loteria_encontrada = false;
+        boolean loteria_abajo = false;
+        String estado_subidas = "desconocido";
+        try {//Se analiza el archivo a ver si ya hay ventas de la loteria en cuestion.
+
+            InputStreamReader archivio = new InputStreamReader(openFileInput(fund_file));
+            BufferedReader br = new BufferedReader(archivio);
+            String new_line = "";//Aqui se escribe el nuevo contenido del archivo.
+            String linea = br.readLine();
+            Log.v("pre_gen #0", "Archivio: " + fund_file + "\n\nContenido de archivio: \n\n" + imprimir_archivo(fund_file));
+            int log_file = 0;
+            while (linea != null) {
+                String[] split = linea.split("   ");
+                Log.v("linea #" + log_file + " Archivio: ", linea + "\n");
+                Log.v("fecha_realistic: ", fecha_realistic + "\n");
+                Log.v("fecha_poner: ", fecha_poner + "\n");
+                Log.v("fecha_selectedS: ", fecha_selectedS + "\n");
+                Log.v("split[3]: ", split[3] + ", puede ser mayor, menor o igual a fecha_realistic. \nfecha_realistic: " + fecha_realistic + "\n");
+                if (Integer.parseInt(split[3]) < Integer.parseInt(fecha_realistic)) {
+                    //Do nothin. Con esto se hace que la linea sea borrada. Es una factura vieja.
+                } else if (Integer.parseInt(split[3]) > Integer.parseInt(fecha_realistic)) {//Se deja la linea igual. Es una factura futura
+                    new_line = new_line + linea + "\n";
+                } else if (Integer.parseInt(split[3]) == Integer.parseInt(fecha_realistic)) {//Se modifica, se elimina o se deja igual.
+                    if (split[0].equals("abajo")) {
+                        //if (split[1].equals(Loteria) & split[2].equals(Horario)) {
+                        if (split[1].equals(Loteria) & split[2].equals(Horario)) {
+                            //if (split[0].equals("abajo")) {
+                            loteria_abajo = true;
+                            loteria_encontrada = true;
+                            new_line = new_line + linea + "\n";
+                        } else {
+                            estado_subidas = "abajo";
+                            new_line = new_line + linea + "\n";
+                        }
+                    } else if (split[1].equals(Loteria) & split[2].equals(Horario)) {
+                        new_line = new_line + linea + "\n"; //Se dejan las "arribas"
+                        loteria_encontrada = true;
+                    } else {
+                        new_line = new_line + linea + "\n"; //Se dejan las "arribas"
+                    }
+                } else {
+                    //Do nothing here!!!
+                }
+                linea = br.readLine();
+            }
+
+            br.close();
+            archivio.close();
+            borrar_archivo(fund_file);
+            crear_archivo(fund_file);
+            guardar(new_line, fund_file);
+            Log.v("pre_gen_final:", "Archivo completo despues de leerlo: " + imprimir_archivo(fund_file) + "\n");
+        } catch (IOException e) {}
+
+        Log.v("pre_gen banderas ", ".\nloteria_encontrada: " + loteria_encontrada + "\nloteria_abajo: " + loteria_abajo + "\n");
+
+        if (estado_subidas.equals("abajo")) {
+            if (verificar_internet()) {
+                abajoniar();
+            } else {
+                //Continue. Do nothing here!
+            }
+        } else {
+            //Continue. Do nothing here!
+        }
+
+        if (loteria_encontrada) {
+            if (loteria_abajo) {
+                if (verificar_internet()) {
+
+                    //#################Vamos a tratar de subir la informacion a la nube: #######################################
+
+                    RequestQueue queue;
+                    queue = Volley.newRequestQueue(this);
+
+                    //Debug:
+                    //mensaje_confirma_subida(jsonObject.toString());
+
+                    //Llamada POST usando Volley:
+                    RequestQueue requestQueue;
+
+                    // Instantiate the cache
+                    Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+                    // Set up the network to use HttpURLConnection as the HTTP client.
+                    Network network = new BasicNetwork(new HurlStack());
+
+                    // Instantiate the RequestQueue with the cache and network.
+                    requestQueue = new RequestQueue(cache, network);
+
+                    // Start the queue
+                    requestQueue.start();
+
+                    //Toast.makeText(this, "Debug:\nConsecutivo: " + Consecutivo + "\nconsecutivo: " + consecutivo + "\nDeben ser iguales.", Toast.LENGTH_LONG).show();
+
+                    String url = addRowURL;
+
+                    JSONObject jsonObject = TranslateUtil.vendidas_to_Json(Loteria, Horario, spreadSheet_loterias);
+
+                    ocultar_todito();
+
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                            (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Log.v("pre_gen response: ", "Response:\n\n" + response.toString() + "\n\n");
+                                    try {//Se analiza el archivo a ver si ya hay ventas de la loteria en cuestion.
+                                        InputStreamReader archivio = new InputStreamReader(openFileInput(fund_file));
+                                        BufferedReader br = new BufferedReader(archivio);
+                                        String new_line = "";//Aqui se escribe el nuevo contenido del archivo.
+                                        String linea = br.readLine();
+
+                                        while (linea != null) {
+                                            String[] split = linea.split("   ");
+                                            if (Integer.parseInt(split[3]) < Integer.parseInt(fecha_realistic)) {
+                                                //Do nothin. Con esto se hace que la linea sea borrada. Es una factura vieja.
+                                            } else if (Integer.parseInt(split[3]) > Integer.parseInt(fecha_realistic)) {//Se deja la linea igual.
+                                                new_line = new_line + linea + "\n";
+                                            } else if (Integer.parseInt(split[3]) == Integer.parseInt(fecha_realistic)) {//Se modifica o se deja igual.
+                                                if (split[1].equals(Loteria) & split[2].equals(Horario)) {
+                                                    if (split[0].equals("abajo")) {
+                                                        Log.v("camb band pre_gen", "Linea: " + linea + "\n");
+                                                        linea = linea.replace("abajo", "arriba");
+                                                        new_line = new_line + linea + "\n";
+                                                    } else {
+                                                        new_line = new_line + linea + "\n";
+                                                    }
+                                                } else {
+                                                    new_line = new_line + linea + "\n";
+                                                }
+                                            } else {
+                                                //Do nothing here!!!
+                                            }
+                                            linea = br.readLine();
+                                        }
+
+                                        br.close();
+                                        archivio.close();
+                                        borrar_archivo(fund_file);
+                                        crear_archivo(fund_file);
+                                        guardar(new_line, fund_file);
+                                        mostrar_todito();
+                                        //generar_tiquete_venta();
+                                    } catch (IOException e) {
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    // TODO: Handle error
+                                    //mensaje_error_en_subida();
+
+                                }
+                            });
+
+                    // Add the request to the RequestQueue.
+                    requestQueue.add(jsonObjectRequest);
+
+                    //##########################################################################################################
+
+                } else {
+                    //generar_tiquete_venta();
+                }
+            }
+            else {
+                //generar_tiquete_venta();
+            }
+        } else {
+            agregar_linea_archivo(fund_file, "abajo   " + Loteria + "   " + Horario + "   " + fecha_poner);
+            pre_generar();
         }
     }
 
@@ -874,6 +1282,10 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         String jugador = cliente.getText().toString();
         if (jugador.isEmpty()){
             jugador = "Cliente nuevo";
+        } else if (jugador.length() > 10) {
+            jugador = "Cliente nuevo";
+            Toast.makeText(this, "Nombre del cliente demasiado largo...", Toast.LENGTH_LONG);
+            //return;
         }
         //int ram_value = (int)(Math.random()*10+1);
         //String ram_value_str = String.valueOf(ram_value);
@@ -1790,6 +2202,16 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     private void separar_fechaYhora(String ahora) {
         String[] split = ahora.split(" ");
 
+        int mesecillo = meses.get(split[1]);
+        String meseciyillo = "";
+        if (mesecillo <= 9) {
+            meseciyillo = "0" + String.valueOf(mesecillo);
+        } else {
+            meseciyillo = String.valueOf(mesecillo);
+        }
+        fecha_realistic = split[5] + meseciyillo + split[2];
+        String anio_helper = split[5];
+
         if (!flag_cad) {
             mes = String.valueOf(meses.get(split[1]));
             anio = split[5];
@@ -1805,6 +2227,16 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         split = hora.split(":");
         minuto = split[1];
         hora = split[0];
+
+        int mesito = Integer.parseInt(mes);
+        String mesitoS = "";
+        if (mesito <= 9) {
+            mesitoS = "0" + String.valueOf(mesito);
+        } else {
+            mesitoS = String.valueOf(mesito);
+        }
+        fecha_poner = anio + mesitoS + dia;
+
     }
 
     private int verificar_caducidad(boolean flag, boolean flag_caducidad) throws FileNotFoundException {

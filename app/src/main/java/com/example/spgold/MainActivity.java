@@ -66,6 +66,30 @@ public class MainActivity extends AppCompatActivity {
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -158,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void mostrar_todo() {
 
+        /*
         textView_esperar.setText("");
         textView_esperar.setVisibility(View.INVISIBLE);
 
@@ -168,10 +193,13 @@ public class MainActivity extends AppCompatActivity {
         button_reportes.setVisibility(View.VISIBLE);
         boton_admin.setVisibility(View.VISIBLE);
 
+         */
+
     }
 
     private void ocultar_todo() {
 
+        /*
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("   Conectando...\n\nPor favor espere...");
 
@@ -181,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
         button_config.setVisibility(View.INVISIBLE);
         button_reportes.setVisibility(View.INVISIBLE);
         boton_admin.setVisibility(View.INVISIBLE);
+
+         */
 
     }
 
@@ -786,7 +816,7 @@ public class MainActivity extends AppCompatActivity {
             ocultar_todo();
             obtener_Json_otras_facturas();
         } else {
-            Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -58,6 +58,7 @@ public class FacturaseditActivity extends AppCompatActivity {
     private Button button_cambiar_fecha;
     private Button button_borrar_factura;
     private Button button_reimprimir;
+    private Button button_archivos;
     private TextView tv_aux;
     private Button boton_aux;
     private HashMap<Integer, JSONObject> abajos = new HashMap<Integer, JSONObject>();
@@ -96,6 +97,30 @@ public class FacturaseditActivity extends AppCompatActivity {
     private String SHEET;
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facturasedit);
@@ -113,6 +138,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         button_borrar_factura = (Button) findViewById(R.id.button_borrar_factura);
         button_reimprimir = (Button) findViewById(R.id.button_reimprimir);
         textView_esperar = (TextView) findViewById(R.id.textView_esperar);
+        button_archivos = (Button) findViewById(R.id.button_archivos);
 
         llenar_mapa_meses();
 
@@ -143,8 +169,20 @@ public class FacturaseditActivity extends AppCompatActivity {
 
     }
 
-    private void mostrar_todo() {
+    public void archivos(View view) {
+        ocultar_todo();
+        tv_aux.setVisibility(View.VISIBLE);
+        String archivos[] = fileList();
+        String ver = "";
+        for (int i = 0; i < archivos.length; i++) {
+            ver = ver + archivos[i] + "\n";
+        }
+        tv_aux.setText(ver);
 
+    }
+
+    private void mostrar_todo() {
+/*
         textView_esperar.setText("");
         textView_esperar.setVisibility(View.INVISIBLE);
 
@@ -157,12 +195,13 @@ public class FacturaseditActivity extends AppCompatActivity {
         button_cambiar_fecha.setVisibility(View.VISIBLE);
         button_borrar_factura.setVisibility(View.VISIBLE);
         button_reimprimir.setVisibility(View.VISIBLE);
-
+        button_archivos.setVisibility(View.VISIBLE);
+*/
 
     }
 
     private void ocultar_todo() {
-
+/*
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("   Conectando...\n\nPor favor espere...");
 
@@ -175,8 +214,9 @@ public class FacturaseditActivity extends AppCompatActivity {
         button_cambiar_fecha.setVisibility(View.INVISIBLE);
         button_borrar_factura.setVisibility(View.INVISIBLE);
         button_reimprimir.setVisibility(View.INVISIBLE);
+        button_archivos.setVisibility(View.INVISIBLE);
 
-
+*/
     }
 
     private boolean verificar_internet() {
@@ -789,7 +829,7 @@ public class FacturaseditActivity extends AppCompatActivity {
             ocultar_todo();
             obtener_Json_otras_facturas();
         } else {
-            Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
         }
     }
 

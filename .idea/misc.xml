@@ -5,7 +5,7 @@
       <map>
         <entry key="app/src/main/res/layout/activity_borrar.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_editonline.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_facturasedit.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_facturasedit.xml" value="0.67" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_tiquete.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_tiquetemonazos.xml" value="0.2" />

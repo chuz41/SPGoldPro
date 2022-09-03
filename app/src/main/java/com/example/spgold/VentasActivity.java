@@ -92,6 +92,30 @@ public class VentasActivity extends AppCompatActivity {
     private Map<String, Integer> meses = new HashMap<String, Integer>();
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     //@RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,7 +244,7 @@ public class VentasActivity extends AppCompatActivity {
     }
 
     private void mostrar_todo() {
-
+/*
         textView_esperar.setText("");
         textView_esperar.setVisibility(View.INVISIBLE);
 
@@ -230,11 +254,11 @@ public class VentasActivity extends AppCompatActivity {
         horario.setVisibility(View.VISIBLE);
         tv_fecha_ventas.setVisibility(View.VISIBLE);
         btn_fecha_ventas.setVisibility(View.VISIBLE);
-
+*/
     }
 
     private void ocultar_todo() {
-
+/*
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("   Conectando...\n\nPor favor espere...");
 
@@ -244,7 +268,7 @@ public class VentasActivity extends AppCompatActivity {
         horario.setVisibility(View.INVISIBLE);
         tv_fecha_ventas.setVisibility(View.INVISIBLE);
         btn_fecha_ventas.setVisibility(View.INVISIBLE);
-
+*/
     }
 
     private void subir_facturas() throws JSONException {
