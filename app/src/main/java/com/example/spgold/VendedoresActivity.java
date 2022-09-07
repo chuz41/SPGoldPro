@@ -79,11 +79,16 @@ public class VendedoresActivity extends AppCompatActivity {
     private HashMap<String, Integer> Montos = new HashMap<String, Integer>();
     private HashMap<String, Integer> Premiados = new HashMap<String, Integer>();
     private HashMap<String, Integer> Comisiones = new HashMap<String, Integer>();
+    private HashMap<Integer, String> saled_lots = new HashMap<Integer, String>();//Loterias vendidas
     private HashMap<String, String> SpreadSheets_vendedor = new HashMap<String, String>();
     private Map<String, Integer> meses = new HashMap<String, Integer>();
     private String readRowURL_global = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=1mQTx7D8-bKKcs7D9ZVdVw4lDbcW3u0N4gP8cKPpfC20&sheet=vendedores";
     private String readRowURL_premios = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=1iMXw4z0ljwvfhdR5BBmh586h1AOmNCWll7GYI1MJFbM&sheet=hoy";
+    private String readRowURL_vendidas = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=";
     private String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=";
+    private String sid_vendidas = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
+    private String s_vendidas = "loterias_vendidas";
+
     private int total_ventas = 0;
     private int comision_vendedor = 0;
     private int getComision_banquero = 0;
@@ -117,6 +122,7 @@ public class VendedoresActivity extends AppCompatActivity {
 
     private void clear_all() {
         SpreadSheets.clear();
+        saled_lots.clear();
         Premios.clear();
         Montos.clear();
         SpreadSheets_vendedor.clear();
@@ -195,7 +201,7 @@ public class VendedoresActivity extends AppCompatActivity {
 
     private void saldo_del_dia() {
         //printIt("Monto total: " + String.valueOf(calcular_monto_total()) + "\nComision vendedor: " + comision_vendedor +
-                //"\nComision banca: " + comision_banca + "\nPremios: "+ total_premios);
+        //"\nComision banca: " + comision_banca + "\nPremios: "+ total_premios);
         int saldo_del_dia = calcular_monto_total() - comision_vendedor - comision_banca - total_premios;
         vendedor_a_presentar = vendedor_a_presentar + "SALDOS:\n\n";
         int espaciado0 = 30;
@@ -226,7 +232,7 @@ public class VendedoresActivity extends AppCompatActivity {
         elegir();
     }
 
-    private void elegir () {
+    private void elegir() {
         //Hacer Visibles los 2 botones
         downloading.setText("Descargas completadas al 100%");
         //listas.setVisibility(View.VISIBLE);
@@ -246,9 +252,9 @@ public class VendedoresActivity extends AppCompatActivity {
         printIt(vendedor_a_presentar);
     }
 
-    /*private void guardar_saldo() {
+    private void guardar_saldo() {
     //TODO
-    }*/
+    }
 
     private int leer_saldo_anterior() {//TODO: HACER ESTO EN UNA SPREADSHEET
         int i = 0;
@@ -340,7 +346,7 @@ public class VendedoresActivity extends AppCompatActivity {
                                         if (!split2[14].equals("no")) {//Significa que es Parley
                                             sec = " " + split2[14];
                                             tir = " " + split2[18];
-                                        } else if (split2[18].equals("ROJA") | split2[18].equals("BLANCA") | split2[18].equals("GRIS")) {// Significa que es reventados.
+                                        } else if (split2[18].equals("ROJA") | split2[18].equals("BLANCA") | split2[18].equals("VERDE")) {// Significa que es reventados.//TODO: Poner colores de bolitas online y todo con respecto a las loterias y sus cambios
                                             tir = " " + split2[18];
                                         } else {//Cualquier otra loteria
                                             //do nothing.
@@ -369,15 +375,7 @@ public class VendedoresActivity extends AppCompatActivity {
 
                                 }
                             }
-                            //msg("Contador de premios: " + String.valueOf(contador_de_premios));
                         }
-
-                        /*for (String key : premios_encontrados.keySet()) {
-                            msg("Key: " + key + "\n\nValue: " + premios_encontrados.get(key));
-                        }*/
-                        /*for (String key : Premios.keySet()) {
-                            msg("Key: " + key + "\n\nValue: " + Premios.get(key));
-                        }*/
 
                         ver_vendedores();
                     }
@@ -396,128 +394,53 @@ public class VendedoresActivity extends AppCompatActivity {
 
     private void Ver_premios() {
 
-        /*RequestQueue requestQueue;
-
-        // Instantiate the cache
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
-
-        // Set up the network to use HttpURLConnection as the HTTP client.
-        Network network = new BasicNetwork(new HurlStack());
-
-        // Instantiate the RequestQueue with the cache and network.
-        requestQueue = new RequestQueue(cache, network);
-
-        // Start the queue
-        requestQueue.start();
-
-        String url = readRowURL_premios;
-
-        // Formulate the request and handle the response.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
+        vendedores.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onResponse(String response) {
-                        // Do something with the response
-                        //ML_ver.setText(response);
-                        //msg(response);
-                        //HashMap<String, String> premios = new HashMap<String, String>();
-                        String[] split = response.split("loteria");//Se separa el objeto Json
-                        if (response != null & split.length > 3) {
-                            //response.replace("loteria", "_sepa_");
-                            //msg(response);
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (vendedores.getSelectedItem().toString().equals("Elija el vendedor...") | vendedores.getSelectedItem().toString().equals("Elija un vendedor...")) {
+                            //msg("Escoja un vendedor...");
+                        } else {
+                            //clear_all();
+                            //pre_config();
+                            //cierre.setVisibility(View.GONE);
+                            if (vendedores.getSelectedItem().toString().equals("Todos")) {
+                                //TODO: Ver que hacer para manejar la opcion "Todos"
+                            } else {
+                                progressBar.setProgress(0);
+                                progressBar.setVisibility(View.VISIBLE);
+                                String[] split = vendedores.getSelectedItem().toString().split(" ");
+                                vendedor = split[0];
+                                maquina = split[1];
+                                downloading.setVisibility(View.GONE);
+                                //vendedores.setFocusableInTouchMode(false);
+                                listas_to_print = listas_to_print + "Puesto " + vendedor + "\nMaquina: " + maquina + "\n******************************\n\n";
 
 
-                            //Se llena un HashMap con los premios, los cuales se bajan de la nube.
-                            for (int i = 1; i < split.length; i++) {
-                                String[] split2 = split[i].split("\"");
-                                //                       Ej.                    Tica                              Noche
-                                String loteria_actual = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
-                                //                       Ej.                    03                                 no                                 no                                ID
-                                String premio_actual = "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo";
-                                premios_encontrados.put(split2[2], split2[6]);
-                                contador_de_premios_local++;
-                                if (Premios.containsKey(loteria_actual)) {
-
-                                    String premio_viejo = Premios.get(loteria_actual);
-                                    String[] split3 = premio_viejo.split("ojo-rojo_ojo-rojo");
-                                    if (Integer.parseInt(split3[4]) >= Integer.parseInt(split2[26])) {
-                                        //Do nothing.
-                                    } else {
-                                        premios_encontrados.replace(split2[2], split3[], premio_actual);
-                                    }
-                                } else {
-                                    premios_encontrados.put(loteria_actual, premio_actual);
-                                    //contador_de_premios_local++;
-                                    if (contador_de_premios_local < contador_de_premios) {
-                                        //msg("Debug1: comprobacion\ncont_auxiliar: " + cont_auxiliar + "\nID: " + split2[26] + "\nLoteria: " + split2[2] + " " + split2[6]);
-                                        //rellenar_contadorcito();
-                                    } else {
-                                        //msg("Debug2: comprobacion\ncont_auxiliar: " + cont_auxiliar + "\nID: " + split2[26] + "\nLoteria: " + split2[2] + " " + split2[6]);
-                                        //Do nothing.
-                                    }
-                                }
-                                //msg("Debug3: comprobacion\ncont_auxiliar: " + cont_auxiliar + "\nID: " + split2[26] + "\nLoteria: " + split2[2] + " " + split2[6]);
-                            }*/
-                            vendedores.setOnItemSelectedListener(
-                                    new AdapterView.OnItemSelectedListener() {
-                                        @Override
-                                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                            if (vendedores.getSelectedItem().toString().equals("Elija el vendedor...") | vendedores.getSelectedItem().toString().equals("Elija un vendedor...")) {
-                                                //msg("Escoja un vendedor...");
-                                            } else {
-                                                //clear_all();
-                                                //pre_config();
-                                                //cierre.setVisibility(View.GONE);
-                                                if (vendedores.getSelectedItem().toString().equals("Todos")){
-                                                    //TODO: Ver que hacer para manejar la opcion "Todos"
-                                                } else {
-                                                    progressBar.setProgress(0);
-                                                    progressBar.setVisibility(View.VISIBLE);
-                                                    String[] split = vendedores.getSelectedItem().toString().split(" ");
-                                                    vendedor = split[0];
-                                                    maquina = split[1];
-                                                    downloading.setVisibility(View.GONE);
-                                                    //vendedores.setFocusableInTouchMode(false);
-                                                    listas_to_print = listas_to_print + "Puesto " + vendedor + "\nMaquina: " + maquina + "\n******************************\n\n";
-
-
-                                                    presentar_vendedor(split[0], split[1]);
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onNothingSelected(AdapterView<?> parent) {
-
-                                        }
-                                    });
+                                presentar_vendedor(split[0], split[1]);
+                            }
                         }
+                    }
 
-       /*             }
-                },
-                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error
+                    public void onNothingSelected(AdapterView<?> parent) {
+
                     }
                 });
+    }
 
-        // Add the request to the RequestQueue.
-        requestQueue.add(stringRequest);
-    }*/
 
-    public String generar_cierre(HashMap<String, String> vendep, boolean vez) throws JSONException {
+    public String generar_cierre(HashMap<String, String> vendep, boolean vez) throws JSONException {//En este metodo se hacen algunas configuraciones y arreglos de variables.
         //cierre.setVisibility(view.GONE);
         vendedores.setVisibility(View.GONE);
         letrero_spinner.setVisibility(View.GONE);
 
         if (vez) {
-           // msg("Hola, estoy en el generar_cierre true!");
+            // msg("Hola, estoy en el generar_cierre true!");
             vendedor_a_presentar = vendedor_a_presentar + "______________________________\nVENTAS: \n\n";
             progressBar.setProgress(1);
         } else {
-            int pro_cant = TOTAL_VENDEDORES - SpreadSheets_vendedor.size();
+            int pro_cant = TOTAL_VENDEDORES - SpreadSheets_vendedor.size();//Se genera el numero que se va a representar en la progressbar
             progressBar.setProgress(pro_cant);
             //Do nothing.
         }
@@ -531,7 +454,6 @@ public class VendedoresActivity extends AppCompatActivity {
             if (bandera_continuar.equals("listo")) {
                 //msg("Ir a generar_cierre2!!!");
                 Log.v("Error18", "Ir a generar_cierre2!!!");
-                //TODO: activar o ir al siguiente cierre!!!
                 generar_cierre2();
                 return "Ultima entrada a generar_cierre. ya no tiene datos y debe abandonar este metodo";
             } else {
@@ -743,7 +665,6 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         listas_to_print = listas_to_print + loteria + " " + horario + ":\n\n";
 
 
-
         Log.v("Error102", "Loteria: " + loteria + " " + horario + "\nComision: " + comision + "\nPaga1: " + paga1 + " Paga2: " + paga2);
         //msg("Loteria: " + loteria + " " + horario + "\nComision: " + comision + "\nPaga1: " + paga1 + " Paga2: " + paga2);
         HashMap<String, Integer> hashMap_local = crear_hasmap_local_ordenado();//Este hasmap tendra los numeros contenidos en hasMap pero sin repetir y sumados sus valores.
@@ -806,7 +727,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             String par1 = "";
             if (String.valueOf(numero_jugado1).length() == 1) {
                 par1 = "0" + numero_jugado1;
-            }else {
+            } else {
                 par1 = numero_jugado1;
             }
 
@@ -823,10 +744,10 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             } else if (numero_jugado3.equals("Orden") | numero_jugado3.equals("Desorden")) {// Es monazos
                 if (String.valueOf(numero_jugado1).length() == 2) {
                     par1 = "0" + numero_jugado1;
-                }else {
+                } else {
                     par1 = numero_jugado1;
                 }
-                if (numero_jugado3.equals("Orden")){
+                if (numero_jugado3.equals("Orden")) {
                     par3 = " " + numero_jugado3 + "   ";
                 } else {
                     par3 = " " + numero_jugado3;
@@ -864,7 +785,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                 String premio3 = premios_splited[3];
                 String Loteria_premios = key2_splited[1] + " " + key2_splited[2];
                 String Loteria_actual = loteria + " " + horario;
-                if (Loteria_actual.equals(Loteria_premios)){
+                if (Loteria_actual.equals(Loteria_premios)) {
                     //msg("numero premiado: " + numero_premiado);
                     //msg("Loteria Premios: " + key2_splited[1] + " " + key2_splited[2] + "\n\nLoteria actual: " + loteria + " " + horario);
                     //int numero_winner = Integer.parseInt(numero_premiado);
@@ -880,7 +801,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                     } else {
                         //Do nothing.
                     }
-                    if (premio3.equals("ROJA") | premio3.equals("GRIS") | premio3.equals("BLANCA")) {
+                    if (premio3.equals("ROJA") | premio3.equals("VERDE") | premio3.equals("BLANCA")) {
                         tipo_loteria = "reventados";
                     }
                     //msg("Tipo loteria: " + tipo_loteria + "\nNumeros jugados: " + numero_jugado1 + " - " + numero_jugado2 + " - " + numero_jugado3 +
@@ -896,7 +817,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                             //                                          split[1]                         split[2]                      split[3]                                  split[4]                                  split[5]                        split[6]                        split[7]
                             String key_premiados = "ojo-rojo_ojo-rojo" + loteria + "ojo-rojo_ojo-rojo" + horario + "ojo-rojo_ojo-rojo" + paga + "ojo-rojo_ojo-rojo" + String.valueOf(monto_apuesta) + "ojo-rojo_ojo-rojo" + premio1 + "ojo-rojo_ojo-rojo" + premio2 + "ojo-rojo_ojo-rojo" + premio3 + "ojo-rojo_ojo-rojo";
                             int value_premiados = monto_premio;
-                            if (Premiados.containsKey(key_premiados)){
+                            if (Premiados.containsKey(key_premiados)) {
                                 int monto_viejo = Premiados.get(key_premiados);//Valor actual del hashmap
                                 int monto_nuevo = Premiados.get(key_premiados) + monto_premio;
                                 Premiados.replace(key_premiados, monto_viejo, monto_nuevo);
@@ -905,8 +826,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                 Premiados.put(key_premiados, value_premiados);
                                 total_premios = total_premios + monto_premio;
                             }
-                        }
-                        else {
+                        } else {
                             //Este numero no es el premiado. Se debe continuar buscando.
                         }
 
@@ -925,7 +845,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                     //                                          split[1]                         split[2]                      split[3]                                  split[4]                                  split[5]                         split[6]                        split[7]
                                     String key_premiados = "ojo-rojo_ojo-rojo" + loteria + "ojo-rojo_ojo-rojo" + horario + "ojo-rojo_ojo-rojo" + paga + "ojo-rojo_ojo-rojo" + String.valueOf(monto_apuesta) + "ojo-rojo_ojo-rojo" + premio1 + "ojo-rojo_ojo-rojo" + premio2 + "ojo-rojo_ojo-rojo" + premio3 + "ojo-rojo_ojo-rojo";
                                     int value_premiados = monto_premio;
-                                    if (Premiados.containsKey(key_premiados)){
+                                    if (Premiados.containsKey(key_premiados)) {
                                         int monto_viejo = Premiados.get(key_premiados);//Valor actual del hashmap
                                         int monto_nuevo = Premiados.get(key_premiados) + monto_premio;
                                         Premiados.replace(key_premiados, monto_viejo, monto_nuevo);
@@ -934,14 +854,14 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                         Premiados.put(key_premiados, value_premiados);
                                         total_premios = total_premios + monto_premio;
                                     }
-                                } else if (premio3.equals("GRIS")) {
+                                } else if (premio3.equals("VERDE")) {
                                     paga = Integer.parseInt(paga2);
                                     int monto_premio = monto_apuesta * paga;
                                     //                                         reventados                          dia                           700                                        500                                       25                              no                             ROJA
                                     //                                          split[1]                         split[2]                      split[3]                                  split[4]                                  split[5]                         split[6]                        split[7]
                                     String key_premiados = "ojo-rojo_ojo-rojo" + loteria + "ojo-rojo_ojo-rojo" + horario + "ojo-rojo_ojo-rojo" + paga + "ojo-rojo_ojo-rojo" + String.valueOf(monto_apuesta) + "ojo-rojo_ojo-rojo" + premio1 + "ojo-rojo_ojo-rojo" + premio2 + "ojo-rojo_ojo-rojo" + premio3 + "ojo-rojo_ojo-rojo";
                                     int value_premiados = monto_premio;
-                                    if (Premiados.containsKey(key_premiados)){
+                                    if (Premiados.containsKey(key_premiados)) {
                                         int monto_viejo = Premiados.get(key_premiados);//Valor actual del hashmap
                                         int monto_nuevo = Premiados.get(key_premiados) + monto_premio;
                                         Premiados.replace(key_premiados, monto_viejo, monto_nuevo);
@@ -1037,7 +957,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                             //Do nothing
                         }
 
-                        if (flag3.equals("true")){
+                        if (flag3.equals("true")) {
 
                             //Aqui va la carnita:
                             int pagar = Integer.parseInt(paga1);
@@ -1046,7 +966,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                             //                                          split[1]                         split[2]                      split[3]                                  split[4]                                  split[5]                        split[6]                        split[7]
                             String key_premiados = "ojo-rojo_ojo-rojo" + loteria + "ojo-rojo_ojo-rojo" + horario + "ojo-rojo_ojo-rojo" + pagar + "ojo-rojo_ojo-rojo" + String.valueOf(monto_apuesta) + "ojo-rojo_ojo-rojo" + premio1 + "ojo-rojo_ojo-rojo" + premio2 + "ojo-rojo_ojo-rojo" + premio3 + "ojo-rojo_ojo-rojo";
                             int value_premiados = monto_premio;
-                            if (Premiados.containsKey(key_premiados)){
+                            if (Premiados.containsKey(key_premiados)) {
                                 int monto_viejo = Premiados.get(key_premiados);//Valor actual del hashmap
                                 int monto_nuevo = Premiados.get(key_premiados) + monto_premio;
                                 Premiados.replace(key_premiados, monto_viejo, monto_nuevo);
@@ -1073,7 +993,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                             //                                          split[1]                         split[2]                      split[3]                                  split[4]                                  split[5]                        split[6]                        split[7]
                             String key_premiados = "ojo-rojo_ojo-rojo" + loteria + "ojo-rojo_ojo-rojo" + horario + "ojo-rojo_ojo-rojo" + paga + "ojo-rojo_ojo-rojo" + String.valueOf(monto_apuesta) + "ojo-rojo_ojo-rojo" + premio1 + "ojo-rojo_ojo-rojo" + premio2 + "ojo-rojo_ojo-rojo" + premio3 + "ojo-rojo_ojo-rojo";
                             int value_premiados = monto_premio;
-                            if (Premiados.containsKey(key_premiados)){
+                            if (Premiados.containsKey(key_premiados)) {
                                 int monto_viejo = Premiados.get(key_premiados);//Valor actual del hashmap
                                 int monto_nuevo = Premiados.get(key_premiados) + monto_premio;
                                 Premiados.replace(key_premiados, monto_viejo, monto_nuevo);
@@ -1245,7 +1165,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                             //                                          split[1]                         split[2]                      split[3]                                  split[4]                                  split[5]                        split[6]                        split[7]
                                             String key_premiados = "ojo-rojo_ojo-rojo" + loteria + "ojo-rojo_ojo-rojo" + horario + "ojo-rojo_ojo-rojo" + paga + "ojo-rojo_ojo-rojo" + String.valueOf(monto_apuesta) + "ojo-rojo_ojo-rojo" + premio1 + "ojo-rojo_ojo-rojo" + premio2 + "ojo-rojo_ojo-rojo" + premio3 + "ojo-rojo_ojo-rojo";
                                             int value_premiados = monto_premio;
-                                            if (Premiados.containsKey(key_premiados)){
+                                            if (Premiados.containsKey(key_premiados)) {
                                                 int monto_viejo = Premiados.get(key_premiados);//Valor actual del hashmap
                                                 int monto_nuevo = Premiados.get(key_premiados) + monto_premio;
                                                 Premiados.replace(key_premiados, monto_viejo, monto_nuevo);
@@ -1380,31 +1300,11 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
 
 
                             } else {
-                                //Respuesta incorrecta!!!
+                                Log.v("Error_ven_vend", "Respuesta incorrecta!!!" + "\nResponse: " + response);
                             }
                         } else {
-                            //Respuesta incorrecta!!!
+                            Log.v("Error_ven_vend", "Respuesta incorrecta!!!" + "\nResponse: " + response);
                         }
-
-                        //Ejemplo sin contenido :
-
-                        /*
-                        String SHEETT = "vendedores";
-                        String[] splitt = response.toString().split("\"");
-                        int length_splitt = splitt.length;
-                        if (response != null & length_splitt > 3) {
-                            if (splitt[3].equals(SHEETT)) {
-                                //Respuesta es la correcta!
-                                //Aqui va el total de los algoritmos funcionales basados en una respuesta correcta!
-
-
-                            } else {
-                                //Respuesta incorrecta!!!
-                            }
-                        } else {
-                            //Respuesta incorrecta!!!
-                        }
-                         */
 
                         leer_premios();
                     }
@@ -1440,7 +1340,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         }
     }
 
-    public void guardar (String Tcompleto, String nombre){
+    public void guardar(String Tcompleto, String nombre) {
         try {
             OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(nombre, Activity.MODE_PRIVATE));
             archivo.write(Tcompleto);
@@ -1456,7 +1356,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         archivo.delete();
     }
 
-    private void agregar_linea_archivo (String file_name, String new_line) {
+    private void agregar_linea_archivo(String file_name, String new_line) {
         String archivos[] = fileList();
         String ArchivoCompleto = "";//Aqui se lee el contenido del archivo guardado.
 
@@ -1489,11 +1389,11 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
     }
 
     private void crear_archivo(String nombre_archivo) {
-        try{
+        try {
             OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(nombre_archivo, Activity.MODE_PRIVATE));
             archivo.flush();
             archivo.close();
-        }catch (IOException e) {
+        } catch (IOException e) {
         }
     }
 
@@ -1506,7 +1406,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
             //vendedores.setVisibility(View.VISIBLE);
             //letrero_spinner.setVisibility(View.VISIBLE);
         } else if (vendedor.equals("Todos")) {
-            //cuando se escogen todos! TODO: revisar viabilidad!
+            //cuando se escogen todos! TODO: generar cierre!!!
             //vendedores.setVisibility(View.VISIBLE);
             //letrero_spinner.setVisibility(View.VISIBLE);
         } else {//Se ha elegido un vendedor!
@@ -1519,13 +1419,104 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                 if (vendedor.equals(split5[1])) {
                     if (verificar_internet()) {
                         Log.v("error1", "presentar_vendedor.\nsplit4[1]: " + split4[1] + "Split4[2]" + split4[2]);
-                        cuentas_vendedor(split4[1], split4[2]);
+                        ver_loterias_vendidas(split4[1], split4[2]);
+                        //cuentas_vendedor(split4[1], split4[2]);
                     } else {
                         //Do nothing.
                     }
                 }
             }
         }
+    }
+
+    private void ver_loterias_vendidas(String s1, String s2) {
+
+        RequestQueue requestQueue;
+
+        // Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+        // Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+
+        // Instantiate the RequestQueue with the cache and network.
+        requestQueue = new RequestQueue(cache, network);
+
+        // Start the queue
+        requestQueue.start();
+
+        String url = readRowURL_vendidas + sid_vendidas + "&sheet=" + s_vendidas;
+
+        // Formulate the request and handle the response.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onResponse(String response) {
+                        // Do something with the response
+                        Log.v("ver_vendidas response", ".\nResponse:\n" + response);
+                        String[] split_test = response.split("\"");
+                        if (response != null & split_test.length > 3) {
+                            String[] split = response.split("loteria");//Se separa el objeto Json
+                            for (int i = 1; i < split.length; i++) {
+                                String[] split2 = split[i].split("\"");
+
+                                int key = i;
+                                String value = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
+                                saled_lots.put(key, value);
+                                Log.v("loterias vendida ", ".\nLoteria: " + split2[2] + " " + split2[6]);
+                                Log.v("SpreadSheetId & Sheet ", ".\nSpreadSheetId: " + s1 + "\nSheet: " + s2);
+                                cuentas_vendedor(s1, s2);
+
+                                /*
+                                if (split2[10].equals("maniana")) {
+                                    //TODO: No se sabe que hacer aqui. Resolver metodos para ventas futuras (Tambien aplica en este metodo ver vendidas!!!)
+                                } else if (split2[10].equals("hoy")){
+                                    //msg("Loterias: " + split2[2] + " " + split2[10]);
+
+                                    //                  Ej.                  Tica                              dia                                hoy                            5 (comision)                         paga1                               paga2
+                                    String lot_act = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[22] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo" + split2[30] + "ojo-rojo_ojo-rojo";
+                                    //                   Ej.                 SpreadSheet                     SHEET: loterias
+                                    String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo";
+
+                                    if (SpreadSheets_vendedor.containsKey(lot_act)) {
+                                        //Do nothing.
+                                    } else {
+                                        SpreadSheets_vendedor.put(lot_act, spread_act);
+                                        //msg("Debug:\nSpreadSheet_vendedor: " + SpreadSheets_vendedor.get(lot_act));
+                                    }
+                                } else {
+                                    //Do nothing here!
+                                }
+                                */
+                            }
+                            //int cont = 0;
+                            /*for (String key : SpreadSheets_vendedor.keySet()) {
+                                cont++;
+                                msg("Loteria: #" + cont + ":\n" + key + "\n\nHoja de Google: " + SpreadSheets_vendedor.get(key));
+                            }*/
+                            //Log.v("error2", "Se va a llamar a la funcion generar_cierre por primera vez!!!");
+                            //String resul_cierre = null;
+
+                            //Debug:
+                            /*for (String key : SpreadSheets_vendedor.keySet()) {
+                                msg("Llave: " + key + "\n\n" + "Valor: " + SpreadSheets_vendedor.get(key));
+                            }*/
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        requestQueue.add(stringRequest);
+
+
+        //llamarlo en el onResponse
     }
 
     private void cuentas_vendedor(String sid, String s) {
@@ -1564,19 +1555,24 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                             for (int i = 1; i < split.length; i++) {
                                 String[] split2 = split[i].split("\"");
                                 if (split2[10].equals("maniana")) {
-                                    //TODO: No se sabe que hacer aqui.
+                                    //TODO: No se sabe que hacer aqui. Resolver metodos para ventas futuras
                                 } else if (split2[10].equals("hoy")){
                                     //msg("Loterias: " + split2[2] + " " + split2[10]);
 
                                     //                  Ej.                  Tica                              dia                                hoy                            5 (comision)                         paga1                               paga2
                                     String lot_act = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[22] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo" + split2[30] + "ojo-rojo_ojo-rojo";
+                                    String var_aux_comp = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";//Variable auxiliar comparativa
                                     //                   Ej.                 SpreadSheet                     SHEET: loterias
                                     String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo";
 
                                     if (SpreadSheets_vendedor.containsKey(lot_act)) {
                                         //Do nothing.
                                     } else {
-                                        SpreadSheets_vendedor.put(lot_act, spread_act);
+                                        if (saled_lots.containsValue(var_aux_comp)) {
+                                            SpreadSheets_vendedor.put(lot_act, spread_act);
+                                        } else {
+                                            //No se guarda para que no se lean spreadsheets vacias.
+                                        }
                                         //msg("Debug:\nSpreadSheet_vendedor: " + SpreadSheets_vendedor.get(lot_act));
                                     }
                                 } else {

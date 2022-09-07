@@ -105,7 +105,6 @@ public class FacturaseditActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -117,7 +116,6 @@ public class FacturaseditActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

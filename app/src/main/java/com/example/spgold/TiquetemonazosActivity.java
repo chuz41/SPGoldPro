@@ -124,7 +124,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     private String SPREADSHEET_ID;
     private HashMap<String, String> abajos2 = new HashMap<String, String>();
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
-    private String spreadSheet_loterias = "1qJhZ_5nnLHHMlOCFywxPTzDbvJnT_fKf7EuvTOmCbU0";
+    private String spreadSheet_loterias = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
 
     @Override
     protected void onPause() {
@@ -205,9 +205,13 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 }
             }
         } else {
-            FECHA.setText(fecha_selectedS + "/" + mes_selectedS + "/" + anio_selectedS);
+            
+            FECHA.setText("HOY");
+            fecha_real = "HOY";
+            SPREADSHEET_ID = Spread_Sheet_Id;
+           /* FECHA.setText(fecha_selectedS + "/" + mes_selectedS + "/" + anio_selectedS);
             fecha_real = "FUTURO";
-            SPREADSHEET_ID = Spread_Sheet_Id_maniana;
+            SPREADSHEET_ID = Spread_Sheet_Id_maniana; */
         }
 
         fecha_selected = Integer.parseInt(fecha_selectedS);
@@ -535,7 +539,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         if (conteni.equals("nada")) {
             //Do nothing.
         } else {
-            //impmir_tiquete(conteni);
+            impmir_tiquete(conteni);
         }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -642,6 +646,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
     private void subir_facturas_resagadas(String conteni) throws JSONException {
         boolean flag_internet = verificar_internet();
+        Log.v("subir facts resag 1 ", ".\nContenido: " + conteni);
         //JSONObject objeto_Json_a_subir = null;
         if (flag_internet) {
             ocultar_todo();
@@ -651,6 +656,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             if (conteni.equals("nada")) {
                 //Do nothing.
             } else {
+                Log.v("subir facts resag 2 ", ".\nContenido: " + conteni);
                 impmir_tiquete(conteni);
             }
         }
@@ -1422,13 +1428,13 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         contenido = "";//Aqui se lee el contenido del archivo guardado.
         linea_temp = "Factura # " + consecutivo_str + "\n";
         contenido = contenido + linea_temp;
-        linea_temp = "\n       --->***********<---\n";
+        linea_temp = "\n       --->***********<---";
         contenido = contenido + linea_temp + "\n";
-        linea_temp = "     ** Tiempos " + Nombre_puesto + " **  \n";
+        linea_temp = "    **     Tiempos " + Nombre_puesto + "   **  ";
         contenido = contenido + linea_temp + "\n";
         linea_temp = "  Pagamos " + Paga1 + " veces orden!!!\n    y " + Paga2 + " veces desorden!!!";
         contenido = contenido + linea_temp + "\n";
-        linea_temp = "       Somos la banca mas \n        solida del pais.\n";
+        linea_temp = "       Somos la banca mas \n        solida del pais";
         contenido = contenido + linea_temp + "\n";
         linea_temp = "       --->***********<---\n";
         contenido = contenido + linea_temp + "\n";
@@ -1441,7 +1447,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         } else {
             linea_temp = "el dia: " + fecha + "/" + mes + "/" + anio;
         }
-        contenido = contenido + linea_temp + "\n\n#############################";
+        contenido = contenido + linea_temp + "\n#############################";
         String archivos[] = fileList();
         if (ArchivoExiste(archivos, "Tiquete" + Loteria + ".txt")) {//Archivo nombre_archivo es el archivo que vamos a copiar
             try {
@@ -1502,9 +1508,9 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
                 String jugador_print = jugador.replace("x_x"," ");
                 if (exed_monto.isEmpty()) {
-                    linea_temp = "\n#############################\n\n Total:  " + monto_venta + " colones. \n\n#############################\n\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
+                    linea_temp = "\n#############################\n Total:  " + monto_venta + " colones. \n#############################\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
                 } else {
-                    linea_temp = "\n#############################\n\n" + exed_monto + "\n#############################\nTotal:  " + monto_venta + " colones. \n\n#############################\n\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
+                    linea_temp = "\n#############################\n" + exed_monto + "\n#############################\nTotal:  " + monto_venta + " colones. \n#############################\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
                 }
                 contenido = contenido + linea_temp + "\n\n\n";
                 monto_venta = 0;

@@ -121,31 +121,27 @@ public class TiqueteActivity extends AppCompatActivity {
     private HashMap<String, String> abajos2 = new HashMap<String, String>();
     private String SHEET = "";
     private String SPREADSHEET_ID;
-    private String spreadSheet_loterias = "1qJhZ_5nnLHHMlOCFywxPTzDbvJnT_fKf7EuvTOmCbU0";
+    private String spreadSheet_loterias = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
 
     @Override
     protected void onPause() {
         super.onPause();
-
         try {
             subir_facturas_resagadas("nada");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         try {
             subir_facturas_resagadas("nada");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -201,9 +197,12 @@ public class TiqueteActivity extends AppCompatActivity {
                 }
             }
         } else {
-            FECHA.setText(fecha_selectedS + "/" + mes_selectedS + "/" + anio_selectedS);
+            FECHA.setText("HOY");
+            fecha_real = "HOY";
+            SPREADSHEET_ID = Spread_Sheet_Id;
+           /* FECHA.setText(fecha_selectedS + "/" + mes_selectedS + "/" + anio_selectedS);
             fecha_real = "FUTURO";
-            SPREADSHEET_ID = Spread_Sheet_Id_maniana;
+            SPREADSHEET_ID = Spread_Sheet_Id_maniana; */
         }
 
         fecha_selected = Integer.parseInt(fecha_selectedS);
@@ -431,7 +430,7 @@ public class TiqueteActivity extends AppCompatActivity {
             //Get BluetoothAdapter
             BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
             if (btAdapter == null) {
-                Toast.makeText(getBaseContext(), "BlueTooth abierto", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "BlueTooth abierto!", Toast.LENGTH_SHORT).show();
                 return;
             }
             // Get sunmi InnerPrinter BluetoothDevice
@@ -1089,17 +1088,17 @@ public class TiqueteActivity extends AppCompatActivity {
         contenido = "";//Aqui se lee el contenido del archivo guardado.
         linea_temp = "Factura # " + consecutivo_str + "\n";
         contenido = contenido + linea_temp;
-        linea_temp = "\n       --->***********<---\n";
+        linea_temp = "\n      --->***********<---";
         contenido = contenido + linea_temp + "\n";
-        linea_temp = "     ** Tiempos " + Nombre_puesto + " **  \n";
+        linea_temp = "    **     Tiempos " + Nombre_puesto + "   **  ";
         contenido = contenido + linea_temp + "\n";
         if (tipo_lot.equals("Reventados")) {
-            linea_temp = "Pagamos " + Paga1 + " veces bolita roja!\n    y " + Paga2 + " veces bolita verde!\n";
+            linea_temp = "Pagamos " + Paga1 + " veces bolita roja!\n    y " + Paga2 + " veces bolita verde!";
         } else {
-            linea_temp = "       Pagamos " + Paga1 + " veces!!!\n";
+            linea_temp = "       Pagamos " + Paga1 + " veces!!!";
         }
         contenido = contenido + linea_temp + "\n";
-        linea_temp = "       Somos la banca mas \n        solida del pais.\n";
+        linea_temp = "       Somos la banca mas \n        solida del pais";
         contenido = contenido + linea_temp + "\n";
         linea_temp = "       --->***********<---\n";
         contenido = contenido + linea_temp + "\n";
@@ -1112,7 +1111,7 @@ public class TiqueteActivity extends AppCompatActivity {
         } else {
             linea_temp = "el dia: " + fecha + "/" + mes + "/" + anio;
         }
-        contenido = contenido + linea_temp + "\n\n#############################";
+        contenido = contenido + linea_temp + "\n#############################";
         String archivos[] = fileList();
         if (ArchivoExiste(archivos, "Tiquete" + Loteria + ".txt")) {//Archivo nombre_archivo es el archivo que vamos a copiar
 
@@ -1163,9 +1162,9 @@ public class TiqueteActivity extends AppCompatActivity {
                 String jugador_print = jugador.replace("x_x"," ");
 
                 if (exed_monto.isEmpty()) {
-                    linea_temp = "\n#############################\n\n Total:  " + monto_venta + " colones. \n\n#############################\n\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
+                    linea_temp = "\n#############################\n Total:  " + monto_venta + " colones. \n#############################\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
                 } else {
-                    linea_temp = "\n#############################\n\n" + exed_monto + "\n#############################\nTotal:  " + monto_venta + " colones. \n\n#############################\n\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
+                    linea_temp = "\n#############################\n" + exed_monto + "\n#############################\nTotal:  " + monto_venta + " colones. \n#############################\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
                 }
 
 
@@ -1176,27 +1175,6 @@ public class TiqueteActivity extends AppCompatActivity {
             }catch (IOException e) {
             }
         }
-
-
-/*
-        boolean flag_internet = verificar_internet();
-        JSONObject objeto_Json_a_subir = null;
-        if (flag_internet) {
-            objeto_Json_a_subir = obtener_Json(consecutivo_str);
-        } else {
-            //Toast.makeText(this, "Error al subir factura #" + consecutivo_str + ". \nVerifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
-        }
-
-        if (!flag_internet) {
-            //Toast.makeText(this, "-----*****************-----\n        NOTA DE SEGURIDAD:\n-----*****************-----\n\nError al cifrar archivo.\nArchivo no se ha subido!", Toast.LENGTH_LONG).show();
-        } else {
-            subir_factura(objeto_Json_a_subir, consecutivo_str);
-        }
-
-        //Degug:
-        //imprimir_archivo("facturas_online.txt");
-
-*/
 
         try {
             subir_facturas_resagadas(contenido);
