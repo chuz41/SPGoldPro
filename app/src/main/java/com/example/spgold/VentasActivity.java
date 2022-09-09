@@ -456,7 +456,9 @@ public class VentasActivity extends AppCompatActivity {
         }
     }
 
-    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {//Este metodo revisa si se ha subido parte del tiquete a la nube.
+    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {
+        //Este metodo revisa si se ha subido parte del tiquete a la nube.
+
         //Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
         RequestQueue requestQueue;
         // Instantiate the cache
@@ -1122,6 +1124,10 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Hora_lista_N", loter.get("Hora_lista_N"));
             Config.putExtra("Limite_maximo", loter.get("Limite_maximo"));
             Config.putExtra("Nombre_puesto", loter.get("Nombre_puesto"));
+            Config.putExtra("Apodo_M", loter.get("Apodo_M"));
+            Config.putExtra("Apodo_M", loter.get("Apodo_D"));
+            Config.putExtra("Apodo_M", loter.get("Apodo_T"));
+            Config.putExtra("Apodo_M", loter.get("Apodo_N"));
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));

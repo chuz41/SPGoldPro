@@ -57,6 +57,8 @@
     <string name="vendedores">Ver vendedor</string>
     <string name="vendedores2">Vendedores</string>
     <string name="edit_loterias">Ver listas</string>
+    <string name="pedir_codigo_tv">Introduzca su codigo de vendedor...</string>
+    <string name="pedir_codigo_et">CODIGO VENDEDOR</string>
     <string name="agregar_horbt">Agregar</string>
     <string name="confirmar">CONFIRMAR</string>
     <string name="saludo_agregar_winners">Agregar numeros ganadores</string>
