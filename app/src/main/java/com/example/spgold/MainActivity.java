@@ -47,7 +47,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +58,13 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     private TextView inicio;
+    private String dia;
+    private String mes;
+    private String anio;
+    private String ahora;
+    private String fecha;
+    private String hora;
+    private String minuto;
     private String nombre_puesto;
     private TextView tv_active;
     private EditText et_ID;
@@ -73,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private String sid_loterias;
     private String s_activ = "maquinas";
     private String maqui;
+    private Map<String, Integer> meses = new HashMap<String, Integer>();
 
     @Override
     protected void onPause() {
@@ -83,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -103,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        inicio = (TextView)findViewById(R.id.tv_inicio);
+        inicio = (TextView) findViewById(R.id.tv_inicio);
         passET = (EditText) findViewById(R.id.et_password);
         button_ventas = (Button) findViewById(R.id.button_ventas);
         button_config = (Button) findViewById(R.id.button_config);
@@ -116,7 +126,11 @@ public class MainActivity extends AppCompatActivity {
 
         passET.setFocusableInTouchMode(false);
 
-        crear_archivo_activation();
+        //check_activation();
+        ocultar_todito("OnCreate");
+        Date now = Calendar.getInstance().getTime();
+        ahora = now.toString();
+        separar_fechaYhora();
 
 
         try {
@@ -129,32 +143,55 @@ public class MainActivity extends AppCompatActivity {
 
         String archivos[] = fileList();
         boolean crear_lot = true;
-        for (int i = 0; i < archivos.length; i++){
+        for (int i = 0; i < archivos.length; i++) {
             Pattern pattern = Pattern.compile("loteria_sfile", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(archivos[i]);
             boolean matchFound = matcher.find();
-            if (matchFound){
-                //abrir archivo y leerlocrear_loteria_decrear_loteria_demomo
+            if (matchFound) {
+                //abrir archivo y leerlo crear_loteria_de crear_loteria_demo mo
                 Log.v("ErrorCrearLoterias", "Archivo encontrado: " + archivos[i]);
                 crear_lot = false;
                 break;
             }
         }
-        if (crear_lot){
+        if (crear_lot) {
             crear_archivo_activation();
+        } else {
+            try {
+                ocultar_todito("Oncreate2");
+                InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
+                //imprimir_archivo("facturas_online.txt");
+                BufferedReader br = new BufferedReader(archivo);
+                String linea = br.readLine();
+
+                Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
+                //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
+                String[] split = linea.split("_separador_");
+                maqui = split[1];
+                sid_loterias = split[2];
+                sid_vendidas = split[3];
+                linea = br.readLine();
+                //ocultar_todito();
+                check_activation();
+                br.close();
+                archivo.close();
+
+            } catch (IOException e) {
+            }
+            mostrar_active_vend();
         }
 
         boolean crear_invoice_file = true;
-        for (int i = 0; i < archivos.length; i++){
+        for (int i = 0; i < archivos.length; i++) {
             Pattern pattern = Pattern.compile("invoice", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(archivos[i]);
             boolean matchFound = matcher.find();
-            if (matchFound){
+            if (matchFound) {
                 crear_invoice_file = false;
                 break;
             }
         }
-        if (crear_invoice_file){
+        if (crear_invoice_file) {
             generar_invoice_file();
         }
 
@@ -173,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 4) {
@@ -183,11 +221,24 @@ public class MainActivity extends AppCompatActivity {
                     passET.setText("");
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
 
             }
         });
+    }
+
+    private void separar_fechaYhora(){
+        String[] split = ahora.split(" ");
+        dia = split[0];
+        mes = String.valueOf(meses.get(split[1]));
+        anio = split[5];
+        String hora_completa = split[3];
+        fecha = split[2];
+        split = hora_completa.split(":");
+        minuto = split[1];
+        hora = split[0];
     }
 
     private void crear_archivo_activation() {
@@ -206,7 +257,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (crear_file_activ){
-            generar_active_file();
+            Log.v("crear archivo activ", "Se creara el archivo \"vent_active.txt\" (mentira)");
+            text_listener();
         } else {
             check_activation();
         }
@@ -215,9 +267,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void generar_active_file() {
         crear_archivo("vent_active.txt");
-        agregar_linea_archivo("vent_active.txt","FALSE");
+        agregar_linea_archivo("vent_active.txt","FALSE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_0");
         Log.v("file active ", ".\nContenido del archivo vent_active.txt: " + imprimir_archivo("vent_active.txt"));
+    }
 
+    private void text_listener() {
+
+
+        et_ID.setText("");
         ocultar_active_vend();
         et_ID.setFocusableInTouchMode(true);
         et_ID.requestFocus();
@@ -231,13 +288,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 2) {
                     String codigo = et_ID.getText().toString();//Se parcea el valor a un string
-                    if (codigo.isEmpty()) {
-                        //imprimir_mensaje();
-                        et_ID.setText("");
-                        return;
-                    } else if (codigo.length() == 11) {
+                    if (codigo.length() == 11) {
                         boolean aceptado = verificar_codigo(codigo);
                         if (aceptado) {
                             vendedor_real(codigo);
@@ -245,13 +297,14 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             tv_active.setText("Debe ingresar un codigo valido!");
                             msg("Debe ingresar un codigo valido!");
+                            et_ID.setText("");
                             et_ID.setFocusableInTouchMode(true);
                             et_ID.requestFocus();
+                            text_listener();
                         }
                     } else {
                         //
                     }
-                }
             }
 
             @Override
@@ -264,6 +317,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void vendedor_real(String codigo) {//Aqui agarran valor maqui, sid_loterias,
+        et_ID.setFocusableInTouchMode(false);
+        ocultar_teclado();
+        tv_active.setText("Buscando vendedor en la base de datos...\nPor favor espere...");
         if (verificar_internet()) {
             RequestQueue requestQueue;
 
@@ -299,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
                                 boolean flag_real = false;
                                 for (int i = 1; i < split.length; i++) {
                                     String[] split2 = split[i].split("\"");
-                                    Log.v("vendedor real " + String.valueOf(i+3), ".\nSplit:\nSplit2: " + split2[2] + ", Split18: " + split2[18] + "\nMaquina: " + split2[2] + "\nEstado: " + split2[18] + "\n.");
+                                    Log.v("vendedor real 3" + String.valueOf(i+3), ".\nSplit:\nSplit2: " + split2[2] + ", Split18: " + split2[18] + "\nMaquina: " + split2[2] + "\nEstado: " + split2[18] + "\n.");
                                     if (split2[6].equals(codigo)) {
                                         flag_real = true;
                                         maqui = split2[2];
@@ -571,6 +627,8 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
+                                Log.v("loterias creadas", "Se han creado todas las loterias!!!");
+                                generar_active_file();
                                 mostrar_active_vend();
                                 check_activation();
                             }
@@ -593,7 +651,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    revisar el manifest a ver si esta igual que los entregables
+    //TODO: Revisar el manifest a ver si esta igual que los entregables
 
     private Boolean verificar_codigo(String codigo){
 
@@ -626,76 +684,111 @@ public class MainActivity extends AppCompatActivity {
 
     private void check_activation() {
 
-        ocultar_todito();
+        ocultar_todito("check_activation");
         Log.v("Check active ", "Se va a chequear si el vendedor esta activo o inactivo. ");
         if (verificar_internet()) {
-            RequestQueue requestQueue;
 
-            // Instantiate the cache
-            Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+            boolean new_flag = false;
+            try {
+                InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
+                //imprimir_archivo("facturas_online.txt");
+                BufferedReader br = new BufferedReader(archivo);
+                String linea = br.readLine();
+                while (linea != null) {
+                    //Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
+                    //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
+                    String[] split = linea.split("_separador_");
+                    if (split[0].equals("TRUE")) {
+                        if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                            new_flag = true;
+                        } else {
+                            mostrar_todito();
+                            //Do nothing.
+                        }
+                    } else {
+                        new_flag = true;
+                    }
+                    linea = br.readLine();
+                }
 
-            // Set up the network to use HttpURLConnection as the HTTP client.
-            Network network = new BasicNetwork(new HurlStack());
+                br.close();
+                archivo.close();
 
-            // Instantiate the RequestQueue with the cache and network.
-            requestQueue = new RequestQueue(cache, network);
+            } catch (IOException e) {}
 
-            // Start the queue
-            requestQueue.start();
+            if (new_flag) {
+                RequestQueue requestQueue;
 
-            String url = readRowURL_activ + sid_activ + "&sheet=" + s_activ;
+                // Instantiate the cache
+                Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-            Log.v("Crear file active URL ", ".\nurl: " + url + "\n.");
+                // Set up the network to use HttpURLConnection as the HTTP client.
+                Network network = new BasicNetwork(new HurlStack());
 
-            // Formulate the request and handle the response.
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                    new Response.Listener<String>() {
-                        @RequiresApi(api = Build.VERSION_CODES.N)
-                        @Override
-                        public void onResponse(String response) {
-                            // Do something with the response
-                            Log.v("ver_activ config 0", ".\nResponse:\n" + response);
-                            String[] split_test = response.split("\"");
-                            Log.v("ver_activ config 1", ".\nSplit_test:\n" + split_test[0] + ", " + split_test[1] + ", " + split_test[2] + ", " + split_test[3] + "\n");
-                            if (response != null & split_test.length > 3) {
-                                String[] split = response.split("maquina");//Se separa el objeto Json
-                                Log.v("ver_activ config 2", ".\nSplit:\n" + split[0] + ", " + split[1] + ", " + split[2] + "\n");
-                                for (int i = 1; i < split.length; i++) {
-                                    String[] split2 = split[i].split("\"");
-                                    Log.v("ver_activ config 2", ".\nSplit:\nSplit2: " + split2[2] + ", Split18: " + split2[18] + "\n");
-                                    Log.v("ver_activ config 3", ".\nMaquina: " + split2[2] + "\nEstado: " + split2[18] + "\n.");
-                                    if (split2[2].equals(maqui)) {
-                                        if (split2[18].equals("TRUE")) {
-                                            borrar_archivo("vent_active.txt");
-                                            crear_archivo("vent_active.txt");
-                                            agregar_linea_archivo("vent_active.txt", "TRUE");
-                                            mostrar_todito();
-                                            break;
-                                            //Continua trabajando con la app.
-                                        } else {//Vendedor inactivo. Se cierra la app.
-                                            borrar_archivo("vent_active.txt");
-                                            crear_archivo("vent_active.txt");
-                                            agregar_linea_archivo("vent_active.txt", "FALSE");
-                                            textView_esperar.setText("Vendedor inactivo. La app se cierra ahora...");
-                                            esperar();
-                                            break;
+                // Instantiate the RequestQueue with the cache and network.
+                requestQueue = new RequestQueue(cache, network);
+
+                // Start the queue
+                requestQueue.start();
+
+                String url = readRowURL_activ + sid_activ + "&sheet=" + s_activ;
+
+                Log.v("Crear file active URL ", ".\nurl: " + url + "\n.");
+
+                // Formulate the request and handle the response.
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onResponse(String response) {
+                                // Do something with the response
+                                Log.v("ver_activ config 0", ".\nResponse:\n" + response);
+                                String[] split_test = response.split("\"");
+                                Log.v("ver_activ config 1", ".\nSplit_test:\n" + split_test[0] + ", " + split_test[1] + ", " + split_test[2] + ", " + split_test[3] + "\n");
+                                if (response != null & split_test.length > 3) {
+                                    String[] split = response.split("maquina");//Se separa el objeto Json
+                                    Log.v("ver_activ config 2", ".\nSplit:\n" + split[0] + ", " + split[1] + ", " + split[2] + "\n");
+                                    for (int i = 1; i < split.length; i++) {
+                                        String[] split2 = split[i].split("\"");
+                                        Log.v("ver_activ config 2", ".\nSplit:\nSplit2: " + split2[2] + ", Split18: " + split2[18] + "\n");
+
+                                        if (split2[2].equals(maqui)) {
+                                            Log.v("ver_activ config 3", ".\nMaquina: " + split2[2] + "\nEstado: " + split2[18] + "\n.");
+                                            if (split2[18].equals("TRUE")) {
+                                                borrar_archivo("vent_active.txt");
+                                                crear_archivo("vent_active.txt");
+                                                agregar_linea_archivo("vent_active.txt", "TRUE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_" + fecha);
+                                                mostrar_todito();
+                                                break;
+                                                //Continua trabajando con la app.
+                                            } else {//Vendedor inactivo. Se cierra la app.
+                                                borrar_archivo("vent_active.txt");
+                                                crear_archivo("vent_active.txt");
+                                                agregar_linea_archivo("vent_active.txt", "FALSE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_" + fecha);
+                                                textView_esperar.setText("Vendedor inactivo. La app se cierra ahora...");
+                                                esperar();
+                                                break;
+                                            }
+                                        } else {
+                                            //Do nothing, continue
                                         }
-                                    } else {
-                                        //Do nothing, continue
                                     }
                                 }
                             }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // Handle error
-                        }
-                    });
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // Handle error
+                            }
+                        });
 
-            // Add the request to the RequestQueue.
-            requestQueue.add(stringRequest);
+                // Add the request to the RequestQueue.
+                requestQueue.add(stringRequest);
+            } else {
+                mostrar_todito();
+                //Do nothing.
+            }
         } else {//No hay internet.
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
@@ -705,7 +798,8 @@ public class MainActivity extends AppCompatActivity {
                 while (linea != null) {
                     Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
                     //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
-                    if (linea.equals("TRUE")) {
+                    String[] split = linea.split("_separador_");
+                    if (split[0].equals("TRUE")) {
                         mostrar_todito();
                         //Do nothing. Continue
                     } else {
@@ -755,8 +849,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     private void mostrar_todito() {
 
 
@@ -773,9 +865,10 @@ public class MainActivity extends AppCompatActivity {
         et_ID.setVisibility(View.INVISIBLE);
     }
 
-    private void ocultar_todito() {
+    private void ocultar_todito(String trace) {
 
 
+        Log.v("ocultar_todito " + trace, "Se hace todo invisible");
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("Verificando vendedor activo...\n\n         Por favor espere...");
         inicio.setVisibility(View.INVISIBLE);
@@ -1503,8 +1596,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void esperar () {
+        ocultar_todito("esperar");
         Toast.makeText(this, "Vendedor inactivo. La app se cierra ahora...", Toast.LENGTH_LONG).show();
         textView_esperar.setText("Vendedor inactivo. La app se cierra ahora...");
+
         for (int i = 0; i > 10; i++) {
             try {
                 Thread.sleep(500);
@@ -1512,6 +1607,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        mostrar_todito();
         boton_atras_active();
     }
 

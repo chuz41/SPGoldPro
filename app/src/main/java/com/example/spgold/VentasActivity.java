@@ -124,6 +124,7 @@ public class VentasActivity extends AppCompatActivity {
 
         mensaje_to_print = getIntent().getStringExtra( "mensaje_toast");
 
+
         if (mensaje_to_print != null) {
             Toast.makeText(this, mensaje_to_print, Toast.LENGTH_LONG).show();
         }
@@ -229,7 +230,7 @@ public class VentasActivity extends AppCompatActivity {
                             }
 
                         }
-                    }
+                    }private Map<String, Integer> meses = new HashMap<String, Integer>();
 
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -242,6 +243,8 @@ public class VentasActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 
     private void mostrar_todo() {
 /*
@@ -1125,14 +1128,25 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Limite_maximo", loter.get("Limite_maximo"));
             Config.putExtra("Nombre_puesto", loter.get("Nombre_puesto"));
             Config.putExtra("Apodo_M", loter.get("Apodo_M"));
-            Config.putExtra("Apodo_M", loter.get("Apodo_D"));
-            Config.putExtra("Apodo_M", loter.get("Apodo_T"));
-            Config.putExtra("Apodo_M", loter.get("Apodo_N"));
+            Config.putExtra("Apodo_D", loter.get("Apodo_D"));
+            Config.putExtra("Apodo_T", loter.get("Apodo_T"));
+            Config.putExtra("Apodo_N", loter.get("Apodo_N"));
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));
             String Loteria = loteria.getSelectedItem().toString();
-            String Horario = horario.getSelectedItem().toString();
+            String Horario = "";
+            if (horario.getSelectedItem().toString().equals(loter.get("Apodo_M"))) {
+                Horario = "Maniana";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_D"))) {
+                Horario = "Dia";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_T"))) {
+                Horario = "Tarde";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_N"))) {
+                Horario = "Noche";
+            } else {
+                //Do nothing. Never come here!
+            }
             Config.putExtra("Loteria", Loteria);
             Config.putExtra("Horario", Horario);
             Config.putExtra("Spread_Sheet_Id", loter.get("Spread_Sheet_Id"));
@@ -1163,11 +1177,26 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Hora_lista_N", loter.get("Hora_lista_N"));
             Config.putExtra("Limite_maximo", loter.get("Limite_maximo"));
             Config.putExtra("Nombre_puesto", loter.get("Nombre_puesto"));
+            Config.putExtra("Apodo_M", loter.get("Apodo_M"));
+            Config.putExtra("Apodo_D", loter.get("Apodo_D"));
+            Config.putExtra("Apodo_T", loter.get("Apodo_T"));
+            Config.putExtra("Apodo_N", loter.get("Apodo_N"));
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));
             String Loteria = loteria.getSelectedItem().toString();
-            String Horario = horario.getSelectedItem().toString();
+            String Horario = "";
+            if (horario.getSelectedItem().toString().equals(loter.get("Apodo_M"))) {
+                Horario = "Maniana";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_D"))) {
+                Horario = "Dia";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_T"))) {
+                Horario = "Tarde";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_N"))) {
+                Horario = "Noche";
+            } else {
+                //Do nothing. Never come here!
+            }
             Config.putExtra("Loteria", Loteria);
             Config.putExtra("Horario", Horario);
             Config.putExtra("Spread_Sheet_Id", loter.get("Spread_Sheet_Id"));
@@ -1198,11 +1227,26 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Hora_lista_N", loter.get("Hora_lista_N"));
             Config.putExtra("Limite_maximo", loter.get("Limite_maximo"));
             Config.putExtra("Nombre_puesto", loter.get("Nombre_puesto"));
+            Config.putExtra("Apodo_M", loter.get("Apodo_M"));
+            Config.putExtra("Apodo_D", loter.get("Apodo_D"));
+            Config.putExtra("Apodo_T", loter.get("Apodo_T"));
+            Config.putExtra("Apodo_N", loter.get("Apodo_N"));
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));
             String Loteria = loteria.getSelectedItem().toString();
-            String Horario = horario.getSelectedItem().toString();
+            String Horario = "";
+            if (horario.getSelectedItem().toString().equals(loter.get("Apodo_M"))) {
+                Horario = "Maniana";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_D"))) {
+                Horario = "Dia";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_T"))) {
+                Horario = "Tarde";
+            } else if (horario.getSelectedItem().toString().equals(loter.get("Apodo_N"))) {
+                Horario = "Noche";
+            } else {
+                //Do nothing. Never come here!
+            }
             Config.putExtra("Loteria", Loteria);
             Config.putExtra("Horario", Horario);
             Config.putExtra("Spread_Sheet_Id", loter.get("Spread_Sheet_Id"));
@@ -1237,8 +1281,24 @@ public class VentasActivity extends AppCompatActivity {
         for (String i : loter.keySet()) {
 
             if (loter.get(i).equals("true")){
-                horarios[a+1] = i;
-                a++;
+
+                if (i.equals("Maniana")) {
+                    horarios[a+1] = loter.get("Apodo_M");
+                    a++;
+                } else if (i.equals("Dia")) {
+                    horarios[a+1] = loter.get("Apodo_D");
+                    a++;
+                } else if (i.equals("Tarde")) {
+                    horarios[a+1] = loter.get("Apodo_T");
+                    a++;
+                } else if (i.equals("Noche")) {
+                    horarios[a+1] = loter.get("Apodo_N");
+                    a++;
+                } else {
+                    //Do nothing. Never come here!
+                }
+            } else {
+                //Do nothing. Significa que el horario no esta habilitado!
             }
         }
     }

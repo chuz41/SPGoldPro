@@ -123,6 +123,10 @@ public class TiqueteActivity extends AppCompatActivity {
     private String SPREADSHEET_ID;
     private String spreadSheet_loterias = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
+    private String Apodo_M;
+    private String Apodo_D;
+    private String Apodo_T;
+    private String Apodo_N;
 
     @Override
     protected void onPause() {
@@ -171,6 +175,10 @@ public class TiqueteActivity extends AppCompatActivity {
         Hora_lista_N = getIntent().getStringExtra("Hora_lista_N");
         Limite_maximo = getIntent().getStringExtra("Limite_maximo");
         Nombre_puesto = getIntent().getStringExtra("Nombre_puesto");
+        Apodo_M = getIntent().getStringExtra("Apodo_M");
+        Apodo_D = getIntent().getStringExtra("Apodo_D");
+        Apodo_T = getIntent().getStringExtra("Apodo_T");
+        Apodo_N = getIntent().getStringExtra("Apodo_N");
         Numero_maquina = getIntent().getStringExtra("Numero_maquina");
         Comision_vendedor = getIntent().getStringExtra("Comision_vendedor");
         Spread_Sheet_Id = getIntent().getStringExtra("Spread_Sheet_Id");

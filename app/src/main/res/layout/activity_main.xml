@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/et_ID"
-        android:layout_width="305dp"
-        android:layout_height="48dp"
-        android:hint="@string/pedir_codigo_et"
-        android:inputType="textPersonName|text|textCapWords"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/tv_inicio"
         android:layout_width="302dp"
@@ -120,8 +109,21 @@
         android:id="@+id/tv_active"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/pedir_codigo_tv"
         app:layout_constraintBottom_toTopOf="@+id/et_ID"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/et_ID"
+        android:layout_width="305dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="80dp"
+        android:hint="@string/pedir_codigo_et"
+        android:inputType="textPersonName|text|textCapWords"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.49" />
 </androidx.constraintlayout.widget.ConstraintLayout>
