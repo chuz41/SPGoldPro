@@ -16,20 +16,20 @@ import java.util.UUID;
 
 public class BluetoothUtil {
     private static final UUID PRINTER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private static final String Innerprinter_Address = "00:11:22:33:44:55";//SunmiV2
+    //private static final String Innerprinter_Address = "00:11:22:33:44:55";//SunmiV2
     //private static final String Innerprinter_Address = "20:18:05:22:03:06";
     //private static final String Innerprinter_Address = "66:22:0B:15:5C:87";
-    //private static final String Innerprinter_Address = "66:22:4F:58:E8:C3";//GOOJPRT Portable print
+    private static final String Innerprinter_Address = "66:22:4F:58:E8:C3";//GOOJPRT Portable print
     //private static final String Innerprinter_Address = "66:22:87:38:52:F6";//58 - 80 mm Portable print
     public static BluetoothAdapter getBTAdapter() {
         return BluetoothAdapter.getDefaultAdapter();
     }
 
-    public static BluetoothDevice getDevice(BluetoothAdapter bluetoothAdapter) {
+    public static BluetoothDevice getDevice(BluetoothAdapter bluetoothAdapter, String impresora) {
         BluetoothDevice innerprinter_device = null;
         @SuppressLint("MissingPermission") Set<BluetoothDevice> devices = bluetoothAdapter.getBondedDevices();
         for (BluetoothDevice device : devices) {
-            if (device.getAddress().equals(Innerprinter_Address)) {
+            if (device.getAddress().equals(impresora)) {
                 innerprinter_device = device;
                 break;
             }

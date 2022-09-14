@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,7 +15,9 @@ import android.widget.Toast;
 
 import com.example.spgold.Util.BluetoothUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class VerActivity extends AppCompatActivity {
 
@@ -47,6 +50,23 @@ public class VerActivity extends AppCompatActivity {
     }
     //#################################################################################################
 
+    private String get_impresora() {
+        String impresora = "00:11:22:33:44:55";
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
+            //imprimir_archivo("facturas_online.txt");
+            BufferedReader br = new BufferedReader(archivo);
+            String linea = br.readLine();
+            Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
+            //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
+            String[] split = linea.split("_separador_");
+            impresora = split[5];
+            br.close();
+            archivo.close();
+        } catch (IOException e) {}
+        return impresora;
+    }
+
 
     public void printIt(View view) {
         BluetoothSocket socket;
@@ -60,7 +80,8 @@ public class VerActivity extends AppCompatActivity {
             return;
         }
         // Get sunmi InnerPrinter BluetoothDevice
-        BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
+        String impresora = get_impresora();
+        BluetoothDevice device = BluetoothUtil.getDevice(btAdapter, impresora);
         if (device == null) {
             Toast.makeText(getBaseContext(), "Make Sure Bluetooth have InnterPrinter", Toast.LENGTH_LONG).show();
             return;

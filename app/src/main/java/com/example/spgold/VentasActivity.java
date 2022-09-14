@@ -91,6 +91,8 @@ public class VentasActivity extends AppCompatActivity {
     private Map<String, String> loter = new HashMap<String, String>();
     private Map<String, Integer> meses = new HashMap<String, Integer>();
 
+    private String sid_vendidas;
+
 
     @Override
     protected void onPause() {
@@ -123,6 +125,7 @@ public class VentasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ventas);
 
         mensaje_to_print = getIntent().getStringExtra( "mensaje_toast");
+        sid_vendidas = getIntent().getStringExtra( "sid_vendidas");
 
 
         if (mensaje_to_print != null) {
@@ -1131,6 +1134,7 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Apodo_D", loter.get("Apodo_D"));
             Config.putExtra("Apodo_T", loter.get("Apodo_T"));
             Config.putExtra("Apodo_N", loter.get("Apodo_N"));
+            Config.putExtra("sid_vendidas", sid_vendidas);
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));
@@ -1181,6 +1185,7 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Apodo_D", loter.get("Apodo_D"));
             Config.putExtra("Apodo_T", loter.get("Apodo_T"));
             Config.putExtra("Apodo_N", loter.get("Apodo_N"));
+            Config.putExtra("sid_vendidas", sid_vendidas);
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));
@@ -1231,6 +1236,7 @@ public class VentasActivity extends AppCompatActivity {
             Config.putExtra("Apodo_D", loter.get("Apodo_D"));
             Config.putExtra("Apodo_T", loter.get("Apodo_T"));
             Config.putExtra("Apodo_N", loter.get("Apodo_N"));
+            Config.putExtra("sid_vendidas", sid_vendidas);
             Config.putExtra("Numero_maquina", loter.get("Numero_maquina"));
             Config.putExtra("Comision_vendedor", loter.get("Comision_vendedor"));
             Config.putExtra("tipo_lot", loter.get("Tipo_juego"));

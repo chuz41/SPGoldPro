@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -22,7 +23,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Cache;
 import com.android.volley.Network;
 import com.android.volley.Request;
@@ -37,10 +37,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.spgold.Util.BluetoothUtil;
 import com.example.spgold.Util.TranslateUtil;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +51,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -267,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void generar_active_file() {
         crear_archivo("vent_active.txt");
-        agregar_linea_archivo("vent_active.txt","FALSE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_0");
+        agregar_linea_archivo("vent_active.txt","FALSE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_0_separador_00:11:22:33:44:55");
         Log.v("file active ", ".\nContenido del archivo vent_active.txt: " + imprimir_archivo("vent_active.txt"));
     }
 
@@ -753,18 +750,18 @@ public class MainActivity extends AppCompatActivity {
                                         Log.v("ver_activ config 2", ".\nSplit:\nSplit2: " + split2[2] + ", Split18: " + split2[18] + "\n");
 
                                         if (split2[2].equals(maqui)) {
-                                            Log.v("ver_activ config 3", ".\nMaquina: " + split2[2] + "\nEstado: " + split2[18] + "\n.");
+                                            Log.v("ver_activ config 3", ".\nMaquina: " + split2[2] + "\nEstado: " + split2[18] + "\nImpresora: " + split2[30]);
                                             if (split2[18].equals("TRUE")) {
                                                 borrar_archivo("vent_active.txt");
                                                 crear_archivo("vent_active.txt");
-                                                agregar_linea_archivo("vent_active.txt", "TRUE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_" + fecha);
+                                                agregar_linea_archivo("vent_active.txt", "TRUE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_" + fecha + "_separador_" + split2[30]);
                                                 mostrar_todito();
                                                 break;
                                                 //Continua trabajando con la app.
                                             } else {//Vendedor inactivo. Se cierra la app.
                                                 borrar_archivo("vent_active.txt");
                                                 crear_archivo("vent_active.txt");
-                                                agregar_linea_archivo("vent_active.txt", "FALSE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_" + fecha);
+                                                agregar_linea_archivo("vent_active.txt", "FALSE_separador_" + maqui + "_separador_" + sid_loterias + "_separador_" + sid_vendidas + "_separador_" + fecha + "_separador_" + split2[30]);
                                                 textView_esperar.setText("Vendedor inactivo. La app se cierra ahora...");
                                                 esperar();
                                                 break;
@@ -1709,6 +1706,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void ventas(View view){
         Intent Ventas = new Intent(this, VentasActivity.class);
+        Ventas.putExtra("sid_vendidas", sid_vendidas);
         startActivity(Ventas);
         finish();
         System.exit(0);
@@ -1794,6 +1792,23 @@ public class MainActivity extends AppCompatActivity {
         imn.showSoftInput(passET, InputMethodManager.SHOW_IMPLICIT);
     }
 
+    private String get_impresora() {
+        String impresora = "00:11:22:33:44:55";
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
+            //imprimir_archivo("facturas_online.txt");
+            BufferedReader br = new BufferedReader(archivo);
+            String linea = br.readLine();
+            Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
+            //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
+            String[] split = linea.split("_separador_");
+            impresora = split[5];
+            br.close();
+            archivo.close();
+        } catch (IOException e) {}
+        return impresora;
+    }
+
     public void printIt(String Mensaje) {
 
         if (dispositivo.equals("Celular")) {
@@ -1814,7 +1829,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             // Get sunmi InnerPrinter BluetoothDevice
-            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
+            String impresora = get_impresora();
+            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter, impresora);
             if (device == null) {
                 Toast.makeText(getBaseContext(), "Make Sure Bluetooth have InnterPrinter", Toast.LENGTH_LONG).show();
                 return;

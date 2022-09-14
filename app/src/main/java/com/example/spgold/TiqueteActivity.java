@@ -121,12 +121,13 @@ public class TiqueteActivity extends AppCompatActivity {
     private HashMap<String, String> abajos2 = new HashMap<String, String>();
     private String SHEET = "";
     private String SPREADSHEET_ID;
-    private String spreadSheet_loterias = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
+    private String spreadSheet_loterias;
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
     private String Apodo_M;
     private String Apodo_D;
     private String Apodo_T;
     private String Apodo_N;
+    private String sid_vendidas;
 
     @Override
     protected void onPause() {
@@ -179,6 +180,8 @@ public class TiqueteActivity extends AppCompatActivity {
         Apodo_D = getIntent().getStringExtra("Apodo_D");
         Apodo_T = getIntent().getStringExtra("Apodo_T");
         Apodo_N = getIntent().getStringExtra("Apodo_N");
+        sid_vendidas = getIntent().getStringExtra("sid_vendidas");
+        spreadSheet_loterias = sid_vendidas;
         Numero_maquina = getIntent().getStringExtra("Numero_maquina");
         Comision_vendedor = getIntent().getStringExtra("Comision_vendedor");
         Spread_Sheet_Id = getIntent().getStringExtra("Spread_Sheet_Id");
@@ -422,6 +425,23 @@ public class TiqueteActivity extends AppCompatActivity {
         return dispositivo;
     }
 
+    private String get_impresora() {
+        String impresora = "00:11:22:33:44:55";
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
+            //imprimir_archivo("facturas_online.txt");
+            BufferedReader br = new BufferedReader(archivo);
+            String linea = br.readLine();
+            Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
+            //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
+            String[] split = linea.split("_separador_");
+            impresora = split[5];
+            br.close();
+            archivo.close();
+        } catch (IOException e) {}
+        return impresora;
+    }
+
     public void printIt(String Mensaje) {
 
         if (dispositivo.equals("Celular")) {
@@ -442,7 +462,8 @@ public class TiqueteActivity extends AppCompatActivity {
                 return;
             }
             // Get sunmi InnerPrinter BluetoothDevice
-            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
+            String impresora = get_impresora();
+            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter, impresora);
             if (device == null) {
                 Toast.makeText(getBaseContext(), "Asegurese de tener conectada una impresora!!!", Toast.LENGTH_LONG).show();
                 return;
@@ -1098,7 +1119,7 @@ public class TiqueteActivity extends AppCompatActivity {
         contenido = contenido + linea_temp;
         linea_temp = "\n      --->***********<---";
         contenido = contenido + linea_temp + "\n";
-        linea_temp = "    **     Tiempos " + Nombre_puesto + "   **  ";
+        linea_temp = "    **  Tiempos " + Nombre_puesto + "   **  ";
         contenido = contenido + linea_temp + "\n";
         if (tipo_lot.equals("Reventados")) {
             linea_temp = "Pagamos " + Paga1 + " veces bolita roja!\n    y " + Paga2 + " veces bolita verde!";
@@ -2215,6 +2236,7 @@ public class TiqueteActivity extends AppCompatActivity {
             }
             Intent Activity_ventas = new Intent(this, VentasActivity.class);
             Activity_ventas.putExtra("mensaje_toast", "Sorteo " + Loteria + " " + Horario + " ha expirado!!!");
+            Activity_ventas.putExtra("sid_vendidas", sid_vendidas);
             startActivity(Activity_ventas);
             finish();
             System.exit(0);

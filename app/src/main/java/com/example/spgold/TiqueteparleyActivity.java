@@ -123,11 +123,12 @@ public class TiqueteparleyActivity extends AppCompatActivity {
     private String SPREADSHEET_ID;
     private HashMap<String, String> abajos2 = new HashMap<String, String>();
     private String addRowURL = "https://script.google.com/macros/s/AKfycbweyYb-DHVgyEdCWpKoTmvOxDGXleawjAN8Uw9AeJYbZ24t9arB/exec";
-    private String spreadSheet_loterias = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
+    private String spreadSheet_loterias;
     private String Apodo_M;
     private String Apodo_D;
     private String Apodo_T;
     private String Apodo_N;
+    private String sid_vendidas;
 
     @Override
     protected void onPause() {
@@ -187,6 +188,8 @@ public class TiqueteparleyActivity extends AppCompatActivity {
         Apodo_D = getIntent().getStringExtra("Apodo_D");
         Apodo_T = getIntent().getStringExtra("Apodo_T");
         Apodo_N = getIntent().getStringExtra("Apodo_N");
+        sid_vendidas = getIntent().getStringExtra("sid_vendidas");
+        spreadSheet_loterias = sid_vendidas;
         Numero_maquina = getIntent().getStringExtra("Numero_maquina");
         Comision_vendedor = getIntent().getStringExtra("Comision_vendedor");
         Loteria = getIntent().getStringExtra("Loteria");
@@ -813,6 +816,23 @@ public class TiqueteparleyActivity extends AppCompatActivity {
         return dispositivo;
     }
 
+    private String get_impresora() {
+        String impresora = "00:11:22:33:44:55";
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput("vent_active.txt"));
+            //imprimir_archivo("facturas_online.txt");
+            BufferedReader br = new BufferedReader(archivo);
+            String linea = br.readLine();
+            Log.v("chequear no internet", ".\nLinea: " + linea + "\n\n");
+            //Toast.makeText(this, "Debug:\nFuncion cambiar_bandera, linea:\n" + linea, Toast.LENGTH_LONG).show();
+            String[] split = linea.split("_separador_");
+            impresora = split[5];
+            br.close();
+            archivo.close();
+        } catch (IOException e) {}
+        return impresora;
+    }
+
     public void printIt(String Mensaje) {
 
         if (dispositivo.equals("Celular")) {
@@ -833,7 +853,8 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                 return;
             }
             // Get sunmi InnerPrinter BluetoothDevice
-            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
+            String impresora = get_impresora();
+            BluetoothDevice device = BluetoothUtil.getDevice(btAdapter, impresora);
             if (device == null) {
                 Toast.makeText(getBaseContext(), "Asegurese de tener conectada una impresora!!!", Toast.LENGTH_LONG).show();
                 return;
@@ -1528,7 +1549,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
         contenido = contenido + linea_temp;
         linea_temp = "\n       --->***********<---";
         contenido = contenido + linea_temp + "\n";
-        linea_temp = "    **     Tiempos " + Nombre_puesto + "   **  ";
+        linea_temp = "    **  Tiempos " + Nombre_puesto + "   **  ";
         contenido = contenido + linea_temp + "\n";
         linea_temp = "       Pagamos " + Paga1 + " veces!!!";
         contenido = contenido + linea_temp + "\n";
@@ -1566,10 +1587,22 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                         separacion_str = separacion_str + " ";
                     }
                     counter++;
+                    String numero1 = "";
+                    String numero2 = "";
+                    if (split[0].length() == 1) {
+                        numero1 = "0" + split[0];
+                    } else {
+                        numero1 = split[0];
+                    }
+                    if (split[1].length() == 1) {
+                        numero2 = "0" + split[1];
+                    } else {
+                        numero2 = split[1];
+                    }
                     if (counter == 1) {
-                        linea_tempo = split[0] + " " + split[1] + " " + separacion_str + split[2] + "|";
+                        linea_tempo = numero1 + " " + numero2 + " " + separacion_str + split[2] + "|";
                     } else if (counter == 2) {
-                        linea_tempo = linea_tempo + split[0] + " " + split[1] + " " + separacion_str + split[2];
+                        linea_tempo = linea_tempo + numero1 + " " + numero2 + " " + separacion_str + split[2];
                         counter = 0;
                     }
 
@@ -1588,7 +1621,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
 
                 String jugador_print = jugador.replace("x_x"," ");
                 if (exed_monto.isEmpty()) {
-                    linea_temp = "\n#############################\n Total:  " + monto_venta + " colones. \n#############################\n\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
+                    linea_temp = "\n#############################\n Total:  " + monto_venta + " colones. \n#############################\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
                 } else {
                     linea_temp = "\n#############################\n" + exed_monto + "\n#############################\nTotal:  " + monto_venta + " colones. \n#############################\nEstimado/a " + jugador_print + ", no\nolvide revisar su tiquete\nantes de retirarse del puesto.\n";
                 }
@@ -2368,6 +2401,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
             }
             Intent Activity_ventas = new Intent(this, VentasActivity.class);
             Activity_ventas.putExtra("mensaje_toast", "Sorteo " + Loteria + " " + Horario + " ha expirado!!!");
+            Activity_ventas.putExtra("sid_vendidas", sid_vendidas);
             startActivity(Activity_ventas);
             finish();
             System.exit(0);
