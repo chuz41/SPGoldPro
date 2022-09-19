@@ -1649,6 +1649,37 @@ public class MainActivity extends AppCompatActivity {
             crear_archivo(facturas_online);
         }
         ////////////////////////////////////////////////////////
+
+        ///////////////Se crea el archivo facturas_diarias.txt//////////
+        String facturas_diarias = "facturas_diarias.txt";
+        if (ArchivoExiste(files, facturas_diarias)) {
+            //Do nothing
+        } else {
+            //Se crea el archivo facturas_diarias.txt
+            crear_archivo(facturas_diarias);
+        }
+        ////////////////////////////////////////////////////////
+
+        ///////////////Se crea el archivo historial_facturas.txt//////////
+        String historial_facturas = "historial_facturas.txt";
+        if (ArchivoExiste(files, historial_facturas)) {
+            //Do nothing
+        } else {
+            //Se crea el archivo historial_facturas.txt
+            crear_archivo(historial_facturas);
+        }
+        ////////////////////////////////////////////////////////
+
+        ///////////////Se crea el archivo contabilidad.txt//////////
+        String contabilidad = "contabilidad.txt";
+        if (ArchivoExiste(files, contabilidad)) {
+            //Do nothing
+        } else {
+            //Se crea el archivo contabilidad.txt
+            crear_archivo(contabilidad);
+        }
+        ////////////////////////////////////////////////////////
+
     }
 
     private boolean ArchivoExiste (String archivos [],String Tiquete){

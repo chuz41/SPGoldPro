@@ -86,8 +86,8 @@ public class VendedoresActivity extends AppCompatActivity {
     private String readRowURL_premios = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=1iMXw4z0ljwvfhdR5BBmh586h1AOmNCWll7GYI1MJFbM&sheet=hoy";
     private String readRowURL_vendidas = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=";
     private String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=";
-    private String sid_vendidas = "1a65hsEUcJ8w5Xl13bsPPwF8FuvqPy3s-KCG5BiuG7fo";
-    private String s_vendidas = "loterias_vendidas";
+    private String sid_vendidas;
+    private String s_vendidas;
 
     private int total_ventas = 0;
     private int comision_vendedor = 0;
@@ -117,6 +117,7 @@ public class VendedoresActivity extends AppCompatActivity {
         downloading.setVisibility(View.GONE);
         clear_all();
         dispositivo = check_device();
+        Log.v("onCreate", "Dispositivo: " + dispositivo);
         pre_config();
     }
 
@@ -148,14 +149,15 @@ public class VendedoresActivity extends AppCompatActivity {
     private void pre_config() {
         vendedores.setVisibility(View.GONE);
         letrero_spinner.setVisibility(View.GONE);
-        contar_premios();
         Integer[] params = new Integer[2];
         params[0] = 1000;
         params[1] = 0;
         new MyTask().execute(params);
         spinner_put();
         gene_fecha_hoy();
+        Log.v("pre_config", ".\nDia: " + dia + "\nMes: " + mes + "\nAnio: " + anio + "\nHora: " + hora + "\nMinuto: " + minuto);
         listas_to_print = listas_to_print + "\nFecha: " + dia + "/" + mes + "/" + anio + "\nHora: " + hora + ":" + minuto + "\n";
+        contar_premios();
         //vendedores.setFocusableInTouchMode(true);
     }
 
@@ -196,6 +198,7 @@ public class VendedoresActivity extends AppCompatActivity {
         }
         vendedor_a_presentar = vendedor_a_presentar + "\nTOTAL EN PREMIOS: " + espaciado3_str + String.valueOf(total_premios);
         vendedor_a_presentar = vendedor_a_presentar + "\n______________________________\n\n";
+        Log.v("generar_cierre3", ".\n\nvendedor_a_presentar:\n\n" + vendedor_a_presentar);
         saldo_del_dia();
     }
 
@@ -229,6 +232,7 @@ public class VendedoresActivity extends AppCompatActivity {
         }
         vendedor_a_presentar = vendedor_a_presentar + "Saldo a la fecha: " + espaciado2_str + String.valueOf(saldo_total_a_la_fecha) + "\n";
         vendedor_a_presentar = vendedor_a_presentar + "\n\n------ ULTIMA --- LINEA ------\n\n\n\n";
+        Log.v("saldo_del_dia", ".\n\nVendedor_a_presentar:\n\n" + vendedor_a_presentar + "\n\n.");
         elegir();
     }
 
@@ -238,6 +242,7 @@ public class VendedoresActivity extends AppCompatActivity {
         //listas.setVisibility(View.VISIBLE);
         //cierre.setVisibility(View.VISIBLE);
         String string = vendedor_a_presentar + "\n\n" + listas_to_print;
+        Log.v("elegir", ".\n\nVendedor_a_presentar:\n\n" + vendedor_a_presentar + "\n\n.");
         printIt(string);
     }
 
@@ -281,64 +286,84 @@ public class VendedoresActivity extends AppCompatActivity {
 
     private void contar_premios() {
 
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setProgress(0);
+        if (verificar_internet()) {
 
-        Premios.clear();
-        RequestQueue requestQueue;
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
 
-        // Instantiate the cache
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+            Premios.clear();
+            RequestQueue requestQueue;
 
-        // Set up the network to use HttpURLConnection as the HTTP client.
-        Network network = new BasicNetwork(new HurlStack());
+            // Instantiate the cache
+            Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-        // Instantiate the RequestQueue with the cache and network.
-        requestQueue = new RequestQueue(cache, network);
+            // Set up the network to use HttpURLConnection as the HTTP client.
+            Network network = new BasicNetwork(new HurlStack());
 
-        // Start the queue
-        requestQueue.start();
+            // Instantiate the RequestQueue with the cache and network.
+            requestQueue = new RequestQueue(cache, network);
 
-        String url = readRowURL_premios;
+            // Start the queue
+            requestQueue.start();
 
-        // Formulate the request and handle the response.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onResponse(String response) {
-                        // Do something with the response
-                        //ML_ver.setText(response);
+            String url = readRowURL_premios;
 
-                        //HashMap<String, String> premios = new HashMap<String, String>();
-                        String[] spliti = response.split("\"");
-                        if (response != null & spliti.length > 3) {
-                            //response.replace("loteria", "_sepa_");
-                            //msg(response);
-                            String[] split = response.split("loteria");//Se separa el objeto Json
+            // Formulate the request and handle the response.
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onResponse(String response) {
+                            // Do something with the response
+                            //ML_ver.setText(response);
 
-                            //Se llena un HashMap con los premios, los cuales se bajan de la nube.
-                            Premios.clear();
-                            for (int i = 1; i < split.length; i++) {
-                                contador_de_premios++;
-                                //Debug
-                                //msg(String.valueOf(contador_de_premios));
-                                String[] split2 = split[i].split("\"");
-                                //                       Ej.                    Tica                              Noche
-                                String loteria_actual = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
-                                //                       Ej.                    03                                 no                                 no                                ID
-                                String premio_actual = "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo";
-                                if (Premios.containsKey(loteria_actual)) {
-                                    String premio_viejo = Premios.get(loteria_actual);
-                                    String[] split3 = premio_viejo.split("ojo-rojo_ojo-rojo");
+                            //HashMap<String, String> premios = new HashMap<String, String>();
+                            String[] spliti = response.split("\"");
+                            if (response != null & spliti.length > 3) {
+                                //response.replace("loteria", "_sepa_");
+                                //msg(response);
+                                String[] split = response.split("loteria");//Se separa el objeto Json
+
+                                //Se llena un HashMap con los premios, los cuales se bajan de la nube.
+                                Premios.clear();
+                                for (int i = 1; i < split.length; i++) {
+                                    contador_de_premios++;
+                                    //Debug
+                                    //msg(String.valueOf(contador_de_premios));
+                                    String[] split2 = split[i].split("\"");
+                                    //                       Ej.                    Tica                              Noche
+                                    String loteria_actual = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
+                                    //                       Ej.                    03                                 no                                 no                                ID
+                                    String premio_actual = "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo";
+                                    if (Premios.containsKey(loteria_actual)) {
+                                        String premio_viejo = Premios.get(loteria_actual);
+                                        String[] split3 = premio_viejo.split("ojo-rojo_ojo-rojo");
 
 
-                                    //                  ID guardado         ID leido actualmente
-                                    if (Integer.parseInt(split3[4]) >= Integer.parseInt(split2[26])) {
-                                        //Premios.put()
-                                        //Do nothing.
+                                        //                  ID guardado         ID leido actualmente
+                                        if (Integer.parseInt(split3[4]) >= Integer.parseInt(split2[26])) {
+                                            //Premios.put()
+                                            //Do nothing.
+                                        } else {
+                                            Premios.replace(loteria_actual, premio_viejo, premio_actual);
+                                            String keye = split2[2] + " " + split2[6];
+                                            String valueye = "";
+                                            String sec = "";
+                                            String tir = "";
+                                            if (!split2[14].equals("no")) {//Significa que es Parley
+                                                sec = " " + split2[14];
+                                                tir = " " + split2[18];
+                                            } else if (split2[18].equals("ROJA") | split2[18].equals("BLANCA") | split2[18].equals("VERDE")) {// Significa que es reventados.//TODO: Poner colores de bolitas online y todo con respecto a las loterias y sus cambios
+                                                tir = " " + split2[18];
+                                            } else {//Cualquier otra loteria
+                                                //do nothing.
+                                            }
+                                            valueye = split2[10] + sec + tir;
+
+                                            premios_encontrados.replace(keye, valueye);
+                                        }
                                     } else {
-                                        Premios.replace(loteria_actual, premio_viejo, premio_actual);
+                                        Premios.put(loteria_actual, premio_actual);
                                         String keye = split2[2] + " " + split2[6];
                                         String valueye = "";
                                         String sec = "";
@@ -346,50 +371,40 @@ public class VendedoresActivity extends AppCompatActivity {
                                         if (!split2[14].equals("no")) {//Significa que es Parley
                                             sec = " " + split2[14];
                                             tir = " " + split2[18];
-                                        } else if (split2[18].equals("ROJA") | split2[18].equals("BLANCA") | split2[18].equals("VERDE")) {// Significa que es reventados.//TODO: Poner colores de bolitas online y todo con respecto a las loterias y sus cambios
+                                        } else if (split2[18].equals("ROJA") | split2[18].equals("BLANCA") | split2[18].equals("VERDE")) {// Significa que es reventados.
                                             tir = " " + split2[18];
                                         } else {//Cualquier otra loteria
                                             //do nothing.
                                         }
                                         valueye = split2[10] + sec + tir;
 
-                                        premios_encontrados.replace(keye, valueye);
-                                    }
-                                } else {
-                                    Premios.put(loteria_actual, premio_actual);
-                                    String keye = split2[2] + " " + split2[6];
-                                    String valueye = "";
-                                    String sec = "";
-                                    String tir = "";
-                                    if (!split2[14].equals("no")) {//Significa que es Parley
-                                        sec = " " + split2[14];
-                                        tir = " " + split2[18];
-                                    } else if (split2[18].equals("ROJA") | split2[18].equals("BLANCA") | split2[18].equals("GRIS")) {// Significa que es reventados.
-                                        tir = " " + split2[18];
-                                    } else {//Cualquier otra loteria
-                                        //do nothing.
-                                    }
-                                    valueye = split2[10] + sec + tir;
+                                        premios_encontrados.put(keye, valueye);
 
-                                    premios_encontrados.put(keye, valueye);
-
+                                    }
                                 }
                             }
+
+                            Log.v("Contar_premios", ".\nResponse:\n\n" + response);
+                            ver_vendedores();
                         }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle error
+                        }
+                    });
 
-                        ver_vendedores();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error
-                    }
-                });
-
-        // Add the request to the RequestQueue.
-        requestQueue.add(stringRequest);
-
+            // Add the request to the RequestQueue.
+            requestQueue.add(stringRequest);
+        } else {
+            Toast.makeText(this, "Debe estar conectado a una red de internet!!!", Toast.LENGTH_LONG).show();
+            /*
+            clear_all();
+            dispositivo = check_device();
+            pre_config();
+            */
+        }
     }
 
     private void Ver_premios() {
@@ -405,7 +420,7 @@ public class VendedoresActivity extends AppCompatActivity {
                             //pre_config();
                             //cierre.setVisibility(View.GONE);
                             if (vendedores.getSelectedItem().toString().equals("Todos")) {
-                                //TODO: Ver que hacer para manejar la opcion "Todos"
+                                //TODO: Ver que hacer para manejar la opcion "Todos" puede ser generar un cierre general!
                             } else {
                                 progressBar.setProgress(0);
                                 progressBar.setVisibility(View.VISIBLE);
@@ -416,7 +431,7 @@ public class VendedoresActivity extends AppCompatActivity {
                                 //vendedores.setFocusableInTouchMode(false);
                                 listas_to_print = listas_to_print + "Puesto " + vendedor + "\nMaquina: " + maquina + "\n******************************\n\n";
 
-
+                                Log.v("Ver_premios", ".\n\nSe ha seleccionado el vendedor " + vendedor + " numero de maquina: " + maquina + "\n\n.");
                                 presentar_vendedor(split[0], split[1]);
                             }
                         }
@@ -453,7 +468,7 @@ public class VendedoresActivity extends AppCompatActivity {
             //msg("SpreadSheets_vendedor: " + String.valueOf(SpreadSheets_vendedor.size()));
             if (bandera_continuar.equals("listo")) {
                 //msg("Ir a generar_cierre2!!!");
-                Log.v("Error18", "Ir a generar_cierre2!!!");
+                Log.v("generar_cierre", "Ir a generar_cierre2. Todo estubo bien!!!");
                 generar_cierre2();
                 return "Ultima entrada a generar_cierre. ya no tiene datos y debe abandonar este metodo";
             } else {
@@ -521,13 +536,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         for (int o = 0; o < espaciado; o++) {
             espaciado_str = espaciado_str + " ";
         }
-        /*int espaciado2 = 30;
-        espaciado2 = espaciado2 - 16 - String.valueOf(comision_total_banca).length();
-        String espaciado2_str = "";
-        //msg("Espaciado: >" + espaciado_str + "<");
-        for (int o = 0; o < espaciado2; o++) {
-            espaciado2_str = espaciado2_str + " ";
-        }*/
+
         int espaciado3 = 30;
         espaciado3 = espaciado3 - 16 - String.valueOf(comision_general).length();
         String espaciado3_str = "";
@@ -538,8 +547,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         vendedor_a_presentar = vendedor_a_presentar + "COMISIONES: \n\nComision vendedor: " + espaciado_str + comision_total_vendedor +
                 "\n\nCOMISION TOTAL: " + espaciado3_str + comision_general +
                 "\n______________________________\n\nPREMIOS:\n\n";
-        //printIt(vendedor_a_presentar);
-        //cierre3.setVisibility(View.VISIBLE);
+        Log.v("generar_cierre2", "Comision: " + comision_general);
         generar_cierre3();
     }
 
@@ -1278,10 +1286,10 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                     String[] split2 = split[i].split("\"");
                                     //                       Ej.                  Chuz                              25
                                     String vendedor_act = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
-                                    //                       Ej.                   SpreadSheet                    SHEET: loterias
-                                    String spreadsheet_act = "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo";
+                                    //                       Ej.                   SpreadSheet                    Sheet (loterias)                    SpreadSheet vendidas             Sheet (loterias_vendidas)
+                                    String spreadsheet_act = "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo" + split2[22] + "ojo-rojo_ojo-rojo";
                                     //vendedor =
-                                    crear_archivo_vendedor(split2[2], split2[6]);
+                                    //crear_archivo_vendedor(split2[2], split2[6]);
                                     if (SpreadSheets.containsKey(spreadsheet_act)) {
                                         //Do nothing.
                                     } else {
@@ -1305,7 +1313,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                         } else {
                             Log.v("Error_ven_vend", "Respuesta incorrecta!!!" + "\nResponse: " + response);
                         }
-
+                        Log.v("ver_vendedores_online", ".\nResponse:\n\n" + response + "\n\n.");
                         leer_premios();
                     }
 
@@ -1416,9 +1424,9 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                 //msg("key: " + key);
                 String[] split4 = SpreadSheets.get(key).split("ojo-rojo_ojo-rojo");
                 String[] split5 = key.split("ojo-rojo_ojo-rojo");
-                if (vendedor.equals(split5[1])) {
+                if (vendedor.equals(split5[1]) && maquina.equals(split5[2])) {
                     if (verificar_internet()) {
-                        Log.v("error1", "presentar_vendedor.\nsplit4[1]: " + split4[1] + "Split4[2]" + split4[2]);
+                        Log.v("presentar_vendedor", ".\n\npresentar_vendedor.\nsplit4[1]: " + split4[1] + "Split4[2]" + split4[2] + "\n\n.");
                         ver_loterias_vendidas(split4[1], split4[2]);
                         //cuentas_vendedor(split4[1], split4[2]);
                     } else {
@@ -1445,6 +1453,16 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         // Start the queue
         requestQueue.start();
 
+        for (String key : SpreadSheets.keySet()) {
+            //msg("key: " + key);
+            String[] split4 = SpreadSheets.get(key).split("ojo-rojo_ojo-rojo");
+            String[] split5 = key.split("ojo-rojo_ojo-rojo");
+            if (vendedor.equals(split5[1]) && maquina.equals(split5[2])) {
+                sid_vendidas = split4[3];
+                s_vendidas = split4[4];
+            }
+        }
+
         String url = readRowURL_vendidas + sid_vendidas + "&sheet=" + s_vendidas;
 
         // Formulate the request and handle the response.
@@ -1462,46 +1480,29 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                 String[] split2 = split[i].split("\"");
 
                                 int key = i;
-                                String value = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
-                                saled_lots.put(key, value);
-                                Log.v("loterias vendida ", ".\nLoteria: " + split2[2] + " " + split2[6]);
-                                Log.v("SpreadSheetId & Sheet ", ".\nSpreadSheetId: " + s1 + "\nSheet: " + s2);
-                                cuentas_vendedor(s1, s2);
+                                String horaritito = "";
 
-                                /*
-                                if (split2[10].equals("maniana")) {
-                                    //TODO: No se sabe que hacer aqui. Resolver metodos para ventas futuras (Tambien aplica en este metodo ver vendidas!!!)
-                                } else if (split2[10].equals("hoy")){
-                                    //msg("Loterias: " + split2[2] + " " + split2[10]);
-
-                                    //                  Ej.                  Tica                              dia                                hoy                            5 (comision)                         paga1                               paga2
-                                    String lot_act = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[22] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo" + split2[30] + "ojo-rojo_ojo-rojo";
-                                    //                   Ej.                 SpreadSheet                     SHEET: loterias
-                                    String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo";
-
-                                    if (SpreadSheets_vendedor.containsKey(lot_act)) {
-                                        //Do nothing.
-                                    } else {
-                                        SpreadSheets_vendedor.put(lot_act, spread_act);
-                                        //msg("Debug:\nSpreadSheet_vendedor: " + SpreadSheets_vendedor.get(lot_act));
-                                    }
+                                if (split2[6].equals("Maniana")) {
+                                    horaritito = "maniana";
+                                } else if (split2[6].equals("Dia")) {
+                                    horaritito = "dia";
+                                } else if (split2[6].equals("Tarde")) {
+                                    horaritito = "tarde";
+                                } else if (split2[6].equals("Noche")) {
+                                    horaritito = "noche";
                                 } else {
-                                    //Do nothing here!
+                                    //Do nothing here.
                                 }
-                                */
-                            }
-                            //int cont = 0;
-                            /*for (String key : SpreadSheets_vendedor.keySet()) {
-                                cont++;
-                                msg("Loteria: #" + cont + ":\n" + key + "\n\nHoja de Google: " + SpreadSheets_vendedor.get(key));
-                            }*/
-                            //Log.v("error2", "Se va a llamar a la funcion generar_cierre por primera vez!!!");
-                            //String resul_cierre = null;
 
-                            //Debug:
-                            /*for (String key : SpreadSheets_vendedor.keySet()) {
-                                msg("Llave: " + key + "\n\n" + "Valor: " + SpreadSheets_vendedor.get(key));
-                            }*/
+                                String value = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + horaritito + "ojo-rojo_ojo-rojo";
+                                saled_lots.put(key, value);
+                                //Log.v("ver_loterias vendida ", ".\nLoteria: " + split2[2] + " " + split2[6]);
+                                //Log.v("SpreadSheetId & Sheet ", ".\nSpreadSheetId: " + s1 + "\nSheet: " + s2);
+                                //cuentas_vendedor(s1, s2);
+                            }
+                            Log.v("ver_loterias vendida ", ".\n\nResponse: \n\n" + response + "\n\n.");
+                            Log.v("SpreadSheetId & Sheet ", ".\nSpreadSheetId: " + s1 + "\nSheet: " + s2);
+                            cuentas_vendedor(s1, s2);
                         }
                     }
                 },
@@ -1565,12 +1566,22 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                     //                   Ej.                 SpreadSheet                     SHEET: loterias
                                     String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo";
 
+
+                                    for (int key : saled_lots.keySet()) {
+                                        Log.v("Key and value", key + " and " + saled_lots.get(key) + "\n");
+                                    }
+
+
                                     if (SpreadSheets_vendedor.containsKey(lot_act)) {
+                                        Log.v("SpreadSheets_vendedor",  "contiene a " + lot_act);
                                         //Do nothing.
                                     } else {
+                                        Log.v("SpreadSheets_vendedor",  "NO contiene a " + lot_act);
                                         if (saled_lots.containsValue(var_aux_comp)) {
+                                            Log.v("saled_lots",  "contiene a " + var_aux_comp);
                                             SpreadSheets_vendedor.put(lot_act, spread_act);
                                         } else {
+                                            Log.v("saled_lots",  "NO contiene a " + var_aux_comp);
                                             //No se guarda para que no se lean spreadsheets vacias.
                                         }
                                         //msg("Debug:\nSpreadSheet_vendedor: " + SpreadSheets_vendedor.get(lot_act));
@@ -1601,11 +1612,12 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                                 progressBar.setMax(TOTAL_VENDEDORES);
                                 progressBar.setVisibility(View.VISIBLE);
                                 progressBar.setProgress(0);
+                                Log.v("cuentas_vendedor previo", "Antes de resul_cierre = generar_cierre(SpreadSheets_vendedor, true)");
                                 resul_cierre = generar_cierre(SpreadSheets_vendedor, true);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            Log.v("error9", "Resultado del llamado a generar_cierre: " + resul_cierre);
+                            Log.v("cuentas_vendedorPositiv", "Resultado del llamado a generar_cierre: " + resul_cierre);
                         }
                     }
                 },
@@ -1698,7 +1710,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
         }
     }
 
-    private int calcular_monto_total() {
+    private int calcular_monto_total() {//TODO: revisar que no haya errores
         int monto_total = 0;
         for (String key : Montos.keySet()) {
             monto_total = monto_total + Montos.get(key);
@@ -1884,9 +1896,7 @@ String spread_act = "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + spl
                 }
             } else {
                 return "Lectura de premios\nterminada!!!";
-
             }
-
         }
 
         @Override

@@ -141,11 +141,11 @@ public class ReventadosActivity extends AppCompatActivity {
             }
         }
 
-        //String[] bolita_str_array = {"BLANCA", "ROJA", "GRIS"};
+        //String[] bolita_str_array = {"BLANCA", "ROJA", "VERDE"};
         String[] bolita_str_array = new String[3];
         bolita_str_array[0] = "BLANCA";
         bolita_str_array[1] = "ROJA";
-        bolita_str_array[2] = "GRIS";
+        bolita_str_array[2] = "VERDE";
         ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(this, R.layout.spinner_item_loteria, bolita_str_array);
         bolita.setAdapter(adapter3);
 
@@ -190,7 +190,7 @@ public class ReventadosActivity extends AppCompatActivity {
                         } else if (color_bolita.equals("ROJA")) {
                             //colocar el valor paga1 en el spinner paga
                             pagar = Integer.parseInt(loter.get("Paga1"));
-                        } else if (color_bolita.equals("GRIS")) {
+                        } else if (color_bolita.equals("VERDE")) {
                             //Colocar el valor paga2 en el spinner paga
                             pagar = Integer.parseInt(loter.get("Paga2"));
                         } else {
@@ -370,7 +370,13 @@ public class ReventadosActivity extends AppCompatActivity {
                     break;
                 }else if (Integer.parseInt(split[0]) == Winner_num){
                     String cliente_print = cliente.replace("x_x"," ");
-                    contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + String.valueOf(Winner_num) + "\n\n" + split[1] + " X " + seleccion_premio + " = " + String.valueOf(pagA * Integer.parseInt(split[1])) + " colones. \n################################\n\n";
+                    String numero_poner = "";
+                    if (String.valueOf(Winner_num).length() == 1) {
+                        numero_poner = "0" + String.valueOf(Winner_num);
+                    } else {
+                        numero_poner = String.valueOf(Winner_num);
+                    }
+                    contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + numero_poner + "\n\n" + split[1] + " X " + seleccion_premio + " = " + String.valueOf(pagA * Integer.parseInt(split[1])) + " colones. \n################################\n\n";
                     total = total + (Integer.parseInt(seleccion_premio) * Integer.parseInt(split[1]));
                 }
                 linea = br24.readLine();
@@ -493,6 +499,7 @@ public class ReventadosActivity extends AppCompatActivity {
                                     //String loteria_a_presentar = split5[1] + " " + split5[2];
 
                                     //Primer numero
+                                    Log.v("buscando winner", ".\n\nNumero premiado: " + split4[1]);
                                     nume1 = split4[1];
                                     //Caso Monazos:
                                     if (split5[1].equals("Monazos")) {
@@ -526,7 +533,7 @@ public class ReventadosActivity extends AppCompatActivity {
                                     //Tercer numero
                                     if (split4[3].equals("no")) {
                                         //Do nothing.
-                                    } else if (split4[3].equals("ROJA") | split4[3].equals("GRIS") | split4[3].equals("BLANCA")) {
+                                    } else if (split4[3].equals("ROJA") | split4[3].equals("VERDE") | split4[3].equals("BLANCA")) {
                                         flag_revent = true;
                                         bolaina = split4[3];
                                         nume3 = split4[3];
@@ -599,39 +606,46 @@ public class ReventadosActivity extends AppCompatActivity {
                 numero_gana = nume1;
                 bolaina = nume3;
                 //Do nothing more!
-                //Continue con el ciclo. 
+                //Continue con el ciclo.
             }*/
         } else {
-
-           String numero_premiado = "";
-           String bola = "";
-           int premio = 0;
-           if (nume1.equals("not_asigned") | nume3.equals("not_asigned")){
-                //Do nothing.
-               msg("Debug: Nunca deberia imprimir esto!!! \n                       ERROR!!!");
-               numero_premiado = nume1;
-               bola = bolaina;
-           } else {
-               numero_premiado = nume1;
-               bola = bolaina;
-               if (bola.equals("ROJA")) {
-                   premio = Integer.parseInt(loter.get("Paga1"));
-               } else if (bola.equals("GRIS")) {
-                   premio = Integer.parseInt(loter.get("Paga2"));
-               } else if (bola.equals("BLANCA")) {
-                   premio = 0;
-               } else {
-                   //Do nothing. Nunca debe llegar aqui!
-               }
-           }
-            //borrar_archivo("premios" + "x_y" + Loteria + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
-            //File file = new File("premios" + "x_y" + Loteria + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
-            //agregar_linea_archivo("premios" + "x_y" + Loteria + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", "");
-            //file.delete();
-            anular("premios" + "x_y" + Loteria + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
-            borrar_archivo("premios" + "x_y" + Loteria + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
-            agregar_linea_archivo("premios" + "x_y" + Loteria + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", numero_premiado + "  " + String.valueOf(premio));
-            //String Loteria = loteria.getSelectedItem().toString();
+            nume1 = num_premio.getText().toString();
+            nume3 = bolita.getSelectedItem().toString();
+            Log.v("debug premio", "Numero premiado: " + nume1 + " ");
+            String numero_premiado = "";
+            String bola = "";
+            int premio = 0;
+            if (nume1.equals("not_asigned") | nume3.equals("not_asigned")){
+                Log.v("not_asigned", "Esa vara de atras: " + premio);
+                msg("Debug: Nunca deberia imprimir esto!!! \n                       ERROR!!!");
+                numero_premiado = nume1;
+                bola = bolaina;
+                if (bola.equals("ROJA")) {
+                    premio = Integer.parseInt(loter.get("Paga1"));
+                } else if (bola.equals("VERDE")) {
+                    premio = Integer.parseInt(loter.get("Paga2"));
+                } else if (bola.equals("BLANCA")) {
+                    premio = 0;
+                } else {
+                    //Do nothing. Nunca debe llegar aqui!
+                }
+            } else {
+                numero_premiado = nume1;
+                bola = nume3;
+                if (bola.equals("ROJA")) {
+                    premio = Integer.parseInt(loter.get("Paga1"));
+                    Log.v("loter.get(paga roja)", "Esa vara de atras: " + premio);
+                } else if (bola.equals("VERDE")) {
+                    Log.v("loter.get(paga verde)", "Esa vara de atras: " + premio);
+                    premio = Integer.parseInt(loter.get("Paga2"));
+                } else if (bola.equals("BLANCA")) {
+                    Log.v("loter.get(no paga)", "Esa vara de atras: " + premio);
+                    premio = 0;
+                } else {
+                    Log.v("loter.get(error)", "Esa vara de atras: " + premio);
+                    //Do nothing. Nunca debe llegar aqui!
+                }
+            }
             String Horario = horario.getSelectedItem().toString();
             String Paga = String.valueOf(premio);
             int pagA = premio;
@@ -654,7 +668,17 @@ public class ReventadosActivity extends AppCompatActivity {
                         jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
                     }
                     String archivo = archivos[i];
-                    generar_tiquete(archivo, Number_winner, jugador_actual, pagA);
+                    String[] split_nom_file = archivo.split("_separador_");
+                    Log.v("Tirar_reporte rev", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                    if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
+                        Log.v("Tirar_reporte rev2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[6] + "\n\n.");
+                        //Creo que nada. TODO: ver que hacer.
+                    } else if (split_nom_file[14].equals("null.txt")) {
+                        generar_tiquete(archivo, Number_winner, jugador_actual, pagA);
+                    } else {
+                        //Do nothing.
+                    }
+
                 }
             }
             contenido = contenido + "\n\n################################\n Total de premios en \n" + Loteria + " " + Horario + ": " + String.valueOf(total) + " colones.\n################################\n\n\n\n\n";

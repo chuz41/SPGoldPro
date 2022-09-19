@@ -1308,7 +1308,7 @@ public class FacturaseditActivity extends AppCompatActivity {
 
                             int monto = Integer.parseInt(splitd[2]);
                             monto = monto * (-1);
-                            String cont_file = Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt";
+                            String cont_file = Loteria + "_" + Horario + "_.txt";
                             contarParley(String.valueOf(monto), splitd[0], splitd[1], cont_file);
                             //temp_file = temp_file + linead + "\n";
 
@@ -1340,7 +1340,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                         //int numero = Integer.parseInt(splitd[0]);
                         int monto = Integer.parseInt(splitd[1]);
                         monto = monto*(-1);
-                        String cont_file = Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt";
+                        String cont_file = Loteria + "_" + Horario + "_.txt";
                         if (tipo_lot.equals("Monazos")) {
 
                             contar_monazos(String.valueOf(monto), splitd[0], cont_file, splitd[2]);

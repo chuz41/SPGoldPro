@@ -940,16 +940,21 @@ public class RepventasActivity extends AppCompatActivity {
 
     private void tirar_reporte(){
 
+
+
         String Loteria = loteria.getSelectedItem().toString();
         String Horario = horario.getSelectedItem().toString();
+
+        Log.v("Ver archivo", ".\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_txt"));
+
         int total = 0;
         String archivos[] = fileList();
 
         if (loter.get("Tipo_juego").equals("Parley")) {
-            if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_" + fecha + "_" + mes + ".txt")) {//Archivo nombre_archivo es el archivo contable
+            if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_txt")) {//Archivo nombre_archivo es el archivo contable
 
                 try {
-                    InputStreamReader archivo24 = new InputStreamReader(openFileInput(Loteria + "_" + Horario + "_" + fecha + "_" + mes + ".txt"));//Se abre archivo
+                    InputStreamReader archivo24 = new InputStreamReader(openFileInput(Loteria + "_" + Horario + "_.txt"));//Se abre archivo
                     BufferedReader br24 = new BufferedReader(archivo24);
                     contenido = "Reporte de ventas\n" + Loteria + " " + Horario + "\nFecha: " + fecha + "/" + mes + "/" + anio + ":\n\n#############################";//Aqui se guarda el reporte que se va a imprimir
 
@@ -1020,10 +1025,10 @@ public class RepventasActivity extends AppCompatActivity {
             }
 
         } else if (loter.get("Tipo_juego").equals("Monazos")) {
-            if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt")) {//Archivo nombre_archivo es el archivo contable
+            if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_.txt")) {//Archivo nombre_archivo es el archivo contable
 
                 try {
-                    InputStreamReader archivo24 = new InputStreamReader(openFileInput(Loteria + "_" + Horario + "_" + fecha + "_" + mes + ".txt"));//Se abre archivo
+                    InputStreamReader archivo24 = new InputStreamReader(openFileInput(Loteria + "_" + Horario + "_.txt"));//Se abre archivo
                     BufferedReader br24 = new BufferedReader(archivo24);
                     contenido = "Reporte de ventas\n" + Loteria + " " + Horario + "\nFecha: " + fecha + "/" + mes + "/" + anio + ":\n\n#############################";//Aqui se guarda el reporte que se va a imprimir
 
@@ -1101,10 +1106,10 @@ public class RepventasActivity extends AppCompatActivity {
             }
 
         } else {
-            if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt")) {//Archivo nombre_archivo es el archivo contable
+            if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_.txt")) {//Archivo nombre_archivo es el archivo contable
 
                 try {
-                    InputStreamReader archivo24 = new InputStreamReader(openFileInput(Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt"));//Se abre archivo
+                    InputStreamReader archivo24 = new InputStreamReader(openFileInput(Loteria + "_" + Horario + "_.txt"));//Se abre archivo
                     BufferedReader br24 = new BufferedReader(archivo24);
                     contenido = "Reporte de ventas\n" + Loteria + " " + Horario + "\nFecha: " + fecha + "/" + mes + "/" + anio + ":\n\n#############################";//Aqui se guarda el reporte que se va a imprimir
 

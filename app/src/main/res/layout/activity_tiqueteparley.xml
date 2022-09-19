@@ -111,5 +111,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_total_text_par"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/et_numero_par2"
+        app:layout_constraintTop_toBottomOf="@+id/et_numero_par2" />
+
+    <TextView
+        android:id="@+id/tv_total_res_par"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/tv_total_text_par"
+        app:layout_constraintTop_toBottomOf="@+id/tv_total_text_par" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

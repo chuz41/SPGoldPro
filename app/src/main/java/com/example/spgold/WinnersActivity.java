@@ -67,6 +67,7 @@ public class WinnersActivity extends AppCompatActivity {
     private String nume2 = "not_asigned";
     private String nume3 = "not_asigned";
     private String contenido = "";
+    private String numero_gana;
     private TextView lot;
     private TextView hor;
     private TextView veces;
@@ -226,7 +227,7 @@ public class WinnersActivity extends AppCompatActivity {
                                 error_msm();
                             }
 
-                            //Fin condicinales
+                            //Fin condicionales
 
                             //Agregar horarios al otro Spinner
                             crear_array_horarios();
@@ -269,8 +270,9 @@ public class WinnersActivity extends AppCompatActivity {
                         if (s.length() == 3) {
                             ocultar_teclado();
 
-                            if (ArchivoExiste(archivos, "premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt")) ;
+                            //if (ArchivoExiste(archivos, "premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt")) ;
 
+                            /*
                             try {
                                 OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", Activity.MODE_PRIVATE));
                                 String ArchivoCompleto = "";
@@ -282,6 +284,8 @@ public class WinnersActivity extends AppCompatActivity {
                             file.delete();
                             agregar_linea_archivo("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", num_premio.getText().toString());
                             //imprimir_archivo("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + ".txt");
+                             */
+                            numero_gana = num_premio.getText().toString();
 
                         }
                     } else if (loter.get("Tipo_juego").equals("Parley")) {
@@ -294,7 +298,7 @@ public class WinnersActivity extends AppCompatActivity {
                         //num_premio.setFocusableInTouchMode(true);
                         if (s.length() == 2) {
                             ocultar_teclado();
-                            if (ArchivoExiste(archivos, "premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt")) ;
+                            /*if (ArchivoExiste(archivos, "premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt")) ;
 
                             try {
                                 OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", Activity.MODE_PRIVATE));
@@ -307,6 +311,8 @@ public class WinnersActivity extends AppCompatActivity {
                             file.delete();
                             agregar_linea_archivo("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", num_premio.getText().toString());
                             //imprimir_archivo("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
+                             */
+                            numero_gana = num_premio.getText().toString();
                         }
                     } else {
                         //error_msm();
@@ -328,7 +334,7 @@ public class WinnersActivity extends AppCompatActivity {
                         String valor_paga = paga.getSelectedItem().toString();
                         //String num_str = num_premio.getText().toString();
                         if (Integer.parseInt(valor_paga) > 0) {
-                            msn(valor_paga, 0);
+                            msn(valor_paga, Integer.parseInt(valor_paga));
                             /*if (loter.get("Loteria").equals("Monazos")) {
                                 if (valor_paga.equals(loter.get("Paga1"))) {
                                     paga_x_veces.setText("Orden");
@@ -1515,6 +1521,7 @@ public class WinnersActivity extends AppCompatActivity {
                 //Do nothing.
             }
             winner_number = nume1;
+            numero_gana = nume1;
             //num_premio.setText(nume1);//no es
         }
 
@@ -1537,12 +1544,10 @@ public class WinnersActivity extends AppCompatActivity {
                 //num_premio.setText(nume1);
                 num_premio.requestFocus();
                 return;
-            } else if (Integer.parseInt(num_premio.getText().toString()) > 99) {
-                Toast.makeText(this, "Debe indicar un numero correcto 4", Toast.LENGTH_LONG).show();
-                num_premio.setText("");
-                num_premio.requestFocus();
-                return;
+            } else {
+                //Do nothing.
             }
+
         }
 
         /*if (Integer.parseInt(num_premio.getText().toString()) < 0) {
@@ -1556,8 +1561,8 @@ public class WinnersActivity extends AppCompatActivity {
         } else {
             if (loter.get("Tipo_juego").equals("Monazos")) {
 
-                File file = new File("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
-                file.delete();
+                //File file = new File("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
+                //file.delete();
                 //String Paga = paga.getSelectedItem().toString();
                 //int pagA = Integer.parseInt(Paga);
                 String Loteria = loteria.getSelectedItem().toString();
@@ -1568,7 +1573,8 @@ public class WinnersActivity extends AppCompatActivity {
                 } else {
                     Winner_number = winner_number;
                 }
-                agregar_linea_archivo("premios" + "x_y" + Loteria + "x_y" + Horario + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", Winner_number);
+                numero_gana = Winner_number;
+                //agregar_linea_archivo("premios" + "x_y" + Loteria + "x_y" + Horario + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", Winner_number);
 
                 int Number_winner = Integer.parseInt(Winner_number);
                 String archivos[] = fileList();
@@ -1576,7 +1582,7 @@ public class WinnersActivity extends AppCompatActivity {
 
                 //Se debe des-comentar la siguente linea cuando se tengan rollos.
                 contenido = contenido + "\n    Reporte de ganadores\n\n    ----> " + Loteria + " " + Horario + " <----\n\n    " + fecha + "/" + mes + "/" + anio + "\n\n";
-                for (int i = 0; i < archivos.length; i++) {
+                for (int i = 0; i < archivos.length; i++) {//TODO: Se debe pasar a un solo archivo.
                     Pattern pattern = Pattern.compile(Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_", Pattern.CASE_INSENSITIVE);
                     Matcher matcher = pattern.matcher(archivos[i]);
                     boolean matchFound = matcher.find();
@@ -1590,7 +1596,17 @@ public class WinnersActivity extends AppCompatActivity {
                             jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
                         }
                         String archivo = archivos[i];
-                        generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                        String[] split_nom_file = archivo.split("_separador_");
+                        Log.v("Tirar_reporte mona", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                        if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
+                            Log.v("Tirar_reporte mona2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                            //Creo que nada. TODO: ver que hacer.
+                        } else if (split_nom_file[14].equals("null.txt")) {
+                            generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                        } else {
+                            //Do nothing.
+                        }
+
                     }
                 }
                 contenido = contenido + "\n\n################################\nTotal de premios en \n" + Loteria + " " + Horario + ": " + String.valueOf(total) + " colones.\n################################\n\n\n\n\n";
@@ -1598,9 +1614,9 @@ public class WinnersActivity extends AppCompatActivity {
                 total = 0;
 
             } else {
-                File file = new File("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
-                file.delete();
-                agregar_linea_archivo("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", num_premio.getText().toString() + "  " + paga.getSelectedItem().toString());
+                //File file = new File("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
+                //file.delete();
+                //agregar_linea_archivo("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", num_premio.getText().toString() + "  " + paga.getSelectedItem().toString());
                 String Loteria = loteria.getSelectedItem().toString();
                 String Horario = horario.getSelectedItem().toString();
                 String Paga = paga.getSelectedItem().toString();
@@ -1632,7 +1648,16 @@ public class WinnersActivity extends AppCompatActivity {
                             jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
                         }
                         String archivo = archivos[i];
-                        generar_tiquete(archivo,  Integer.parseInt(Winner_number), jugador_actual);
+                        String[] split_nom_file = archivo.split("_separador_");
+                        Log.v("Tirar_reporte regu", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                        if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
+                            Log.v("Tirar_reporte regu2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[6] + "\n\n.");
+                            //Creo que nada. TODO: ver que hacer.
+                        } else if (split_nom_file[14].equals("null.txt")) {
+                            generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                        } else {
+                            //Do nothing.
+                        }
                     }
                 }
 

@@ -959,7 +959,17 @@ public class ParleyActivity extends AppCompatActivity {
                         jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
                     }
                     String archivo = archivos[i];
-                    generar_tiquete(archivo, Number_winner1, Number_winner2, Number_winner3, jugador_actual);
+                    String[] split_nom_file = archivo.split("_separador_");
+                    Log.v("Tirar_reporte parley", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                    if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
+                        Log.v("Tirar_reporte parley2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[6] + "\n\n.");
+                        //Creo que nada. TODO: ver que hacer.
+                    } else if (split_nom_file[14].equals("null.txt")) {
+                        generar_tiquete(archivo, Number_winner1, Number_winner2, Number_winner3, jugador_actual);
+                    } else {
+                        //Do nothing.
+                    }
+
                 }
             }
             contenido = contenido + "\n\n################################\n Total de premios en \n" + Loteria + " " + Horario + ": " + String.valueOf(total) + " colones.\n################################\n\n\n\n\n";

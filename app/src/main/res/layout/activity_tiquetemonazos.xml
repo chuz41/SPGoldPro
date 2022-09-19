@@ -6,6 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".TiquetemonazosActivity">
 
+    <TextView
+        android:id="@+id/tv_total_res_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/tv_total_text_mona"
+        app:layout_constraintTop_toBottomOf="@+id/tv_total_text_mona" />
+
+    <TextView
+        android:id="@+id/tv_total_text_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/spinner_orden_desorden_mona"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_orden_desorden_mona" />
+
     <EditText
         android:id="@+id/et_monto_mona"
         android:layout_width="100dp"
