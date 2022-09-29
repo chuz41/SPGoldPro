@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReportesActivity">
+
+    <Button
+        android:id="@+id/button_rep_ventas"
+        android:layout_width="210dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="100dp"
+        android:onClick="rep_ventas"
+        android:text="@string/reporte_ventas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_rep_winners"
+        android:layout_width="230dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="60dp"
+        android:onClick="rep_winners"
+        android:text="@string/reporte_winners"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_rep_ventas" />
+
+    <Button
+        android:id="@+id/button_admin_invoices"
+        android:layout_width="233dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="60dp"
+        android:onClick="invoice_admin"
+        android:text="@string/admin_invoices"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_rep_winners" />
+
+    <TextView
+        android:id="@+id/textView_reportes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reportes"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@+id/button_rep_ventas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.486" />
+</androidx.constraintlayout.widget.ConstraintLayout>

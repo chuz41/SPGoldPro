@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RepventasActivity">
+
+    <TextView
+        android:id="@+id/tv_repventas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="@string/repventas_tvr"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_lot"
+        android:layout_width="248dp"
+        android:layout_height="59dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_lot_rev" />
+
+    <Spinner
+        android:id="@+id/spinner_hor"
+        android:layout_width="268dp"
+        android:layout_height="62dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_hor_rev" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_hor_rev"
+        android:layout_width="260dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="64dp"
+        android:text="@string/spinner_hor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_lot" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_lot_rev"
+        android:layout_width="234dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="72dp"
+        android:text="@string/loteria"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_repventas" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

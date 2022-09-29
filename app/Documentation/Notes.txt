@@ -1,0 +1,9 @@
+Se debe tomar en cuenta que aunque el archivo facturas_online.txt diga abajo, puede ser que el
+tiquete se halla subido de manera parcial.
+Ademas, puede que no halla internet en el momento que se intenta subir el tiquete con los numeros
+y montos negativos.
+Para resolver esto se utilizara el metodo equilibrar, el cual se describe a continuacion:
+
+equilibrar:
+
+borrar(): TODO: Verificar caducidad a la hora de borrar.

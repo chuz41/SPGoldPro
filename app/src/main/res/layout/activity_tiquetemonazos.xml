@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TiquetemonazosActivity">
+
+    <TextView
+        android:id="@+id/tv_total_res_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/tv_total_text_mona"
+        app:layout_constraintTop_toBottomOf="@+id/tv_total_text_mona" />
+
+    <TextView
+        android:id="@+id/tv_total_text_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/spinner_orden_desorden_mona"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_orden_desorden_mona" />
+
+    <EditText
+        android:id="@+id/et_monto_mona"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:hint="@string/monto"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_cliente_mona" />
+
+    <EditText
+        android:id="@+id/tv_tiquete_mona"
+        android:layout_width="360dp"
+        android:layout_height="509dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_numero_mona" />
+
+    <Button
+        android:id="@+id/button_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="generar_pedido"
+        android:text="@string/vender"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button4_mona"
+        android:layout_width="120dp"
+        android:layout_height="47dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="borrar_archivo_lot_actual"
+        android:text="@string/cancelar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/et_numero_mona"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:hint="@string/numero"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/et_monto_mona"
+        app:layout_constraintTop_toBottomOf="@+id/et_cliente_mona" />
+
+    <Spinner
+        android:id="@+id/spinner_orden_desorden_mona"
+        android:layout_width="149dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toEndOf="@+id/et_numero_mona"
+        app:layout_constraintTop_toTopOf="@+id/et_numero_mona" />
+
+    <EditText
+        android:id="@+id/et_cliente_mona"
+        android:layout_width="305dp"
+        android:layout_height="48dp"
+        android:hint="@string/cliente"
+        android:inputType="textPersonName|text|textCapWords"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_gentiquete_mona" />
+
+    <TextView
+        android:id="@+id/tv_gentiquete_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.459"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_fecha_mona"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/et_cliente_mona"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toEndOf="@+id/tv_gentiquete_mona"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/textView_esperar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

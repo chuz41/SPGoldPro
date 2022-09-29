@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReventadosActivity">
+
+    <TextView
+        android:id="@+id/tv_winreventados"
+        android:layout_width="256dp"
+        android:layout_height="35dp"
+        android:text="@string/winventas_tvr"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_bolita"
+        android:layout_width="158dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_hor_reven" />
+
+    <Spinner
+        android:id="@+id/spinner_hor_reven"
+        android:layout_width="255dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_hor_rev" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_hor_rev"
+        android:layout_width="230dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/spinner_hor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_lot_rev" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_lot_rev"
+        android:layout_width="234dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/loteria"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_winreventados" />
+
+    <EditText
+        android:id="@+id/et_numwinn_rev"
+        android:layout_width="81dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="52dp"
+        android:hint="@string/ingrese_num_premio"
+        android:inputType="number"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_hor_rev" />
+
+    <TextView
+        android:id="@+id/textView_paga_rev"
+        android:layout_width="115dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/paga_x_veces"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_bolita" />
+
+    <Spinner
+        android:id="@+id/spinner_paga_rev"
+        android:layout_width="117dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_bolita" />
+
+    <TextView
+        android:id="@+id/textView_rev3"
+        android:layout_width="63dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/veces"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_paga_rev" />
+
+    <Button
+        android:id="@+id/button_generar"
+        android:layout_width="130dp"
+        android:layout_height="95dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
+        android:onClick="tirar_reporte"
+        android:text="@string/gen_rep"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_numwinn_rev" />
+
+    <TextView
+        android:id="@+id/textView_lot_rev"
+        android:layout_width="283dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:text="TextView"
+        android:textColor="#070AB8"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_lot_rev" />
+
+    <TextView
+        android:id="@+id/textView_bolita"
+        android:layout_width="132dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/bolita"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_hor_reven" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

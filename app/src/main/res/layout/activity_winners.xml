@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WinnersActivity">
+
+    <TextView
+        android:id="@+id/tv_win"
+        android:layout_width="256dp"
+        android:layout_height="35dp"
+        android:text="@string/winventas_tvr"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_hor"
+        android:layout_width="230dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/spinner_hor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_lot" />
+
+    <Spinner
+        android:id="@+id/spinner_lot"
+        android:layout_width="274dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_lot" />
+
+    <Spinner
+        android:id="@+id/spinner_hor"
+        android:layout_width="277dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_hor" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_hor_par"
+        android:layout_width="230dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/spinner_hor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_lot" />
+
+    <TextView
+        android:id="@+id/tv_ingrese_lot"
+        android:layout_width="234dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/loteria"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_win" />
+
+    <EditText
+        android:id="@+id/et_numwinn"
+        android:layout_width="189dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="28dp"
+        android:hint="@string/ingrese_num_premio"
+        android:inputType="number"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_hor" />
+
+    <TextView
+        android:id="@+id/textView_paga"
+        android:layout_width="129dp"
+        android:layout_height="29dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/paga_x_veces"
+        app:layout_constraintBottom_toTopOf="@+id/textView_3"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_paga"
+        android:layout_width="121dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="168dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/textView_3"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_hor" />
+
+    <TextView
+        android:id="@+id/textView_3"
+        android:layout_width="72dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="188dp"
+        android:text="@string/veces"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_hor" />
+
+    <Button
+        android:id="@+id/button_generar"
+        android:layout_width="130dp"
+        android:layout_height="95dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:onClick="tirar_reporte"
+        android:text="@string/gen_rep"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_numwinn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

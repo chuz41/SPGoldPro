@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HorariosagregarActivity">
+
+    <TextView
+        android:id="@+id/textView_agregar_horarios"
+        android:layout_width="237dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/Seleccionar_horarios"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.482"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_juega"
+        android:layout_width="83dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/hora_juego"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_select_ident" />
+
+    <Button
+        android:id="@+id/button_lista"
+        android:layout_width="83dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/hora_lista"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_juega" />
+
+    <EditText
+        android:id="@+id/Edit_text_hora_juega"
+        android:layout_width="128dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="12dp"
+        android:hint="@string/hora_juegotv"
+        app:layout_constraintStart_toEndOf="@+id/button_juega"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_select_ident" />
+
+    <EditText
+        android:id="@+id/Edit_text_hora_lista"
+        android:layout_width="128dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="12dp"
+        android:hint="@string/hora_listatv"
+        app:layout_constraintStart_toEndOf="@+id/button_lista"
+        app:layout_constraintTop_toBottomOf="@+id/Edit_text_hora_juega" />
+
+    <Spinner
+        android:id="@+id/spinner_select_ident"
+        android:layout_width="160dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_agregar_horarios"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:id="@+id/button_agreg_hor"
+        android:layout_width="106dp"
+        android:layout_height="116dp"
+        android:layout_marginTop="12dp"
+        android:onClick="agregar_horarios"
+        android:text="@string/agregar_horbt"
+        app:layout_constraintStart_toEndOf="@+id/Edit_text_hora_juega"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_select_ident" />
+
+    <TextView
+        android:id="@+id/textView_1_hor"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Edit_text_hora_lista" />
+
+    <TextView
+        android:id="@+id/textView_2_hor"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/textView_1_hor"
+        app:layout_constraintTop_toBottomOf="@+id/Edit_text_hora_lista" />
+
+    <TextView
+        android:id="@+id/textView_3_hor"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/textView_2_hor"
+        app:layout_constraintTop_toBottomOf="@+id/Edit_text_hora_lista" />
+
+    <TextView
+        android:id="@+id/textView_4_hor"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/textView_3_hor"
+        app:layout_constraintTop_toBottomOf="@+id/Edit_text_hora_lista" />
+
+    <Button
+        android:id="@+id/button_confirmar_agH"
+        android:layout_width="288dp"
+        android:layout_height="91dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="80dp"
+        android:onClick="confirm_horarios"
+        android:text="@string/confirmar"
+        android:textSize="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Edit_text_hora_lista" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mensaje_cancelar_atras"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_confirmar_agH" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
