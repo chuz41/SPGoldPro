@@ -647,7 +647,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                 String linea = br.readLine();//Se lee archivo contable
                 while (linea != null) {
                     String[] split = linea.split("      ");//Se separa el monto de los numeros guardados.
-                    if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                    if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      " + split[1] + "      0      " + fecha;
                         TiqueteContable = TiqueteContable + linea + "\n";
                     } else {
@@ -708,7 +708,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                     String linea = br.readLine();//Se lee archivo contable
                     while (linea != null) {
                         String[] split = linea.split("      ");//Se separa el monto de los numeros guardados.
-                        if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                        if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
                             linea = split[0] + "      " + split[1] + "      0      " + fecha;
                             TiqueteContable = TiqueteContable + linea + "\n";
                         } else {

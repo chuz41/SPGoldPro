@@ -1049,6 +1049,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                 String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
                 String linea = br.readLine();//Se lee archivo contable
                 while (linea != null) {
+                    Log.v("contar", ".\n\nLinea:\n\n" + linea + "\n\n.");
                     String[] split = linea.split("      ");//Se separa el monto del numero guardado.
                     if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      0      " + fecha;
@@ -1056,7 +1057,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                     } else {
                         if (Integer.parseInt(split[0]) == Integer.parseInt(numero_act)) {
                             int monto_numero = Integer.parseInt(split[1]);
-                            monto_numero = (monto_numero * (-1));
+                            //monto_numero = (monto_numero * (-1));
                             monto_numero = monto_numero + valor;
                             linea = split[0] + "      " + String.valueOf(monto_numero) + "      " + fecha;
                         }
@@ -1066,9 +1067,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                 }
                 br.close();
                 archivo.close();
+                Log.v("contar_cont_file", ".\n\nArchivo contable antes de contar:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
                 borrar_archivo(archivo_contable);
                 crear_archivo(archivo_contable);
                 guardar(TiqueteContable, archivo_contable);
+                Log.v("contar_cont_file", ".\n\nArchivo contable despues de contar:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
             }catch (IOException e) {
             }
         }
@@ -1094,6 +1097,7 @@ public class FacturaseditActivity extends AppCompatActivity {
 
                 String linea = br.readLine();//Se lee archivo contable
                 while (linea != null) {
+                    Log.v("contar_mona", ".\n\nLinea:\n\n" + linea + "\n\n.");
                     String ord_desord_paga = "";
                     if (desord_ord.equals("Orden")) {
                         ord_desord_paga = Paga1;
@@ -1133,7 +1137,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                 }
                 br.close();
                 archivo.close();
+                Log.v("contar_mona_cont_file", ".\n\nArchivo contable antes de contar_monazos:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
+                borrar_archivo(archivo_contable);
+                crear_archivo(archivo_contable);
                 guardar(TiqueteContable, archivo_contable);
+                Log.v("contar_mona_cont_file", ".\n\nArchivo contable despues de contar_monazos:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
             } catch (IOException e) {
             }
         }
@@ -1169,9 +1177,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                     }
                     linea = String.valueOf(num) + "      " + String.valueOf(valor) + "      " + ord_desord_paga + "      " +  desord_ord + "      " + fecha;
                     TiqueteContable = TiqueteContable + linea + "\n";
+                    Log.v("contar_mona_cont_file", ".\n\nArchivo contable antes de contar_monazos:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
                     borrar_archivo(archivo_contable);
                     crear_archivo(archivo_contable);
                     guardar(TiqueteContable, archivo_contable);
+                    Log.v("contar_mona_cont_file", ".\n\nArchivo contable despues de contar_monazos:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
                 } catch (IOException e) {
                 }
             } else {
@@ -1214,9 +1224,10 @@ public class FacturaseditActivity extends AppCompatActivity {
                 String TiqueteContable = "";//Aqui se lee el contenido del tiquete guardado.
                 String linea = br.readLine();//Se lee archivo contable
                 while (linea != null) {
+                    Log.v("contar_parley", ".\n\nLinea:\n\n" + linea + "\n\n.");
                     String[] split = linea.split("      ");//Se separa el monto de los numeros guardados.
                     //Toast.makeText(this, "Debugueo (linea): " + linea + "\n\nSplit 1: " + split[0] + "\nSplit 2: " + split[1] + "\nSplit 3: " + split[2] + "\n\n", Toast.LENGTH_LONG).show();
-                    if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                    if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      " + split[1] + "      0      " + fecha;
                         TiqueteContable = TiqueteContable + linea + "\n";
                     } else {
@@ -1226,7 +1237,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 Log.v("Debugueo_coinsidencia2", ".\n\nlinea: \n\n" + linea + "\n\n.");
                                 flag_cont = false;
                                 int monto_numero = Integer.parseInt(split[2]);
-                                monto_numero = (monto_numero * (-1));
+                                //monto_numero = (monto_numero * (-1));
                                 monto_numero = monto_numero + valor;
                                 linea = String.valueOf(num1) + "      " + String.valueOf(num2) + "      " + String.valueOf(monto_numero) + "      " + fecha;
                                 TiqueteContable = TiqueteContable + linea + "\n";
@@ -1242,9 +1253,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                 }
                 br.close();
                 archivo.close();
+                Log.v("contar_parley_cont_file", ".\n\nArchivo contable antes de contar_parley:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
                 borrar_archivo(archivo_contable);
                 crear_archivo(archivo_contable);
                 guardar(TiqueteContable, archivo_contable);
+                Log.v("contar_parley_cont_file", ".\n\nArchivo contable despues de contar_parley:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
             } catch (IOException e) {
             }
         }
@@ -1262,10 +1275,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                         //flag_cont = true;
                         //Toast.makeText(this, "Debugueo guardar linea sin coinsidencias (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
                         String[] split = linea.split("      ");//Se separa el monto de los numeros guardados.
-                        if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                        if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
                             linea = split[0] + "      " + split[1] + "      0      " + fecha;
                             TiqueteContable = TiqueteContable + linea + "\n";
                         } else {
+                            //linea = String.valueOf(num1) + "      " + String.valueOf(num2) + "      " + String.valueOf(valor) + "      " + fecha;
                             TiqueteContable = TiqueteContable + linea + "\n";
                         }
                         linea = br.readLine();
@@ -1274,9 +1288,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                     archivo.close();
                     linea = String.valueOf(num1) + "      " + String.valueOf(num2) + "      " +  monto_act + "      " + fecha;
                     TiqueteContable = TiqueteContable + linea + "\n";
+                    Log.v("contar_parley_cont_file", ".\n\nArchivo contable antes de contar_parley:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
                     borrar_archivo(archivo_contable);
                     crear_archivo(archivo_contable);
                     guardar(TiqueteContable, archivo_contable);
+                    Log.v("contar_parley_cont_file", ".\n\nArchivo contable despues de contar_parley:\n\n" + imprimir_archivo(archivo_contable) + "\n\n.");
                 } catch (IOException e) {
                 }
             } else {
@@ -1323,7 +1339,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 String[] splitA = splitd[i].split("_");
                                 Log.v("descontar_parley", ".\n\nLinea: " + linead + "\n\n.");
                                 int montoi = Integer.parseInt(splitA[2]);
-                                montoi = montoi * (-1);
+                                montoi = (montoi * (-1));
                                 contar_parley(String.valueOf(montoi), splitA[0], splitA[1], cont_file);
                                 //break;
                             }
@@ -1335,7 +1351,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 int montoi = Integer.parseInt(splitA[1]);
                                 montoi = montoi * (-1);
                                 contar(String.valueOf(montoi), splitA[0], cont_file);
-                                break;
+                                //break;
                             }
 
                             //temp_file = temp_file + linead + "\n";
