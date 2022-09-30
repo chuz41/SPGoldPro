@@ -805,7 +805,7 @@ public class ParleyActivity extends AppCompatActivity {
                                 //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
                                 int otnom = Integer.parseInt(splity[5]) * -1;
                                 if (tipo_lot.equals("Monazos")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "_" + splity[3] + "__";
+                                    linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
                                     //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
                                     flagsitilla = true;
                                 } else if(tipo_lot.equals("Parley")) {
@@ -824,8 +824,8 @@ public class ParleyActivity extends AppCompatActivity {
                                 }
                             }
                             String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
-                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + file + "      " + fecha;
-                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + file + "      " + fecha_invoice;
+                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
+                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
                             agregar_linea_archivo(facturas_diarias, linea_escribir);
                             agregar_linea_archivo(historial_facturas, linea_escribir2);
 

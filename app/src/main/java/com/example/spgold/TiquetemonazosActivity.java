@@ -1290,6 +1290,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                     //agregar_linea_archivo(factura_a_subir, linea_adapt);
                     String[] split = linea.split("      ");//TODO: Revisar agregar_numero
                     sub_linea_final = sub_linea_final + split[0] + "_" + split[2] + "_" + split[1] + "__";
+                    //                                   numero           monto          ord_desord
                     String separacion_str = "";
                     int separacion = 5 - split[1].length();
                     for (int i = 0; i < separacion; i++) {
@@ -1637,7 +1638,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 String monto = split2[10];//10
                                 String extra_info = split2[14];//14
                                 String factura_leida = split2[18];//Numero de factura
-                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
+                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida + "\n\n.");
                                 String iD = split2[22];
                                 Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
                                 String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
@@ -1682,7 +1683,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
                                 int otnom = Integer.parseInt(splity[5]) * -1;
                                 if (tipo_lot.equals("Monazos")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "_" + splity[3] + "__";
+                                    linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
                                     //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
                                     flagsitilla = true;
                                 } else if(tipo_lot.equals("Parley")) {
@@ -1701,8 +1702,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 }
                             }
                             String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
-                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + file + "      " + fecha;
-                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + file + "      " + fecha_invoice;
+                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
+                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
                             agregar_linea_archivo(facturas_diarias, linea_escribir);
                             agregar_linea_archivo(historial_facturas, linea_escribir2);
 

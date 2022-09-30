@@ -172,7 +172,7 @@ public class FacturaseditActivity extends AppCompatActivity {
     }
 
     public void archivos(View view) {
-        ocultar_todo();
+        //ocultar_todo();
         //tv_aux.setVisibility(View.VISIBLE);
         String archivos[] = fileList();
         String ver = "";
@@ -184,7 +184,7 @@ public class FacturaseditActivity extends AppCompatActivity {
     }
 
     private void mostrar_todo() {
-/*
+
         textView_esperar.setText("");
         textView_esperar.setVisibility(View.INVISIBLE);
 
@@ -192,18 +192,18 @@ public class FacturaseditActivity extends AppCompatActivity {
         textView_fecha.setVisibility(View.VISIBLE);
         editText_listar_facturas.setVisibility(View.VISIBLE);
         edit_Text_numero_factura.setVisibility(View.VISIBLE);
-        boton_aux.setVisibility(View.VISIBLE);
-        tv_aux.setVisibility(View.VISIBLE);
+        //boton_aux.setVisibility(View.VISIBLE);
+        //tv_aux.setVisibility(View.VISIBLE);
         button_cambiar_fecha.setVisibility(View.VISIBLE);
         button_borrar_factura.setVisibility(View.VISIBLE);
         button_reimprimir.setVisibility(View.VISIBLE);
-        button_archivos.setVisibility(View.VISIBLE);
-*/
+        //button_archivos.setVisibility(View.VISIBLE);
+
 
     }
 
     private void ocultar_todo() {
-/*
+
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("   Conectando...\n\nPor favor espere...");
 
@@ -211,14 +211,13 @@ public class FacturaseditActivity extends AppCompatActivity {
         textView_fecha.setVisibility(View.INVISIBLE);
         editText_listar_facturas.setVisibility(View.INVISIBLE);
         edit_Text_numero_factura.setVisibility(View.INVISIBLE);
-        boton_aux.setVisibility(View.INVISIBLE);
-        tv_aux.setVisibility(View.INVISIBLE);
+        //boton_aux.setVisibility(View.INVISIBLE);
+        //tv_aux.setVisibility(View.INVISIBLE);
         button_cambiar_fecha.setVisibility(View.INVISIBLE);
         button_borrar_factura.setVisibility(View.INVISIBLE);
         button_reimprimir.setVisibility(View.INVISIBLE);
-        button_archivos.setVisibility(View.INVISIBLE);
+        //button_archivos.setVisibility(View.INVISIBLE);
 
-*/
     }
 
     private boolean verificar_internet() {
@@ -284,7 +283,7 @@ public class FacturaseditActivity extends AppCompatActivity {
             }
 
             if (flag) {
-                mostrar_todo();
+                //mostrar_todo();
                 return;
             } else {
                 //Do nothing. Continue with the work
@@ -390,7 +389,7 @@ public class FacturaseditActivity extends AppCompatActivity {
 
         String url = readRowURL;
 
-        ocultar_todo();
+        //ocultar_todo();
 
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -474,7 +473,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
                                 int otnom = Integer.parseInt(splity[5]) * -1;
                                 if (tipo_lot.equals("Monazos")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "_" + splity[3] + "__";
+                                    linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
                                     //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
                                     flagsitilla = true;
                                 } else if(tipo_lot.equals("Parley")) {
@@ -493,8 +492,8 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 }
                             }
                             String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
-                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + file + "      " + fecha;
-                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + file + "      " + fecha_invoice;
+                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
+                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
                             agregar_linea_archivo(facturas_diarias, linea_escribir);
                             agregar_linea_archivo(historial_facturas, linea_escribir2);
 
@@ -569,7 +568,7 @@ public class FacturaseditActivity extends AppCompatActivity {
 
         String url = addRowURL;
 
-        ocultar_todo();
+        //ocultar_todo();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
@@ -587,7 +586,7 @@ public class FacturaseditActivity extends AppCompatActivity {
 
                                 //mensaje_confirma_subida("factura #" + factura_num + " se ha subido correctamente!");
                                 cambiar_bandera (factura_num, tag);
-                                mostrar_todo();
+                                //mostrar_todo();
                                 try {
                                     abajiar();
                                 } catch (JSONException e) {
@@ -805,7 +804,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         boolean flag_internet = verificar_internet();
         //JSONObject objeto_Json_a_subir = null;
         if (flag_internet) {
-            ocultar_todo();
+            //ocultar_todo();
             obtener_Json_otras_facturas();
         } else {
             //Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
