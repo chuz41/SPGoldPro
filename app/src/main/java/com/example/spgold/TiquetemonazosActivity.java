@@ -137,6 +137,10 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     private String lotery = "";
     private String horary = "";
     private Integer sub_total = 0;
+    private String facturas_diarias = "facturas_diarias.txt";
+    private String historial_facturas = "historial_facturas.txt";
+    private String contabilidad = "contabilidad.txt";
+    private String nombre_dia;
 
     @Override
     protected void onPause() {
@@ -176,6 +180,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         tv_total_text.setText("Sub total:");
         tv_total_res.setText("0");
 
+
         Paga1 = getIntent().getStringExtra("Paga1");
         Paga2 = getIntent().getStringExtra("Paga2");
         Maniana = getIntent().getStringExtra("Maniana");
@@ -212,7 +217,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         fecha_selectedS = getIntent().getStringExtra("fecha_selected");
         mes_selectedS = getIntent().getStringExtra("mes_selected");
         anio_selectedS = getIntent().getStringExtra("anio_selected");
-
+        button_mona.setClickable(true);
         sub_total = 0;
         //El siguiente algoritmo de ifs se entera si se cambio o no la fecha de ventas.
         if (Integer.parseInt(fecha_selectedS) == 0) {
@@ -271,12 +276,12 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
                     String[] split = linea.split("      ");
 
-                    /*if (Integer.parseInt(split[2]) < Integer.parseInt(fecha)) {
-                        //Do nothing. Se eliminan las ventas de ayer.
+                    if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                        linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
+                        conte_file = conte_file + linea + "\n";
                     } else {
                         conte_file = conte_file + linea + "\n";
-                    }*/
-                    conte_file = conte_file + linea + "\n";
+                    }
 
                     linea = br.readLine();
 
@@ -284,6 +289,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 br.close();
                 archivo.close();
                 borrar_archivo(fichName);
+                crear_archivo(fichName);
                 guardar(conte_file, fichName);
 
             } catch (IOException e) {
@@ -295,11 +301,9 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             int cero = 0;
             String cero_s = Integer.toString(cero);
 
-            agregar_linea_archivo(fichName, "000" + "      " + "0" + "      " + Paga1 + "      " + "Orden");
-            agregar_linea_archivo(fichName, "000" + "      " + "0" + "      " + Paga2 + "      " + "Desorden");
-
+            agregar_linea_archivo(fichName, "000" + "      " + "0" + "      " + Paga1 + "      " + "Orden" + "      " + fecha);
+            agregar_linea_archivo(fichName, "000" + "      " + "0" + "      " + Paga2 + "      " + "Desorden" + "      " + fecha);
             //archivo contable creado!!!
-
         }
         comprobar_archivo();
 
@@ -536,7 +540,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         } else {
             //Do nothing. Se supone que nunca entraria aqui!!!
         }
-
         //printIt();
         //imprimir_archivo(Loteria + "_" + Horario + "_" + dia + "_" + mes + ".txt");
         String archivos[] = fileList();
@@ -548,49 +551,66 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
                 String linea = br.readLine();//Se lee archivo contable
                 while (linea != null) {
-
                     String[] split = linea.split("      ");//Se separa el monto del numero, del tipo de juego (orden o desorden) y el numero jugado.
-                    //Toast.makeText(this, "Debugueo (linea): " + linea + "\n\nSplit 1: " + split[0] + "\nSplit 2: " + split[1] + "\nSplit 3: " + split[2] + "\nSplit 4: " + split[3] + "\n\n", Toast.LENGTH_LONG).show();
-                    if (Integer.parseInt(split[0]) == num){
-                        //Toast.makeText(this, "Debugueo primera coinsidencia (linea): \n\nSplit[3] (orden o desorden en el archivo contable): " + split[3] + "\norden o desorden nueva venta: " + desord_ord, Toast.LENGTH_LONG).show();
-                        desord_ord = desord_ord.replace("\n","");
-                        if (split[3].equals(desord_ord)) {
-                            //Toast.makeText(this, "Debugueo segunda coinsidencia (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
-                            flag_cont = false;
-                            int monto_numero = Integer.parseInt(split[1]);
+                    if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                        linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
+                        TiqueteContable = TiqueteContable + linea + "\n";
+                    } else {
+                        if (Integer.parseInt(split[0]) == num) {
+                            //Toast.makeText(this, "Debugueo primera coinsidencia (linea): \n\nSplit[3] (orden o desorden en el archivo contable): " + split[3] + "\norden o desorden nueva venta: " + desord_ord, Toast.LENGTH_LONG).show();
+                            desord_ord = desord_ord.replace("\n", "");
+                            if (split[3].equals(desord_ord)) {
+                                //Toast.makeText(this, "Debugueo segunda coinsidencia (linea): \n\n" + linea, Toast.LENGTH_LONG).show();
+                                flag_cont = false;
+                                int monto_numero = Integer.parseInt(split[1]);
 
-                            ///////////SE VERIFICA QUE NO EXEDA EL LIMITE PERMITIDO DE VENTAS//////////////////////////////////////
+                                ///////////SE VERIFICA QUE NO EXEDA EL LIMITE PERMITIDO DE VENTAS//////////////////////////////////////
 
-                            int amonu = monto_numero + valor;
-                            if (amonu > Integer.parseInt(Limite_maximo)) {
-                                exeso = amonu - Integer.parseInt(Limite_maximo);
-                                monto_numero = amonu - exeso;
-                                diferencia_exed = diferencia_exed + exeso;
-                                exed_monto = exed_monto + "Maximo permitido para\nel numero " + numero_act + " " + tipo_jogo +  "\n se ha exedido!\nSe devuelven " + exeso + " colones. \n";
-                                Toast.makeText(this, "Monto exede el maximo permi-\ntidopara el numero " + numero_act + "\nSe devuelven " + exeso + " colones. ", Toast.LENGTH_LONG).show();
+                                int amonu = monto_numero + valor;
+                                if (amonu > Integer.parseInt(Limite_maximo)) {
+                                    exeso = amonu - Integer.parseInt(Limite_maximo);
+                                    monto_numero = amonu - exeso;
+                                    diferencia_exed = diferencia_exed + exeso;
+                                    exed_monto = exed_monto + "Maximo permitido para\nel numero " + numero_act + " " + tipo_jogo + "\n se ha exedido!\nSe devuelven " + exeso + " colones. \n";
+                                    Toast.makeText(this, "Monto exede el maximo permi-\ntidopara el numero " + numero_act + "\nSe devuelven " + exeso + " colones. ", Toast.LENGTH_LONG).show();
+                                } else {
+                                    monto_numero = monto_numero + valor;
+                                }
+
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                                String valor_numeri = String.valueOf(num);
+                                if (valor_numeri.length() == 1) {
+                                    valor_numeri = "00" + valor_numeri;
+                                } else if (valor_numeri.length() == 2) {
+                                    valor_numeri = "0" + valor_numeri;
+                                } else if (valor_numeri.length() == 3) {
+                                    valor_numeri = valor_numeri;
+                                } else {
+                                    //Do nothing here never!
+                                }
+                                linea = valor_numeri + "      " + String.valueOf(monto_numero) + "      " + ord_desord_paga + "      " + desord_ord + "      " + fecha;
+                                TiqueteContable = TiqueteContable + linea + "\n";
                             } else {
-                                monto_numero = monto_numero + valor;
+                                TiqueteContable = TiqueteContable + linea + "\n";
                             }
-
-                            //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-                            linea = String.valueOf(num) + "      " + String.valueOf(monto_numero) + "      " + ord_desord_paga + "      " + desord_ord;
-                            TiqueteContable = TiqueteContable + linea + "\n";
                         } else {
                             TiqueteContable = TiqueteContable + linea + "\n";
                         }
-                    } else {
-                        TiqueteContable = TiqueteContable + linea + "\n";
                     }
                     linea = br.readLine();
                 }
                 br.close();
                 archivo.close();
+                borrar_archivo(Loteria + "_" + Horario + "_.txt");
+                crear_archivo(Loteria + "_" + Horario + "_.txt");
+                Log.v("Ver_archivo++", ".\n\nTiquete contable:\n" + TiqueteContable + "\n\nArchivo:\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_.txt") + "\n\nLoteria: " + Loteria + "\nHorario: " + Horario + "\n\n.");
                 guardar(TiqueteContable, Loteria + "_" + Horario + "_.txt");
             } catch (IOException e) {
             }
         }
+
         if (ArchivoExiste(archivos, Loteria + "_" + Horario + "_.txt")) {//nombre del archivo CONTABle del dia
             if (flag_cont) {
                 try {
@@ -600,13 +620,30 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
                     String linea = br.readLine();//Se lee archivo contable
                     while (linea != null) {
-
-                        TiqueteContable = TiqueteContable + linea + "\n";
+                        String[] split = linea.split("      ");
+                        if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                            linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
+                            TiqueteContable = TiqueteContable + linea + "\n";
+                        } else {
+                            TiqueteContable = TiqueteContable + linea + "\n";
+                        }
                         linea = br.readLine();
+                    }
+                    String valor_numeri = String.valueOf(num);
+                    if (valor_numeri.length() == 1) {
+                        valor_numeri = "00" + valor_numeri;
+                    } else if (valor_numeri.length() == 2) {
+                        valor_numeri = "0" + valor_numeri;
+                    } else if (valor_numeri.length() == 3) {
+                        valor_numeri = valor_numeri;
+                    } else {
+                        //Do nothing here never!
                     }
                     br.close();
                     archivo.close();
-                    linea = String.valueOf(num) + "      " + String.valueOf(valor) + "      " + ord_desord_paga + "      " +  desord_ord;
+                    borrar_archivo(Loteria + "_" + Horario + "_.txt");
+                    crear_archivo(Loteria + "_" + Horario + "_.txt");
+                    linea = valor_numeri + "      " + String.valueOf(valor) + "      " + ord_desord_paga + "      " +  desord_ord + "      " + fecha;
                     TiqueteContable = TiqueteContable + linea + "\n";
                     guardar(TiqueteContable, Loteria + "_" + Horario + "_.txt");
                 } catch (IOException e) {
@@ -617,6 +654,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     }
 
     public void generar_pedido (View view){
+        button_mona.setClickable(false);
         String jugador = cliente.getText().toString();
 
         /*if (jugador.isEmpty()){
@@ -630,18 +668,17 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
         if (ArchivoExiste(archivos, "Tiquete" + Loteria + ".txt")) {//Archivo Tiquete_Nombre_loteria.txt es el archivo temporal que almacena cada venta.
 
-
-
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput("Tiquete" + Loteria + ".txt"));
                 BufferedReader br = new BufferedReader(archivo);
                 TiqueteCompleto = "";//Aqui se lee el contenido del tiquete guardado.
 
                 String linea = br.readLine();
-
+                int cont_log = 0;
                 while (linea != null) {
+                    Log.v("Gen_ped..#" + String.valueOf(cont_log), "Linea de tiquete: " + linea + "\n");
+                    cont_log++;
                     String[] split = linea.split("      ");//Se separa el monto del numero jugado.
-                    //Toast.makeText(this, "Debuggeo linea por linea del tiquete: \n\nsplit[0] (Debe ser el numero jugado): "+ split[0] + "\nsplit[1] (Debe ser el monto): " + split[1] + "\nsplit[2] (Debe indicar orden o desorden): " + split[2], Toast.LENGTH_LONG).show();
                     int diff = contar(split[1], split[0], split[2]);//Aqui se llama a la funcion que agrega la venta al archivo contable.
                     int valor = Integer.parseInt(split[1]);
                     if (diff > 0) {
@@ -655,16 +692,14 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
                     //Se crea fichero identico al fichero online
 
-                    //agregar_linea_archivo(Numero_maquina + "_" + Loteria + "_" + Horario + "_" + fecha + "_" + mes + "_" + anio + "_.txt", linea);
 
                     //////////////////////////////////////////////////////////////
                     linea = br.readLine();
-
                 }
                 br.close();
                 archivo.close();
                 guardar(TiqueteCompleto, "Tiquete" + Loteria + ".txt");
-                String tcompleto = TiqueteCompleto;
+                //String tcompleto = TiqueteCompleto;
                 //////////////////ONLINE OPTIONS///////////////////////////////
                 //Se inicia la variable SHEET que corresponde a la hoja que se va a editar.
 
@@ -1092,6 +1127,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         //##########################################################################################
 
         String consecutivo_str = "";
+        String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
+        String fecha_comparar = anio + mes + fecha;
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput("invoice.txt"));
             BufferedReader br = new BufferedReader(archivo);
@@ -1107,19 +1144,32 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             linea = br.readLine();//Se lee la segunda linea del archivo
             while (linea != null) {
                 linea = linea.replace("\n", "");
-                linea_consecutivo = linea_consecutivo + linea + "\n";
+                String[] splitio = linea.split(" ");
+                String[] splitio2 = splitio[2].split("_");
+                if (splitio2[1].equals(nombre_dia)) {
+                    if (splitio2[0].equals(fecha_invoice)) {
+                        linea_consecutivo = linea_consecutivo + linea + "\n";//Estas son las facturas de hoy
+                    } else if (Integer.parseInt(splitio2[0]) < Integer.parseInt(fecha_comparar)){
+                        //do nothing. Son las facturas con mas de una semana. Aqui se eliminan.
+                    } else {
+                        linea_consecutivo = linea_consecutivo + linea + "\n";//Seria las facturas futuras.
+                    }
+                } else {
+                    linea_consecutivo = linea_consecutivo + linea + "\n";//Son las facturas que estan en el rango de menos de una semana.
+                }
+                //linea_consecutivo = linea_consecutivo + linea + "\n";
                 linea = br.readLine();
                 flag_cont++;
-
-
             }
-            guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
+
             if (flag_cont == 0) { //TODO: Evitar que el archivo de facturas cresca desmedido y llene la memoria.
                 //guardar(split[0] + " " + split[1],"invoice.txt");//Se elimina el cambio de linea si no se ha generado ni una sola factura. (Parece innecesario)
             }
-
             br.close();
             archivo.close();
+            borrar_archivo("invoice.txt");
+            crear_archivo("invoice.txt");
+            guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
         } catch (IOException e) {
         }
 
@@ -1179,7 +1229,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         }
 
         String tempFile = jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hoora + "_separador_" + miinuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
-        agregar_linea_archivo("facturas_online.txt", "abajo " + tempFile + " " + SPREADSHEET_ID + " " + SHEET + " " + tipo_lot);
+        String lineaAgregar = "abajo " + tempFile + " " + SPREADSHEET_ID + " " + SHEET + " " + tipo_lot;
+        agregar_linea_archivo("facturas_online.txt", lineaAgregar);
 
         tempFile = tempFile.replace("\n","");
         consecutivo_str = consecutivo_str.replace("\n","");
@@ -1193,8 +1244,9 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
         ///////////////////////////////////////////////////////////////////////////
 
-        crear_archivo(tempFile);
-        String tod = consecutivo_str + " " + tempFile;
+        //crear_archivo(tempFile);
+        fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
+        String tod = consecutivo_str + " " + tempFile + " " + fecha_invoice;
         tod = tod.replace("\n","");
         agregar_linea_archivo("invoice.txt", tod);
         String linea_temp = "";
@@ -1223,6 +1275,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         contenido = contenido + linea_temp + "\n#############################";
         String archivos[] = fileList();
         if (ArchivoExiste(archivos, "Tiquete" + Loteria + ".txt")) {//Archivo nombre_archivo es el archivo que vamos a copiar
+
             try {
                 InputStreamReader archivo24 = new InputStreamReader(openFileInput("Tiquete" + Loteria + ".txt"));//Se abre archivo
                 BufferedReader br24 = new BufferedReader(archivo24);
@@ -1231,10 +1284,13 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 int counter = 0;
                 String linea_tempo = "";
+                String sub_linea_final = "";
                 while (linea != null) {
                     //String linea_adapt = linea.replace("      ", " ");//Adaptamos el archivo para subirlo a la nube.
                     //agregar_linea_archivo(factura_a_subir, linea_adapt);
-                    String[] split = linea.split("      ");
+                    String[] split = linea.split("      ");//TODO: Revisar agregar_numero
+                    sub_linea_final = sub_linea_final + split[0] + "_" + split[2] + "_" + split[1] + "__";
+                    //                                   numero           monto          ord_desord
                     String separacion_str = "";
                     int separacion = 5 - split[1].length();
                     for (int i = 0; i < separacion; i++) {
@@ -1260,7 +1316,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                         //Do nothing. Nunca deberia llegar aqui.
                     }
                     if (counter == 1) {
-
                         linea_tempo = helper + separacion_str + split[1] + " " + ord_desord + "|";
                     } else if (counter == 2) {
                         linea_tempo = linea_tempo + helper + separacion_str + split[1] + " " + ord_desord;
@@ -1271,10 +1326,15 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                         //linea = linea_tempo;
                         contenido = contenido + "\n" + linea_tempo;
                     }
-                    String liniesilla = linea + "      " + SPREADSHEET_ID + "      " + SHEET;
-                    agregar_linea_archivo(tempFile, liniesilla);
+
                     linea = br24.readLine();
                 }
+                //                     split[0]                     split[1]                 split[2]           split[3]             split[4]
+                String liniesilla = sub_linea_final + "      " + SPREADSHEET_ID + "      " + SHEET + "      " + tempFile + "      " + fecha;
+                String liniesilla_history = sub_linea_final + "      " + SPREADSHEET_ID + "      " + SHEET + "      " + tempFile + "      " + fecha_invoice;
+                agregar_linea_archivo(facturas_diarias, liniesilla);
+                agregar_linea_archivo(historial_facturas, liniesilla_history);//TODO: limpiar en facturasEditActivity
+
                 if (counter == 1) {
                     contenido = contenido + "\n" + linea_tempo;
                 }
@@ -1292,6 +1352,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 archivo24.close();
             }catch (IOException e) {
             }
+        } else {
+            return;
         }
 
         try {
@@ -1345,84 +1407,58 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             String factura = "";
             String file = abajos2.get(key);
             try {
-                InputStreamReader archivo = new InputStreamReader(openFileInput(abajos2.get(key)));
-                //imprimir_archivo("facturas_online.txt");
+                InputStreamReader archivo = new InputStreamReader(openFileInput(facturas_diarias));
+                //imprimir_archivo("facturas_online.txt");  abajos2.get(key)
                 BufferedReader br = new BufferedReader(archivo);
                 String linea = br.readLine();
-
-                if (linea != null){
+                while (linea != null) {
                     String[] split = linea.split("      ");
-                    String[] split_name = abajos2.get(key).split("_separador_");
-                    Log.v("ERROR9001_facturas", "Linea leida: " + linea);
-                    if (linea.equals("BORRADA")) {
-                        Log.v("abajiar_linea_borrada", "\n\nLinea: " + linea);
-                        //Do nothing.
-                    } else if (linea.isEmpty()) {
-                        Log.v("abajiar_linea_empty", "\n\nLinea: " + linea);
-                        //Do nothing.
-                    } else if (split_name[14].equals("equi.txt")) {
-                        Log.v("abajiar_nombre_equi.txt", "\n\nLinea: " + linea);
-                        tipo_lot= split_name[9];
-                        if (tipo_lot.equals("Monazos")) {
-                            SSPPRREEAADDSSHHEETT = split[3];
-                            SSHHEETT = split[4];
-                        } else if (tipo_lot.equals("Parley")) {
-                            SSPPRREEAADDSSHHEETT = split[3];
-                            SSHHEETT = split[4];
-                        } else if (tipo_lot.equals("Reventados")) {
-                            SSPPRREEAADDSSHHEETT = split[2];
-                            SSHHEETT = split[3];
-                        } else if (tipo_lot.equals("Regular")) {
-                            SSPPRREEAADDSSHHEETT = split[2];
-                            SSHHEETT = split[3];
+                    if (file.equals(split[3])) {
+                        String[] split_name = file.split("_separador_");
+                        Log.v("ERROR9001_facturas", "Linea leida: " + linea);
+                        if (split[0].equals("BORRADA")) {
+                            Log.v("abajiar_linea_borrada", "\n\nLinea: " + linea);
+                            //Do nothing.
+                        } else if (linea.isEmpty()) {
+                            Log.v("abajiar_linea_empty", "\n\nLinea: " + linea);
+                            //Do nothing.
+                        } else if (split_name[14].equals("equi.txt")) {
+                            Log.v("abajiar_nombre_equi.txt", "\n\nLinea: " + linea);
+                            tipo_lot = split_name[9];
+                            SSPPRREEAADDSSHHEETT = split[1];
+                            SSHHEETT = split[2];
+                            factura = split_name[6];
+                            //file = abajos2.get(key);
+                            Log.v("Errequilibrar_facturas", "\n\nFinal del nombre del archivo: " + split_name[14] + "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
+                            br.close();
+                            archivo.close();
+                            equilibrar(SSPPRREEAADDSSHHEETT, SSHHEETT, file, factura, tipo_lot, key);
+                            break;
+                        } else if (split_name[14].equals("null.txt")) {
+                            Log.v("abajiar_nombre_null.txt", "\n\nLinea: " + linea);
+                            tipo_lot = split_name[9];
+                            SSPPRREEAADDSSHHEETT = split[1];
+                            SSHHEETT = split[2];
+                            factura = split_name[6];
+                            //file = abajos2.get(key);\n
+                            Log.v("Error9003_pre", "\n\nTipo_lot: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\n\n.");
+                            objeto_json = generar_Json_resagadas(file, factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lot);
+                            Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
+                            abajos2.remove(key);
+                            br.close();
+                            archivo.close();
+                            subir_factura_resagadas(objeto_json, "nothing", conteni);
+                            break;
                         } else {
-                            //Nothing here never
+                            Log.v("abajiar_ninguna_opcion", " Error!!! Nunca deberia llegar aqui!!!\n\nLinea: " + linea);
+                            //Do nothing.
                         }
-                        factura = split_name[6];
-                        //file = abajos2.get(key);
-                        Log.v("Errequilibrar_facturas", "\n\nFinal del nombre del archivo: " + split_name[14] + "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
-                        br.close();
-                        archivo.close();
-                        equilibrar(SSPPRREEAADDSSHHEETT, SSHHEETT, file, factura, tipo_lot, key);
-                        break;
-                    } else if (split_name[14].equals("null.txt")) {
-                        Log.v("abajiar_nombre_null.txt", "\n\nLinea: " + linea);
-                        tipo_lot= split_name[9];
-                        if (tipo_lot.equals("Monazos")) {
-                            SSPPRREEAADDSSHHEETT = split[3];
-                            SSHHEETT = split[4];
-                        } else if (tipo_lot.equals("Parley")) {
-                            SSPPRREEAADDSSHHEETT = split[3];
-                            SSHHEETT = split[4];
-                        } else if (tipo_lot.equals("Reventados")) {
-                            SSPPRREEAADDSSHHEETT = split[2];
-                            SSHHEETT = split[3];
-                        } else if (tipo_lot.equals("Regular")) {
-                            SSPPRREEAADDSSHHEETT = split[2];
-                            SSHHEETT = split[3];
-                        } else {
-                            //Nothing here never
-                        }
-                        factura = split_name[6];
-                        //file = abajos2.get(key);\n
-                        Log.v("Error9003_pre", "\n\nTipo_lot: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\n\n.");
-                        objeto_json = generar_Json_resagadas(file, factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lot);
-                        Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
-                        abajos2.remove(key);
-                        br.close();
-                        archivo.close();
-                        subir_factura_resagadas(objeto_json, "nothing", conteni);
-                        break;
-                    } else {
-                        Log.v("abajiar_ninguna_opcion", " Error!!! Nunca deberia llegar aqui!!!\n\nLinea: " + linea);
-                        //Do nothing.
                     }
+                    linea = br.readLine();
                 }
                 br.close();
                 archivo.close();
-            } catch (IOException e) {
-
-            }
+            } catch (IOException e) {}
         }
         //mostrar_todo();
     }
@@ -1485,24 +1521,41 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         boolean flagsita = true;
 
         try {
-            InputStreamReader archivo = new InputStreamReader(openFileInput(file));
+            InputStreamReader archivo = new InputStreamReader(openFileInput(facturas_diarias));
             BufferedReader br = new BufferedReader(archivo);
             String linea = br.readLine();
             String json_string = "";
             while (linea != null) {
                 String[] split = linea.split("      ");
-                if (linea.equals("BORRADA")) {
-                    Log.v("ErrorBorrada", "Factura esta borrada, no hacer nada!!!");
-                    flagsita = false;
-                } else if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
-                    //                            #1                #2             monto          ext. info         factura
-                    json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + "no" + "_n_" + factura + "_l_";
-                } else if (tipo_lote.equals("Monazos")) {
-                    //                            #1                #2             monto            ext. info           factura
-                    json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + split[2] + "_n_" + factura + "_l_";
-                } else if (tipo_lote.equals("Parley")) {
-                    //                            #1                #2                 monto           ext. info        factura
-                    json_string = json_string + split[0] + "_n_" + split[1] + "_n_" + split[2] + "_n_" + "no" + "_n_" + factura + "_l_";
+                if (split[3].equals(file)) {
+                    String information = split[0];
+                    if (split[0].equals("BORRADA")) {
+                        Log.v("ErrorBorrada", "Factura esta borrada, no hacer nada!!!");
+                        flagsita = false;
+                    } else if (tipo_lote.equals("Regular") | tipo_lote.equals("Reventados")) {
+                        String[] split2 = information.split("__");
+                        for (int i = 0; i < split2.length; i++) {
+                            String[] split3 = split2[i].split("_");
+                            //                            #1                 #2              monto          ext. info         factura
+                            json_string = json_string + split3[0] + "_n_" + "no" + "_n_" + split3[1] + "_n_" + "no" + "_n_" + factura + "_l_";
+                        }
+                    } else if (tipo_lote.equals("Monazos")) {
+                        String[] split2 = information.split("__");
+                        for (int i = 0; i < split2.length; i++) {
+                            String[] split3 = split2[i].split("_");
+                            //                            #1                 #2             monto              ext. info           factura
+                            json_string = json_string + split3[0] + "_n_" + "no" + "_n_" + split3[2] + "_n_" + split3[1] + "_n_" + factura + "_l_";
+                        }
+                    } else if (tipo_lote.equals("Parley")) {
+                        String[] split2 = information.split("__");
+                        for (int i = 0; i < split2.length; i++) {
+                            String[] split3 = split2[i].split("_");
+                            //                            #1                  #2                 monto           ext. info         factura
+                            json_string = json_string + split3[0] + "_n_" + split3[1] + "_n_" + split3[2] + "_n_" + "no" + "_n_" + factura + "_l_";
+                        }
+                    } else {
+                        //Do nothing. Nunca llega aqui!
+                    }
                 } else {
                     //Do nothing. Nunca llega aqui!
                 }
@@ -1519,33 +1572,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         } catch (IOException | JSONException e) {
         }
         return jsonObject;
-    }
-
-    private JSONObject generar_Json(String file, String factura){
-        //boolean flag_subir = false;
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            InputStreamReader archivo = new InputStreamReader(openFileInput(file));
-            BufferedReader br = new BufferedReader(archivo);
-            String linea = br.readLine();
-            String json_string = "";
-            while (linea != null) {
-                String[] split = linea.split("      ");
-                //                            #1                #2             monto            ext. info           factura
-                json_string = json_string + split[0] + "_n_" + "no" + "_n_" + split[1] + "_n_" + split[2] + "_n_" + factura + "_l_";
-                linea = br.readLine();
-            }
-            br.close();
-            archivo.close();
-            jsonObject = TranslateUtil.string_to_Json(json_string, SPREADSHEET_ID, SHEET, factura);
-        } catch (IOException | JSONException e) {
-        }
-        return jsonObject;
-    }
-
-    private void mensaje_confirma_subida(String s) {
-        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
     }
 
     public void borrar_archivo(String file) {
@@ -1612,7 +1638,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 String monto = split2[10];//10
                                 String extra_info = split2[14];//14
                                 String factura_leida = split2[18];//Numero de factura
-                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
+                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida + "\n\n.");
                                 String iD = split2[22];
                                 Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
                                 String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
@@ -1642,36 +1668,44 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                                 //////////////////////////////////////////////////////////////////////////
                             }
 
-                            //borrar_archivo(file);
 
                             String[] splityto = file.split("_separador_");
                             String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
                             String montitito = String.valueOf(new_monto * -1);
                             String new_name = splityto[0] + "_separador_" + splityto[1] + "_separador_" + splityto[2] + "_separador_" + splityto[3] + "_separador_" + splityto[4] + "_separador_" + splityto[5] + "_separador_" + factoura + "_separador_" + splityto[7] + "_separador_" + splityto[8] + "_separador_" + splityto[9] + "_separador_" + splityto[10] + "_separador_" + splityto[11] + "_separador_" + montitito + "_separador_" + splityto[13] + "_separador_" + "null.txt";
-                            crear_archivo(new_name);
+                            //crear_archivo(new_name);
                             //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);
                             //Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                            String linea_leida = "";
                             for (String key : hashMap.keySet()) {
                                 Log.v("E0 for hashMap", "\nKey: " + key + "\nValue: " + hashMap.get(key) + "\ntipo_lot: " + tipo_lot + "\n");
                                 String[] splity = key.split("ojo-rojo_ojo-rojo");
                                 //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
                                 int otnom = Integer.parseInt(splity[5]) * -1;
                                 if (tipo_lot.equals("Monazos")) {
-                                    agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
+                                    linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
+                                    //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
                                     flagsitilla = true;
                                 } else if(tipo_lot.equals("Parley")) {
-                                    agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                    linea_leida = linea_leida + splity[1] + "_" + splity[2] + "_" + String.valueOf(otnom) + "__";
+                                    //agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
                                     flagsitilla = true;
                                 } else if (tipo_lot.equals("Reventados")) {
-                                    agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
+                                    //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
                                     flagsitilla = true;
                                 } else if (tipo_lot.equals("Regular")) {
-                                    agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
                                     flagsitilla = true;
                                 } else {
                                     //Do nothing.
                                 }
                             }
+                            String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
+                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
+                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
+                            agregar_linea_archivo(facturas_diarias, linea_escribir);
+                            agregar_linea_archivo(historial_facturas, linea_escribir2);
 
                             if (flagsitilla) {
                                 //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
@@ -1712,10 +1746,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 });
         // Add the request to the RequestQueue.
         requestQueue.add(stringRequest);
-    }
-
-    private void mensaje_error_en_subida() {
-        //Toast.makeText(this, "Error subiendo la factura a la base de datos!!!", Toast.LENGTH_LONG).show();
     }
 
     private void cambiar_bandera (String Consecutivo, String tag) {
@@ -1848,11 +1878,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         String url = addRowURL;
 
         ocultar_todo();
-       /* if (conteni.equals("nada")) {
-            //Do nothing.
-        } else {
-            impmir_tiquete(conteni);
-        } */
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
@@ -1909,73 +1934,6 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         //Toast.makeText(this, "Debug:\nEste mensaje debe aparecer despues del mensaje de funcion cambiar_bandera.\nSi aparece antes es que no es sincronico!!!", Toast.LENGTH_LONG).show();
 
     }
-/*
-    private void subir_factura(JSONObject jsonObject, String Consecutivo) throws JSONException {
-        //flag_file_arriba = false;
-
-        RequestQueue queue;
-        queue = Volley.newRequestQueue(this);
-
-
-        //Llamada POST usando Volley:
-        RequestQueue requestQueue;
-
-        // Instantiate the cache
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
-
-        // Set up the network to use HttpURLConnection as the HTTP client.
-        Network network = new BasicNetwork(new HurlStack());
-
-        // Instantiate the RequestQueue with the cache and network.
-        requestQueue = new RequestQueue(cache, network);
-
-        // Start the queue
-        requestQueue.start();
-
-        //Toast.makeText(this, "Debug:\nConsecutivo: " + Consecutivo + "\nconsecutivo: " + consecutivo + "\nDeben ser iguales.", Toast.LENGTH_LONG).show();
-
-        String url = addRowURL;
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String[] split = response.toString().split("\"");
-                        int length_split = split.length;
-                        if (length_split > 3) {
-                            if (split[3].equals(SHEET)) {
-                                //mensaje_confirma_subida(response.toString());
-                                mensaje_confirma_subida("factura #" + Consecutivo + " se ha subido correctamente!");
-                                cambiar_bandera (Consecutivo);
-                            } else {
-                                //mensaje_confirma_subida("Factura " + Consecutivo + " no se ha subido!");
-                            }
-                        } else {
-                            //No se subio correctamente!
-                            mensaje_confirma_subida("Factura " + Consecutivo + " no se ha subido!");
-                        }
-
-                        //flag_file_arriba = true;
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                        mensaje_error_en_subida();
-
-                    }
-                });
-
-        // Add the request to the RequestQueue.
-        requestQueue.add(jsonObjectRequest);
-        //Toast.makeText(this, "Debug:\nBandera flag_file_arriba (antes del return): " + String.valueOf(flag_file_arriba), Toast.LENGTH_LONG).show();
-
-        //Toast.makeText(this, "Debug:\nEste mensaje debe aparecer despues del mensaje de funcion cambiar_bandera.\nSi aparece antes es que no es sincronico!!!", Toast.LENGTH_LONG).show();
-
-    }*/
 
     private boolean verificar_internet() {
         ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -2022,10 +1980,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
 
     }
 
-
-
     public void borrar_archivo_lot_actual(View view) throws FileNotFoundException {
-
         String archivos[] = fileList();
         File archivo = new File("Tiquete" + Loteria + ".txt");
         String archivo_name = "Tiquete" + Loteria + ".txt";
@@ -2047,21 +2002,11 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             cliente.setText("");
             monto.setText("");
             numero.setText("");
-
-            //Intent Activity_ventas = new Intent(this, VentasActivity.class);
-            //startActivity(Activity_ventas);
-            //finish();
-            //System.exit(0);
         }else {
             tiquete.setText("");//Le indicamos a la aplicacion que to-do eso lo coloque en el editText.
             cliente.setText("");
             monto.setText("");
             numero.setText("");
-
-            //Intent Activity_ventas = new Intent(this, VentasActivity.class);
-            //startActivity(Activity_ventas);
-            //finish();
-            //System.exit(0);
         }
     }
 
@@ -2073,7 +2018,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
     }
 
     private void imprimiendoAnim() {
-        //Toast.makeText(getApplicationContext(), "imprimiendo...",	Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "imprimiendo...",	Toast.LENGTH_SHORT).show();
     }
 
     private void agregar_fact_online(String file, String spid, String sheet, String tip_lot) {
@@ -2081,11 +2026,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         Log.v("Error800", "Agregar a facturas_online.txt :\n\n" + imprimir_archivo(file));
         agregar_linea_archivo("facturas_online.txt", linea_agrgar);
         Log.v("Error111", "SpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
-        //msg("Error111 SpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
-        //debug
-        //imprimir_archivo(file);
         Log.v("Error110", "facturas_online.txt:\n\n" + imprimir_archivo("facturas_online.txt"));
-        //msg("Error110\n" + imprimir_archivo(imprimir_archivo(file)));
     }
 
     private String imprimir_archivo(String nombre_archivo){
@@ -2095,18 +2036,12 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(nombre_archivo));//Se abre archivo
                 BufferedReader br = new BufferedReader(archivo);
-
-
                 String linea = br.readLine();//Se lee archivo
                 while (linea != null) {
                     contenido = contenido + linea + "\n";
                     linea = br.readLine();
                     //return;
                 }
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
                 br.close();
                 archivo.close();
             } catch (IOException e) {
@@ -2120,8 +2055,9 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         String numero1 = numero.getText().toString();
         sub_total = sub_total + Integer.parseInt(monto.getText().toString());
         tv_total_res.setText(String.valueOf(sub_total));
-        tiquete_venta.put(monto1, numero1); //Hacer esto pero que si hay apuestas a determinado numero, se sume el monto y no se reemplaze
 
+        tiquete_venta.put(monto1, numero1); //Hacer esto pero que si hay apuestas a determinado numero, se sume el monto y no se reemplaze
+                                                                            //TODO: Hacer el algoritmo.
         String archivos[] = fileList();
 
         if (ArchivoExiste(archivos, "Tiquete" + Loteria + ".txt")) {
@@ -2146,13 +2082,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             }
 
         } else {//Do nothing.
-            //guardar();
         }
-
-        //Limpiar valores ingresados en los textView y en los ficheros
-        //monto.setText("");
         numero.setText("");
-
     }
 
     public void guardar (String Tcompleto, String nombre){
@@ -2160,7 +2091,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(nombre, Activity.MODE_PRIVATE));
             archivo.write(Tcompleto);
             archivo.flush();
-
+            archivo.close();
         } catch (IOException e) {
         }
     }
@@ -2229,6 +2160,7 @@ public class TiquetemonazosActivity extends AppCompatActivity {
             }catch (IOException e) {
             }
         } else {
+
             tv_total_res.setText(String.valueOf(sub_total));
             crear_archivo(fileName);
         }
@@ -2274,23 +2206,25 @@ public class TiquetemonazosActivity extends AppCompatActivity {
         }
         fecha_realistic = split[5] + meseciyillo + split[2];
         String anio_helper = split[5];
+        nombre_dia = split[0];
 
         if (!flag_cad) {
             mes = String.valueOf(meses.get(split[1]));
             anio = split[5];
             fecha = split[2];
             dia = split[2];
+
         } else {
             mes = mes_selectedS;
             anio = anio_selectedS;
             fecha = fecha_selectedS;
             dia = fecha_selectedS;
         }
+        Log.v("verificar_fecha", ".\n\nFecha: " + fecha + "\nDia: " + nombre_dia + "\n\n.");
         hora = split[3];
         split = hora.split(":");
         minuto = split[1];
         hora = split[0];
-
         int mesito = Integer.parseInt(mes);
         String mesitoS = "";
         if (mesito <= 9) {

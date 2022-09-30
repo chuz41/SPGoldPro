@@ -62,30 +62,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_ingrese_hor_rev" />
 
-    <Button
-        android:id="@+id/button_fecha_ventas"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/green"
-        android:onClick="cambiar_fecha"
-        android:text="@string/cambiar_fecha"
-        android:textColor="@color/red"
-        android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_hor" />
-
     <TextView
         android:id="@+id/textView_fecha_ventas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/red"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/button_fecha_ventas"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_hor" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_hor"
+        app:layout_constraintVertical_bias="0.173" />
 
     <TextView
         android:id="@+id/textView_esperar"
