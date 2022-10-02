@@ -703,171 +703,204 @@ public class ParleyActivity extends AppCompatActivity {
         //mostrar_todo();
     }
 
-    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {//Este metodo revisa si se ha subido parte del tiquete a la nube.
-        RequestQueue requestQueue;//Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
-        // Instantiate the cache
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) throws IOException {//Este metodo revisa si se ha subido parte del tiquete a la nube.
 
-        // Set up the network to use HttpURLConnection as the HTTP client.
-        Network network = new BasicNetwork(new HurlStack());
+        boolean flag = true;
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput(facturas_diarias));
+            //imprimir_archivo("facturas_online.txt");
+            BufferedReader br = new BufferedReader(archivo);
+            String linea = br.readLine();
+            while (linea != null) {
+                String[] splito = linea.split("      ");
+                String[] split = splito[3].split("_separador_");
+                //                       0                           1                         2                        3                        4                       5                         6                       7                     8                       9                         10                     11                        12                          13                   14
+                //String tempFile = jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hoora + "_separador_" + miinuto + "_separador_" + factura + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+                int facturita = (Integer.parseInt(split[6]) * (-1)) ;
+                Log.v("equilibrar_iterar_file", "...................\n\nfacturita: " + facturita + "\nfactura: " + factura + "\n\n.......................");
+                if (facturita == Integer.parseInt(factura)) {//TODO: TODO LO QUE SIGUE ESTA MALO --> //Aplica para cualquier archivo, ya sea ..._equi.txt o ..._null.txt. Si cualquiera de estos aparece es que ya ha pasado por equilibrar.
+                    if (split[14].equals("null.txt")) {      // ARCHIVOS ...equi.txt no se toman en cuenta.
+                        flag = false;//Significa que ya se ha creado un archivo con el new_name.
+                        break;
+                    } else {
+                        //Do nothing. Continue!
+                    }
+                } else {
+                    //Do nothing. Continue!
+                }
+                linea = br.readLine();
+            }
+            br.close();
+            archivo.close();
+        } catch (IOException e) {}
+        if (flag) {
+            RequestQueue requestQueue;//Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
+            // Instantiate the cache
+            Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-        // Instantiate the RequestQueue with the cache and network.
-        requestQueue = new RequestQueue(cache, network);
+            // Set up the network to use HttpURLConnection as the HTTP client.
+            Network network = new BasicNetwork(new HurlStack());
 
-        // Start the queue
-        requestQueue.start();
+            // Instantiate the RequestQueue with the cache and network.
+            requestQueue = new RequestQueue(cache, network);
 
-        String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=" + SpreadSheet +"&sheet=" + Sheet;
+            // Start the queue
+            requestQueue.start();
 
-        String url = readRowURL;
+            String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=" + SpreadSheet + "&sheet=" + Sheet;
 
-        //ocultar_todo();
+            String url = readRowURL;
 
-        // Formulate the request and handle the response.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onResponse(String response) {
-                        // Do something with the response
-                        //ML_ver.setText(response);
-                        //msg(response);
+            //ocultar_todo();
 
-                        //HashMap<String, String> premios = new HashMap<String, String>();
-                        //msg("Response: " + response);
-                        if (response != null) {
-                            //response.replace("loteria", "_sepa_");
+            // Formulate the request and handle the response.
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onResponse(String response) {
+                            // Do something with the response
+                            //ML_ver.setText(response);
+                            //msg(response);
 
-                            //String[] split = response.split("loteria");//Se separa el objeto Json
-                            //TODO: Algoritmo que revisa la spreadsheet para ver si se ha subido de manera parcial un tiquete cualquiera, pero que no se ha terminado de subir, por lo tanto aparece como "abajo"
-                            Log.v("Equilibrar onResponse", " Response: \n\n" + response);
-                            //debug:
-                            //msg("Response: (Debe ser toda la SpreadSheet a la cual se ha subido el tiquete anterior, mostrado en \"Atencion1\"\n\n" + response);
-                            //TODO: Se debe modificar el archivo "file" con la informacion de numeros negativizados encontrados en la spreadsheet con el mismo numero de factura.
+                            //HashMap<String, String> premios = new HashMap<String, String>();
+                            //msg("Response: " + response);
+                            if (response != null) {
+                                //response.replace("loteria", "_sepa_");
 
-                            boolean flagsitilla = false;
+                                //String[] split = response.split("loteria");//Se separa el objeto Json
+                                //TODO: Algoritmo que revisa la spreadsheet para ver si se ha subido de manera parcial un tiquete cualquiera, pero que no se ha terminado de subir, por lo tanto aparece como "abajo"
+                                Log.v("Equilibrar onResponse", " Response: \n\n" + response);
+                                //debug:
+                                //msg("Response: (Debe ser toda la SpreadSheet a la cual se ha subido el tiquete anterior, mostrado en \"Atencion1\"\n\n" + response);
+                                //TODO: Se debe modificar el archivo "file" con la informacion de numeros negativizados encontrados en la spreadsheet con el mismo numero de factura.
 
-                            String[] split = response.split("numero1");//Se separa el objeto Json "response"
-                            //Se llena un HashMap local con las ventas, las cuales se bajan de la nube.
-                            HashMap<String, String> hashMap = new HashMap<String, String>();
-                            int new_monto = 0;
-                            for (int i = 1; i < split.length; i++) {//En este loop se filtran los valores repetidos en la tabla.
+                                boolean flagsitilla = false;
 
-                                String[] split2 = split[i].split("\"");
-                                String nu1 = split2[2];
-                                String nu2 = split2[6];
-                                String monto = split2[10];//10
-                                String extra_info = split2[14];//14
-                                String factura_leida = split2[18];//Numero de factura
-                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
-                                String iD = split2[22];
-                                Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
-                                String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
-                                String valor_factura = factura_leida;//numero de factura
-                                //Debug:
-                                //msg("Key: " + key_factura + "\nValue: " + valor_factura);
+                                String[] split = response.split("numero1");//Se separa el objeto Json "response"
+                                //Se llena un HashMap local con las ventas, las cuales se bajan de la nube.
+                                HashMap<String, String> hashMap = new HashMap<String, String>();
+                                int new_monto = 0;
+                                for (int i = 1; i < split.length; i++) {//En este loop se filtran los valores repetidos en la tabla.
 
-                                //////////////////////////////////////////////////////////////////////////
-                                ///////Algoritmo que verifica si hay IDs iguales para omitirlos!//////////
-                                //////////////////////////////////////////////////////////////////////////
-                                if (hashMap.containsKey(key_factura)) {
-                                    Log.v("equilibrar ID repetido", "\n\nID: " + iD + ". (No se hace nada!)\n\n");
-                                    //Do nothing!
-                                    //Si llega aqui significa que ha encontrado una linea repetida en la spreadsheet, por lo tanto la omite.
-                                } else {//   numeros jugados  monto jugado
+                                    String[] split2 = split[i].split("\"");
+                                    String nu1 = split2[2];
+                                    String nu2 = split2[6];
+                                    String monto = split2[10];//10
+                                    String extra_info = split2[14];//14
+                                    String factura_leida = split2[18];//Numero de factura
+                                    Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
+                                    String iD = split2[22];
+                                    Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
+                                    String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
+                                    String valor_factura = factura_leida;//numero de factura
+                                    //Debug:
+                                    //msg("Key: " + key_factura + "\nValue: " + valor_factura);
 
-                                    int un_fact = Integer.parseInt(factura);
-                                    int dos_fact = Integer.parseInt(factura_leida);
-                                    Log.v("equilibrar en el for", "\n\nFactura: " + un_fact + " Factura leida: " + dos_fact);
-                                    if (un_fact == dos_fact) {
-                                        new_monto = new_monto + Integer.parseInt(monto);
-                                        hashMap.put(key_factura, valor_factura);//Lo que hay en este hashMap es la informacion que se pudo haber subido de manera parcial y haber dejado el mensaje: "abajo"
+                                    //////////////////////////////////////////////////////////////////////////
+                                    ///////Algoritmo que verifica si hay IDs iguales para omitirlos!//////////
+                                    //////////////////////////////////////////////////////////////////////////
+                                    if (hashMap.containsKey(key_factura)) {
+                                        Log.v("equilibrar ID repetido", "\n\nID: " + iD + ". (No se hace nada!)\n\n");
+                                        //Do nothing!
+                                        //Si llega aqui significa que ha encontrado una linea repetida en la spreadsheet, por lo tanto la omite.
+                                    } else {//   numeros jugados  monto jugado
+
+                                        int un_fact = Integer.parseInt(factura);
+                                        int dos_fact = Integer.parseInt(factura_leida);
+                                        Log.v("equilibrar en el for", "\n\nFactura: " + un_fact + " Factura leida: " + dos_fact);
+                                        if (un_fact == dos_fact) {
+                                            new_monto = new_monto + Integer.parseInt(monto);
+                                            hashMap.put(key_factura, valor_factura);//Lo que hay en este hashMap es la informacion que se pudo haber subido de manera parcial y haber dejado el mensaje: "abajo"
+                                        } else {
+                                            //Do nothing.
+                                        }
+                                    }
+                                    //////////////////////////////////////////////////////////////////////////
+                                }
+
+                                //borrar_archivo(file);
+
+                                String[] splityto = file.split("_separador_");
+                                String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
+                                String montitito = String.valueOf(new_monto * -1);
+                                String new_name = splityto[0] + "_separador_" + splityto[1] + "_separador_" + splityto[2] + "_separador_" + splityto[3] + "_separador_" + splityto[4] + "_separador_" + splityto[5] + "_separador_" + factoura + "_separador_" + splityto[7] + "_separador_" + splityto[8] + "_separador_" + splityto[9] + "_separador_" + splityto[10] + "_separador_" + splityto[11] + "_separador_" + montitito + "_separador_" + splityto[13] + "_separador_" + "null.txt";
+                                //crear_archivo(new_name);
+                                //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);
+                                //Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                                String linea_leida = "";
+                                for (String key : hashMap.keySet()) {
+                                    Log.v("E0 for hashMap", "\nKey: " + key + "\nValue: " + hashMap.get(key) + "\ntipo_lot: " + tipo_lot + "\n");
+                                    String[] splity = key.split("ojo-rojo_ojo-rojo");
+                                    //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
+                                    int otnom = Integer.parseInt(splity[5]) * -1;
+                                    if (tipo_lot.equals("Monazos")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
+                                        //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
+                                        flagsitilla = true;
+                                    } else if (tipo_lot.equals("Parley")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + splity[2] + "_" + String.valueOf(otnom) + "__";
+                                        //agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                        flagsitilla = true;
+                                    } else if (tipo_lot.equals("Reventados")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
+                                        //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                        flagsitilla = true;
+                                    } else if (tipo_lot.equals("Regular")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
+                                        flagsitilla = true;
                                     } else {
                                         //Do nothing.
                                     }
                                 }
-                                //////////////////////////////////////////////////////////////////////////
-                            }
+                                String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
+                                String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
+                                String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
+                                agregar_linea_archivo(facturas_diarias, linea_escribir);
+                                agregar_linea_archivo(historial_facturas, linea_escribir2);
 
-                            //borrar_archivo(file);
+                                if (flagsitilla) {
+                                    //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                                    agregar_fact_online(new_name, SpreadSheet, Sheet, tipo_lot);
+                                    Log.v("flagsitilla: ", "se cambiara la bandera de la factura # " + String.valueOf((Integer.parseInt(splityto[6]))));
+                                    cambiar_bandera(String.valueOf((Integer.parseInt(splityto[6]))), "equi");
+                                    //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
+                                    int factur = Integer.parseInt(factura) * -1;
+                                    JSONObject objeto_json = generar_Json_resagadas(new_name, String.valueOf(factur), Sheet, SpreadSheet, tipo_lot);
+                                    abajos2.remove(key);
+                                    //cambiar_bandera(String.valueOf(factur), "equi");
+                                    Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
+                                    try {
+                                        subir_factura_resagadas(objeto_json, "equi");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
 
-                            String[] splityto = file.split("_separador_");
-                            String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
-                            String montitito = String.valueOf(new_monto * -1);
-                            String new_name = splityto[0] + "_separador_" + splityto[1] + "_separador_" + splityto[2] + "_separador_" + splityto[3] + "_separador_" + splityto[4] + "_separador_" + splityto[5] + "_separador_" + factoura + "_separador_" + splityto[7] + "_separador_" + splityto[8] + "_separador_" + splityto[9] + "_separador_" + splityto[10] + "_separador_" + splityto[11] + "_separador_" + montitito + "_separador_" + splityto[13] + "_separador_" + "null.txt";
-                            //crear_archivo(new_name);
-                            //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);
-                            //Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
-                            String linea_leida = "";
-                            for (String key : hashMap.keySet()) {
-                                Log.v("E0 for hashMap", "\nKey: " + key + "\nValue: " + hashMap.get(key) + "\ntipo_lot: " + tipo_lot + "\n");
-                                String[] splity = key.split("ojo-rojo_ojo-rojo");
-                                //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
-                                int otnom = Integer.parseInt(splity[5]) * -1;
-                                if (tipo_lot.equals("Monazos")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
-                                    //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
-                                    flagsitilla = true;
-                                } else if(tipo_lot.equals("Parley")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + splity[2] + "_" + String.valueOf(otnom) + "__";
-                                    //agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
-                                    flagsitilla = true;
-                                } else if (tipo_lot.equals("Reventados")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
-                                    //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
-                                    flagsitilla = true;
-                                } else if (tipo_lot.equals("Regular")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
-                                    flagsitilla = true;
+
                                 } else {
-                                    //Do nothing.
+                                    Log.v("equilibrar flagsitilla", "Todo or do nothing! I don't know right now :-|");
+                                    //Todo or do nothing! I don't know right now :-|
                                 }
-                            }
-                            String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
-                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
-                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
-                            agregar_linea_archivo(facturas_diarias, linea_escribir);
-                            agregar_linea_archivo(historial_facturas, linea_escribir2);
-
-                            if (flagsitilla) {
-                                //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
-                                agregar_fact_online(new_name, SpreadSheet, Sheet, tipo_lot);
-                                Log.v("flagsitilla: ", "se cambiara la bandera de la factura # " + String.valueOf((Integer.parseInt(splityto[6]))));
-                                cambiar_bandera(String.valueOf((Integer.parseInt(splityto[6]))), "equi");
-                                //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
-                                int factur = Integer.parseInt(factura) * -1;
-                                JSONObject objeto_json = generar_Json_resagadas(new_name, String.valueOf(factur), Sheet, SpreadSheet, tipo_lot);
-                                abajos2.remove(key);
-                                //cambiar_bandera(String.valueOf(factur), "equi");
-                                Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
-                                try {
-                                    subir_factura_resagadas(objeto_json, "equi");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
+                                //cambiar_bandera(String.valueOf(factura), "equi");
+                                //cambiar_bandera(String.valueOf(factura), "equi");
 
                             } else {
-                                Log.v("equilibrar flagsitilla", "Todo or do nothing! I don't know right now :-|");
-                                //Todo or do nothing! I don't know right now :-|
+                                Log.v("Error de respuesta", ".\nResponse:\n--> " + response + " <--\n\n.");
+                                //Respuesta es null. No deberia pasar nunca.
                             }
-                            //cambiar_bandera(String.valueOf(factura), "equi");
-                            //cambiar_bandera(String.valueOf(factura), "equi");
-
-                        } else {
-                            Log.v("Error de respuesta", ".\nResponse:\n--> " + response + " <--\n\n.");
-                            //Respuesta es null. No deberia pasar nunca.
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error
-                    }
-                });
-        // Add the request to the RequestQueue.
-        requestQueue.add(stringRequest);
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle error
+                        }
+                    });
+            // Add the request to the RequestQueue.
+            requestQueue.add(stringRequest);
+        } else {
+            Log.v("Equilibrar_repetido", ".............................\n\nNo se genera ningun archivo new_name debido a que este ya ha sido creado!\n\n.............................");
+        }
     }
 
     private void agregar_fact_online(String file, String spid, String sheet, String tip_lot) {
@@ -1151,11 +1184,9 @@ public class ParleyActivity extends AppCompatActivity {
 
     private void generar_tiquete(String file, int Winner_num1, int Winner_num2, int Winner_num3, String cliente) {
         //Aqui se revisa si cada tiquete tiene premio.
-        //contenido = "";
-        String Horario = horario.getSelectedItem().toString();
 
         try {
-            InputStreamReader archivo24 = new InputStreamReader(openFileInput(file));//Se abre el archivo contable
+            InputStreamReader archivo24 = new InputStreamReader(openFileInput(facturas_diarias));//Se abre el archivo
             BufferedReader br24 = new BufferedReader(archivo24);
             String linea = br24.readLine();//Se lee archivo
             Pattern pattern = Pattern.compile("BORRADA", Pattern.CASE_INSENSITIVE);
@@ -1164,7 +1195,7 @@ public class ParleyActivity extends AppCompatActivity {
             //Toast.makeText(this, "Linea: " + linea + "\nSeleccion premio: " + seleccion_premio, Toast.LENGTH_LONG).show();
             boolean matchFound = matcher.find();
             if (matchFound){
-                //Toast.makeText(this, "Se ha borrado esta loteria!!!", Toast.LENGTH_LONG).show();
+                Log.v("borrada_encontr_Par", "Se ha borrado esta factura!!!");
                 return;
             }
             String flag1 = "false";
@@ -1172,82 +1203,95 @@ public class ParleyActivity extends AppCompatActivity {
             String flag3 = "false";
             int num1 = -1;
             int num2 = -1;
+
             while (linea != null){
+
                 boolean flag11 = false;
                 boolean flag12 = false;
                 boolean flag13 = false;
-                //Toast.makeText(this, "La linea aun no es nula!!!", Toast.LENGTH_LONG).show();
-                String[] split = linea.split("      ");//Se separa el monto de los numeros guardados.
-                if (split[0].isEmpty()){
-                    break;
-                } else if (Integer.parseInt(split[0]) == Winner_num1) {
-                    num1 = Integer.parseInt(split[0]);
-                    flag1 = "true";
-                    flag11 = true;
-                } else if (Integer.parseInt(split[0]) == Winner_num2) {
-                    num1 = Integer.parseInt(split[0]);
-                    flag1 = "true";
-                    flag12 = true;
-                } else if (Integer.parseInt(split[0]) == Winner_num3) {
-                    num1 = Integer.parseInt(split[0]);
-                    flag1 = "true";
-                    flag13 = true;
-                }
-
-                if (flag11) {
-                    if (Integer.parseInt(split[1]) == Winner_num2) {
-                        num2 = Integer.parseInt(split[1]);
-                        flag2 = "true";
-                    } else if (Integer.parseInt(split[1]) == Winner_num3) {
-                        num2 = Integer.parseInt(split[1]);
-                        flag2 = "true";
-                    }
-                } else if (flag12) {
-                    if (Integer.parseInt(split[1]) == Winner_num1) {
-                        num2 = Integer.parseInt(split[1]);
-                        flag2 = "true";
-                    } else if (Integer.parseInt(split[1]) == Winner_num3) {
-                        num2 = Integer.parseInt(split[1]);
-                        flag2 = "true";
-                    }
-                } else if (flag13) {
-                    if (Integer.parseInt(split[1]) == Winner_num1) {
-                        num2 = Integer.parseInt(split[1]);
-                        flag2 = "true";
-                    } else if (Integer.parseInt(split[1]) == Winner_num2) {
-                        num2 = Integer.parseInt(split[1]);
-                        flag2 = "true";
-                    }
-                }
-
-
-                //Aqui se comprueba que las dos flags esten en "true":
-                if (flag1.equals("true")) {
-                    if (flag2.equals("true")) {
-                        flag3 = "true";
-                    } else {
-                        //Do nothing
-                    }
+                int n1 = -1;
+                int n2 = -1;
+                int n3 = -1;
+                String[] split_numeros = null;
+                if (linea.isEmpty()) {
+                    //Do nothing. Continue...
                 } else {
-                    //Do nothing
-                }
-
-                if (flag3.equals("true")){
-
-
-                    String cliente_print = cliente.replace("x_x"," ");
-                    contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nParejita ganadora: " + String.valueOf(num1) + "  " + String.valueOf(num2) + "\n\n" + split[2] + " X " + seleccion_premio + " = " + String.valueOf(Integer.parseInt(seleccion_premio) * Integer.parseInt(split[2])) + " colones. \n################################\n\n";
-                    total = total + (Integer.parseInt(seleccion_premio) * Integer.parseInt(split[2]));
-                    flag3 = "false";
-                    flag1 = "false";
-                    flag2 = "false";
-                    flag3 = "false";
+                    String[] splitq = linea.split("      ");//Se separa el monto del numero guardado.
+                    if (splitq[3].equals(file)) {
+                        //                      0                           1                         2                        3                       4                        5                         6                                7                     8                       9                         10                     11                        12                           13
+                        //String fileile = jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hoora + "_separador_" + miinuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+                        String[] split = file.split("_separador_");//Se separa el monto del numero guardado, tipo de premio y si esta en orden o en desorden en caso de ser Monazos.
+                        String[] split_info = splitq[0].split("__");
+                        int largo_split = split_info.length;
+                        for (int i = 0; i < largo_split; i++) {
+                            split_numeros = split_info[i].split("_");
+                            n1 = Integer.parseInt(split_numeros[0]);
+                            n2 = Integer.parseInt(split_numeros[1]);
+                            if (n1 == Winner_num1) {
+                                num1 = n1;
+                                flag1 = "true";
+                                flag11 = true;
+                            } else if (n1 == Winner_num2) {
+                                num1 = n1;
+                                flag1 = "true";
+                                flag12 = true;
+                            } else if (n1 == Winner_num3) {
+                                num1 = n1;
+                                flag1 = "true";
+                                flag13 = true;
+                            }
+                            if (flag11) {
+                                if (n2 == Winner_num2) {
+                                    num2 = n2;
+                                    flag2 = "true";
+                                } else if (n2 == Winner_num3) {
+                                    num2 = n2;
+                                    flag2 = "true";
+                                }
+                            } else if (flag12) {
+                                if (n2 == Winner_num1) {
+                                    num2 = n2;
+                                    flag2 = "true";
+                                } else if (n2 == Winner_num3) {
+                                    num2 = n2;
+                                    flag2 = "true";
+                                }
+                            } else if (flag13) {
+                                if (n2 == Winner_num1) {
+                                    num2 = n2;
+                                    flag2 = "true";
+                                } else if (n2 == Winner_num2) {
+                                    num2 = n2;
+                                    flag2 = "true";
+                                }
+                            }
+                            //Aqui se comprueba que las dos flags esten en "true":
+                            if (flag1.equals("true")) {
+                                if (flag2.equals("true")) {
+                                    flag3 = "true";
+                                } else {
+                                    //Do nothing
+                                }
+                            } else {
+                                //Do nothing
+                            }
+                            if (flag3.equals("true")) {
+                                String cliente_print = cliente.replace("x_x", " ");
+                                contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nParejita ganadora: " + String.valueOf(num1) + "  " + String.valueOf(num2) + "\n\n" + split_numeros[2] + " X " + seleccion_premio + " = " + String.valueOf(Integer.parseInt(seleccion_premio) * Integer.parseInt(split_numeros[2])) + " colones. \n################################\n\n";
+                                total = total + (Integer.parseInt(seleccion_premio) * Integer.parseInt(split_numeros[2]));
+                                flag3 = "false";
+                                flag1 = "false";
+                                flag2 = "false";
+                                flag3 = "false";
+                            }
+                        }
+                    } else {
+                    }
                 }
                 linea = br24.readLine();
             }
             br24.close();
             archivo24.close();
-            //printIt(contenido);
         }catch (IOException e) {
         }
     }
@@ -1259,18 +1303,11 @@ public class ParleyActivity extends AppCompatActivity {
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(nombre_archivo));//Se abre archivo
                 BufferedReader br = new BufferedReader(archivo);
-
-
                 String linea = br.readLine();//Se lee archivo
                 while (linea != null) {
                     contenido = contenido + linea + "\n";
                     linea = br.readLine();
-                    //return;
                 }
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
                 br.close();
                 archivo.close();
             } catch (IOException e) {
@@ -1335,7 +1372,7 @@ public class ParleyActivity extends AppCompatActivity {
                                 } else if (split2[6].equals("maniana")) {
                                     nomLot = "Maniana";
                                 } else {
-                                    //Do nothing.
+                                    nomLot = split2[6];
                                 }
                                 //msg("nomLot: " + nomLot + "\n\nsplit2[3]: " + split2[3]);
                                 //                       Ej.                    Parley                          Noche
@@ -1358,19 +1395,12 @@ public class ParleyActivity extends AppCompatActivity {
 
                             //iterar sobre el HashMap...
                             //String s = "Premios de hoy  " + fecha + "/" + mes + "/" + anio + "\n\n\n";
-
-
-
                             for (String key : premios.keySet()) {
-
-                                //msg("key: " + key + "\n\nlot: " + lot);
 
                                 if (key.equals(lot)) {
 
-                                    //msg("key: " + key + "\n\nlot: " + lot);
                                     String[] split4 = premios.get(key).split("ojo-rojo_ojo-rojo");
                                     String[] split5 = key.split("ojo-rojo_ojo-rojo");
-                                    //String loteria_a_presentar = split5[1] + " " + split5[2];
 
                                     //Primer numero
                                     nume1 = split4[1];
@@ -1407,7 +1437,6 @@ public class ParleyActivity extends AppCompatActivity {
                                     //Tercer numero
                                     if (split4[3].equals("no")) {
                                         //Do nothing.
-                                    } else if (split4[3].equals("ROJA") | split4[3].equals("GRIS") | split4[3].equals("BLANCA")) {
                                     } else {
                                         nume3 = split4[3];
                                         if (Integer.parseInt(nume3) < 10) {
@@ -1453,9 +1482,6 @@ public class ParleyActivity extends AppCompatActivity {
             return;
         } else {
             //Do nothing. Contunuar con la ejecucion.
-        //    num_premio1.setText(nume1);
-        //    num_premio2.setText(nume2);
-        //    num_premio3.setText(nume3);
         }
 
         if(num_premio1.getText().toString().isEmpty() | num_premio2.getText().toString().isEmpty() | num_premio3.getText().toString().isEmpty()) {

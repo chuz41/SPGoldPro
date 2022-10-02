@@ -755,171 +755,201 @@ public class WinnersActivity extends AppCompatActivity {
         return jsonObject;
     }
 
-    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) {//Este metodo revisa si se ha subido parte del tiquete a la nube.
-        RequestQueue requestQueue;//Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
-        // Instantiate the cache
-        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) throws IOException {//Este metodo revisa si se ha subido parte del tiquete a la nube.
 
-        // Set up the network to use HttpURLConnection as the HTTP client.
-        Network network = new BasicNetwork(new HurlStack());
+        boolean flag = true;
+        try {
+            InputStreamReader archivo = new InputStreamReader(openFileInput(facturas_diarias));
+            //imprimir_archivo("facturas_online.txt");
+            BufferedReader br = new BufferedReader(archivo);
+            String linea = br.readLine();
+            while (linea != null) {
+                String[] splito = linea.split("      ");
+                String[] split = splito[3].split("_separador_");
+                //                       0                           1                         2                        3                        4                       5                         6                       7                     8                       9                         10                     11                        12                          13                   14
+                //String tempFile = jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hoora + "_separador_" + miinuto + "_separador_" + factura + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+                int facturita = (Integer.parseInt(split[6]) * (-1)) ;
+                Log.v("equilibrar_iterar_file", "...................\n\nfacturita: " + facturita + "\nfactura: " + factura + "\n\n.......................");
+                if (facturita == Integer.parseInt(factura)) {//TODO: TODO LO QUE SIGUE ESTA MALO --> //Aplica para cualquier archivo, ya sea ..._equi.txt o ..._null.txt. Si cualquiera de estos aparece es que ya ha pasado por equilibrar.
+                    if (split[14].equals("null.txt")) {      // ARCHIVOS ...equi.txt no se toman en cuenta.
+                        flag = false;//Significa que ya se ha creado un archivo con el new_name.
+                        break;
+                    } else {
+                        //Do nothing. Continue!
+                    }
+                } else {
+                    //Do nothing. Continue!
+                }
+                linea = br.readLine();
+            }
+            br.close();
+            archivo.close();
+        } catch (IOException e) {}
+        if (flag) {
+            RequestQueue requestQueue;//Se llama a la SpreadSheet que contiene la loteria actual para verificar que no hay errores en la subida de datos. Usar: Method.get
+            // Instantiate the cache
+            Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
 
-        // Instantiate the RequestQueue with the cache and network.
-        requestQueue = new RequestQueue(cache, network);
+            // Set up the network to use HttpURLConnection as the HTTP client.
+            Network network = new BasicNetwork(new HurlStack());
 
-        // Start the queue
-        requestQueue.start();
+            // Instantiate the RequestQueue with the cache and network.
+            requestQueue = new RequestQueue(cache, network);
 
-        String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=" + SpreadSheet +"&sheet=" + Sheet;
+            // Start the queue
+            requestQueue.start();
 
-        String url = readRowURL;
+            String readRowURL = "https://script.google.com/macros/s/AKfycbxJNCrEPYSw8CceTwPliCscUtggtQ2l_otieFmE/exec?spreadsheetId=" + SpreadSheet + "&sheet=" + Sheet;
 
-        //ocultar_todo();
+            String url = readRowURL;
 
-        // Formulate the request and handle the response.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onResponse(String response) {
-                        // Do something with the response
-                        //ML_ver.setText(response);
-                        //msg(response);
+            //ocultar_todo();
 
-                        //HashMap<String, String> premios = new HashMap<String, String>();
-                        //msg("Response: " + response);
-                        if (response != null) {
-                            //response.replace("loteria", "_sepa_");
+            // Formulate the request and handle the response.
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onResponse(String response) {
+                            // Do something with the response
+                            //ML_ver.setText(response);
+                            //msg(response);
 
-                            //String[] split = response.split("loteria");//Se separa el objeto Json
-                            //TODO: Algoritmo que revisa la spreadsheet para ver si se ha subido de manera parcial un tiquete cualquiera, pero que no se ha terminado de subir, por lo tanto aparece como "abajo"
-                            Log.v("Equilibrar onResponse", " Response: \n\n" + response);
-                            //debug:
-                            //msg("Response: (Debe ser toda la SpreadSheet a la cual se ha subido el tiquete anterior, mostrado en \"Atencion1\"\n\n" + response);
-                            //TODO: Se debe modificar el archivo "file" con la informacion de numeros negativizados encontrados en la spreadsheet con el mismo numero de factura.
+                            //HashMap<String, String> premios = new HashMap<String, String>();
+                            //msg("Response: " + response);
+                            if (response != null) {
+                                //response.replace("loteria", "_sepa_");
 
-                            boolean flagsitilla = false;
+                                //String[] split = response.split("loteria");//Se separa el objeto Json
+                                //TODO: Algoritmo que revisa la spreadsheet para ver si se ha subido de manera parcial un tiquete cualquiera, pero que no se ha terminado de subir, por lo tanto aparece como "abajo"
+                                Log.v("Equilibrar onResponse", " Response: \n\n" + response);
+                                //debug:
+                                //msg("Response: (Debe ser toda la SpreadSheet a la cual se ha subido el tiquete anterior, mostrado en \"Atencion1\"\n\n" + response);
+                                //TODO: Se debe modificar el archivo "file" con la informacion de numeros negativizados encontrados en la spreadsheet con el mismo numero de factura.
 
-                            String[] split = response.split("numero1");//Se separa el objeto Json "response"
-                            //Se llena un HashMap local con las ventas, las cuales se bajan de la nube.
-                            HashMap<String, String> hashMap = new HashMap<String, String>();
-                            int new_monto = 0;
-                            for (int i = 1; i < split.length; i++) {//En este loop se filtran los valores repetidos en la tabla.
+                                boolean flagsitilla = false;
 
-                                String[] split2 = split[i].split("\"");
-                                String nu1 = split2[2];
-                                String nu2 = split2[6];
-                                String monto = split2[10];//10
-                                String extra_info = split2[14];//14
-                                String factura_leida = split2[18];//Numero de factura
-                                Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
-                                String iD = split2[22];
-                                Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
-                                String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
-                                String valor_factura = factura_leida;//numero de factura
-                                //Debug:
-                                //msg("Key: " + key_factura + "\nValue: " + valor_factura);
+                                String[] split = response.split("numero1");//Se separa el objeto Json "response"
+                                //Se llena un HashMap local con las ventas, las cuales se bajan de la nube.
+                                HashMap<String, String> hashMap = new HashMap<String, String>();
+                                int new_monto = 0;
+                                for (int i = 1; i < split.length; i++) {//En este loop se filtran los valores repetidos en la tabla.
 
-                                //////////////////////////////////////////////////////////////////////////
-                                ///////Algoritmo que verifica si hay IDs iguales para omitirlos!//////////
-                                //////////////////////////////////////////////////////////////////////////
-                                if (hashMap.containsKey(key_factura)) {
-                                    Log.v("equilibrar ID repetido", "\n\nID: " + iD + ". (No se hace nada!)\n\n");
-                                    //Do nothing!
-                                    //Si llega aqui significa que ha encontrado una linea repetida en la spreadsheet, por lo tanto la omite.
-                                } else {//   numeros jugados  monto jugado
+                                    String[] split2 = split[i].split("\"");
+                                    String nu1 = split2[2];
+                                    String nu2 = split2[6];
+                                    String monto = split2[10];//10
+                                    String extra_info = split2[14];//14
+                                    String factura_leida = split2[18];//Numero de factura
+                                    Log.v("Equilibrar fact_leida", "\n\nFactura leida: " + factura_leida);
+                                    String iD = split2[22];
+                                    Log.v("E6", "split[18]: " + split2[18] + " split[14]: " + split2[14]);
+                                    String key_factura = "ojo-rojo_ojo-rojo" + nu1 + "ojo-rojo_ojo-rojo" + nu2 + "ojo-rojo_ojo-rojo" + extra_info + "ojo-rojo_ojo-rojo" + iD + "ojo-rojo_ojo-rojo" + monto + "ojo-rojo_ojo-rojo";
+                                    String valor_factura = factura_leida;//numero de factura
+                                    //Debug:
+                                    //msg("Key: " + key_factura + "\nValue: " + valor_factura);
 
-                                    int un_fact = Integer.parseInt(factura);
-                                    int dos_fact = Integer.parseInt(factura_leida);
-                                    Log.v("equilibrar en el for", "\n\nFactura: " + un_fact + " Factura leida: " + dos_fact);
-                                    if (un_fact == dos_fact) {
-                                        new_monto = new_monto + Integer.parseInt(monto);
-                                        hashMap.put(key_factura, valor_factura);//Lo que hay en este hashMap es la informacion que se pudo haber subido de manera parcial y haber dejado el mensaje: "abajo"
+                                    //////////////////////////////////////////////////////////////////////////
+                                    ///////Algoritmo que verifica si hay IDs iguales para omitirlos!//////////
+                                    //////////////////////////////////////////////////////////////////////////
+                                    if (hashMap.containsKey(key_factura)) {
+                                        Log.v("equilibrar ID repetido", "\n\nID: " + iD + ". (No se hace nada!)\n\n");
+                                        //Do nothing!
+                                        //Si llega aqui significa que ha encontrado una linea repetida en la spreadsheet, por lo tanto la omite.
+                                    } else {//   numeros jugados  monto jugado
+
+                                        int un_fact = Integer.parseInt(factura);
+                                        int dos_fact = Integer.parseInt(factura_leida);
+                                        Log.v("equilibrar en el for", "\n\nFactura: " + un_fact + " Factura leida: " + dos_fact);
+                                        if (un_fact == dos_fact) {
+                                            new_monto = new_monto + Integer.parseInt(monto);
+                                            hashMap.put(key_factura, valor_factura);//Lo que hay en este hashMap es la informacion que se pudo haber subido de manera parcial y haber dejado el mensaje: "abajo"
+                                        } else {
+                                            //Do nothing.
+                                        }
+                                    }
+                                    //////////////////////////////////////////////////////////////////////////
+                                }
+
+                                //borrar_archivo(file);
+
+                                String[] splityto = file.split("_separador_");
+                                String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
+                                String montitito = String.valueOf(new_monto * -1);
+                                String new_name = splityto[0] + "_separador_" + splityto[1] + "_separador_" + splityto[2] + "_separador_" + splityto[3] + "_separador_" + splityto[4] + "_separador_" + splityto[5] + "_separador_" + factoura + "_separador_" + splityto[7] + "_separador_" + splityto[8] + "_separador_" + splityto[9] + "_separador_" + splityto[10] + "_separador_" + splityto[11] + "_separador_" + montitito + "_separador_" + splityto[13] + "_separador_" + "null.txt";
+                                //crear_archivo(new_name);
+                                //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);
+                                //Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                                String linea_leida = "";
+                                for (String key : hashMap.keySet()) {
+                                    Log.v("E0 for hashMap", "\nKey: " + key + "\nValue: " + hashMap.get(key) + "\ntipo_lot: " + tipo_lot + "\n");
+                                    String[] splity = key.split("ojo-rojo_ojo-rojo");
+                                    //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
+                                    int otnom = Integer.parseInt(splity[5]) * -1;
+                                    if (tipo_lot.equals("Monazos")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
+                                        //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
+                                        flagsitilla = true;
+                                    } else if (tipo_lot.equals("Parley")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + splity[2] + "_" + String.valueOf(otnom) + "__";
+                                        //agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                        flagsitilla = true;
+                                    } else if (tipo_lot.equals("Reventados")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
+                                        //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
+                                        flagsitilla = true;
+                                    } else if (tipo_lot.equals("Regular")) {
+                                        linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
+                                        flagsitilla = true;
                                     } else {
                                         //Do nothing.
                                     }
                                 }
-                                //////////////////////////////////////////////////////////////////////////
-                            }
-
-                            //borrar_archivo(file);
-
-                            String[] splityto = file.split("_separador_");
-                            String factoura = String.valueOf((Integer.parseInt(splityto[6])) * -1);
-                            String montitito = String.valueOf(new_monto * -1);
-                            String new_name = splityto[0] + "_separador_" + splityto[1] + "_separador_" + splityto[2] + "_separador_" + splityto[3] + "_separador_" + splityto[4] + "_separador_" + splityto[5] + "_separador_" + factoura + "_separador_" + splityto[7] + "_separador_" + splityto[8] + "_separador_" + splityto[9] + "_separador_" + splityto[10] + "_separador_" + splityto[11] + "_separador_" + montitito + "_separador_" + splityto[13] + "_separador_" + "null.txt";
-                            //crear_archivo(new_name);
-                            //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);
-                            //Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
-                            String linea_leida = "";
-                            for (String key : hashMap.keySet()) {
-                                Log.v("E0 for hashMap", "\nKey: " + key + "\nValue: " + hashMap.get(key) + "\ntipo_lot: " + tipo_lot + "\n");
-                                String[] splity = key.split("ojo-rojo_ojo-rojo");
-                                //msg("Factura: " + key + "\nValor: " + hashMap.get(key) + "\n");
-                                int otnom = Integer.parseInt(splity[5]) * -1;
-                                if (tipo_lot.equals("Monazos")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + splity[3] + "_" + String.valueOf(otnom) + "__";
-                                    //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + splity[3] + "      " + SpreadSheet + "      " + Sheet);
-                                    flagsitilla = true;
-                                } else if(tipo_lot.equals("Parley")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + splity[2] + "_" + String.valueOf(otnom) + "__";
-                                    //agregar_linea_archivo(new_name, splity[1] + "      " + splity[2] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
-                                    flagsitilla = true;
-                                } else if (tipo_lot.equals("Reventados")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
-                                    //agregar_linea_archivo(new_name, splity[1] + "      " + String.valueOf(otnom) + "      " + SpreadSheet + "      " + Sheet);
-                                    flagsitilla = true;
-                                } else if (tipo_lot.equals("Regular")) {
-                                    linea_leida = linea_leida + splity[1] + "_" + String.valueOf(otnom) + "__";
-                                    flagsitilla = true;
+                                String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
+                                String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
+                                String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
+                                agregar_linea_archivo(facturas_diarias, linea_escribir);
+                                agregar_linea_archivo(historial_facturas, linea_escribir2);
+                                if (flagsitilla) {
+                                    //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
+                                    agregar_fact_online(new_name, SpreadSheet, Sheet, tipo_lot);
+                                    Log.v("flagsitilla: ", "se cambiara la bandera de la factura # " + String.valueOf((Integer.parseInt(splityto[6]))));
+                                    cambiar_bandera(String.valueOf((Integer.parseInt(splityto[6]))), "equi");
+                                    //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
+                                    int factur = Integer.parseInt(factura) * -1;
+                                    JSONObject objeto_json = generar_Json_resagadas(new_name, String.valueOf(factur), Sheet, SpreadSheet, tipo_lot);
+                                    abajos2.remove(key);
+                                    //cambiar_bandera(String.valueOf(factur), "equi");
+                                    Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
+                                    try {
+                                        subir_factura_resagadas(objeto_json, "equi");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 } else {
-                                    //Do nothing.
+                                    Log.v("equilibrar flagsitilla", "Todo or do nothing! I don't know right now :-|");
+                                    //Todo or do nothing! I don't know right now :-|
                                 }
-                            }
-                            String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
-                            String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
-                            String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
-                            agregar_linea_archivo(facturas_diarias, linea_escribir);
-                            agregar_linea_archivo(historial_facturas, linea_escribir2);
-
-                            if (flagsitilla) {
-                                //agregar_linea_archivo("facturas_online.txt", "abajo " + new_name + " " + SpreadSheet + " " + Sheet + " " + tipo_lot);//Se hace que file sea un archivo igual a cualquier factura para subirla. Se guarda la informacion necesaria en el file.
-                                agregar_fact_online(new_name, SpreadSheet, Sheet, tipo_lot);
-                                Log.v("flagsitilla: ", "se cambiara la bandera de la factura # " + String.valueOf((Integer.parseInt(splityto[6]))));
-                                cambiar_bandera(String.valueOf((Integer.parseInt(splityto[6]))), "equi");
-                                //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
-                                int factur = Integer.parseInt(factura) * -1;
-                                JSONObject objeto_json = generar_Json_resagadas(new_name, String.valueOf(factur), Sheet, SpreadSheet, tipo_lot);
-                                abajos2.remove(key);
-                                //cambiar_bandera(String.valueOf(factur), "equi");
-                                Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
-                                try {
-                                    subir_factura_resagadas(objeto_json, "equi");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
+                                //cambiar_bandera(String.valueOf(factura), "equi");
+                                //cambiar_bandera(String.valueOf(factura), "equi");
 
                             } else {
-                                Log.v("equilibrar flagsitilla", "Todo or do nothing! I don't know right now :-|");
-                                //Todo or do nothing! I don't know right now :-|
+                                Log.v("Error de respuesta", ".\nResponse:\n--> " + response + " <--\n\n.");
+                                //Respuesta es null. No deberia pasar nunca.
                             }
-                            //cambiar_bandera(String.valueOf(factura), "equi");
-                            //cambiar_bandera(String.valueOf(factura), "equi");
-
-                        } else {
-                            Log.v("Error de respuesta", ".\nResponse:\n--> " + response + " <--\n\n.");
-                            //Respuesta es null. No deberia pasar nunca.
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error
-                    }
-                });
-        // Add the request to the RequestQueue.
-        requestQueue.add(stringRequest);
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle error
+                        }
+                    });
+            // Add the request to the RequestQueue.
+            requestQueue.add(stringRequest);
+        } else {
+            Log.v("Equilibrar_repetido", ".............................\n\nNo se genera ningun archivo new_name debido a que este ya ha sido creado!\n\n.............................");
+        }
     }
 
     private boolean verificar_internet() {
@@ -1001,10 +1031,6 @@ public class WinnersActivity extends AppCompatActivity {
         imn.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void msn1(){
-        Toast.makeText(this, "Debe indicar la loteria que desea revisar!!!", Toast.LENGTH_LONG).show();
-    }
-
     private void msn2(){
         Toast.makeText(this, "Debe indicar el horario que desea revisar!!!", Toast.LENGTH_LONG).show();
     }
@@ -1029,22 +1055,6 @@ public class WinnersActivity extends AppCompatActivity {
     }
     //###############################################################################################################
 
-    private int solicitar_num_premio(){
-        //Se le solicita al vendedor introducir el numero ganador correspondiente a la loteria en cuestion
-
-        String win_number = num_premio.getText().toString();
-        if (win_number.isEmpty()){
-            Toast.makeText(this, "Ingrese el numero ganador!!!", Toast.LENGTH_LONG).show();
-            return 100;
-        }else if(Integer.parseInt(win_number) < 0 || Integer.parseInt(win_number) > 99){
-            Toast.makeText(this, "Debe ingresar un numero valido!!!", Toast.LENGTH_LONG).show();
-            return 200;
-        }else {
-            int numbre_win = Integer.parseInt(win_number);
-            return numbre_win;
-        }
-    }
-
     private void separar_fechaYhora(String ahora) {
         String[] split = ahora.split(" ");
         nombre_dia = split[0];
@@ -1057,7 +1067,6 @@ public class WinnersActivity extends AppCompatActivity {
         minuto = split[1];
         hora = split[0];
     }
-
 
     private boolean lotActiva(String archivo) {
         try {
@@ -1080,19 +1089,11 @@ public class WinnersActivity extends AppCompatActivity {
         return true;
     }
 
-    private void msg(String mensaje) {
-        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
-    }
-
     private void generar_tiquete(String file, int Winner_num, String cliente) {
+
         //Aqui se revisa cada tiquete por si tiene premio.
-        //contenido = "";
-        String Loteria = loteria.getSelectedItem().toString();
-        String Horario = horario.getSelectedItem().toString();
-
-
         try {
-            InputStreamReader archivo24 = new InputStreamReader(openFileInput(file));//Se abre el archivo
+            InputStreamReader archivo24 = new InputStreamReader(openFileInput(facturas_diarias));//Se abre el archivo
             BufferedReader br24 = new BufferedReader(archivo24);
             String linea = br24.readLine();//Se lee archivo
             Pattern pattern = Pattern.compile("BORRADA", Pattern.CASE_INSENSITIVE);
@@ -1101,218 +1102,230 @@ public class WinnersActivity extends AppCompatActivity {
             //Toast.makeText(this, "Linea: " + linea + "\nSeleccion premio: " + seleccion_premio, Toast.LENGTH_LONG).show();
             boolean matchFound = matcher.find();
             if (matchFound){
-                //Toast.makeText(this, "Se ha borrado esta factura!!!", Toast.LENGTH_LONG).show();
+                Log.v("borrada_encontr_Winners", "Se ha borrado esta factura!!!");
                 return;
             }
             while (linea != null){
 
-                //Toast.makeText(this, "La linea aun no es nula!!!", Toast.LENGTH_LONG).show();
-                boolean flag_1 = false, flag_2 = false, flag_3 = false, flag_11 = false, flag_12 = false, flag_13 = false, flag_21 = false, flag_22 = false, flag_23 = false;
-                String[] split = linea.split("      ");//Se separa el monto del numero guardado, tipo de premio y si esta en orden o en desorden en caso de ser Monazos.
-                int pagar = 0;
-
-                if (loter.get("Tipo_juego").equals("Monazos")) {
-                    if (split[2].equals("Orden")) {
-                        pagar = Integer.parseInt(loter.get("Paga1"));
-                    } else if (split[2].equals("Desorden")) {
-                        pagar = Integer.parseInt(loter.get("Paga2"));
-                    } else {
-                        //Do nothing. Nunca debe llegar aqui.
-                    }
+                if (linea.isEmpty()) {
+                    //Do nothing. Contigune...
                 } else {
-                    pagar = Integer.parseInt(paga.getSelectedItem().toString());
-                }
+                    boolean flag_1 = false, flag_2 = false, flag_3 = false, flag_11 = false, flag_12 = false, flag_13 = false, flag_21 = false, flag_22 = false, flag_23 = false;
+                    String[] splitq = linea.split("      ");
+                    if (splitq[3].equals(file)) {
+                        //                      0                           1                         2                        3                       4                        5                         6                                7                     8                       9                         10                     11                        12                           13
+                        //String fileile = jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hoora + "_separador_" + miinuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
+                        String[] split = file.split("_separador_");//Se separa el monto del numero guardado, tipo de premio y si esta en orden o en desorden en caso de ser Monazos.
+                        int pagar = 0;
 
-                if (split[0].isEmpty()){
-                    break;//      numero jugado        numero ganador
-                }else if (Integer.parseInt(split[0]) == Winner_num){ //si numero jugado es igual a numero ganador, se ha ganado un premio
-                    if (loter.get("Tipo_juego").equals("Monazos")) {
-                        //Toast.makeText(this, "Coinside monazos" + "\n" + "split[0]: " + split[0] + "\nSplit[1]: " + split[1] + "\nSplit[2]: " + split[2], Toast.LENGTH_LONG).show();
-                        //Aqui captura los numeros que ganan en orden. Aunque tambien puede capturar numeros jugdos en desorden.
+                        String[] split_info = splitq[0].split("__");
+                        int largo_split = split_info.length;
 
-                        //Se debe comentar la siguiente linea cuando se tenga rollos
-                        //contenido = contenido + "###############################\nPremio encontrado!!!\nCliente: " + cliente + "\nNumero ganador: " + split[0] + " " + split[2] + "\n" + split[1] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split[1])) + " colones. \n###############################\n";
-                        //Se debe des-comentar la siguiente linea cuando se tenga rollos.
-                        String cliente_print = cliente.replace("x_x"," ");
-                        contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + split[0] + " " + split[2] + "\n\n" + split[1] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split[1])) + " colones. \n################################\n\n";
-                        total = total + (pagar * Integer.parseInt(split[1]));
-                    } else {
-                        //Toast.makeText(this, "Coinside otros que no son monazos!" + "\n" + "split[0]: " + split[0] + "\nSplit[1]: " + split[1], Toast.LENGTH_LONG).show();
-                        //Se debe comentar la siguiente linea cuando se tenga rollos.
-                        //contenido = contenido + "################################\nPremio encontrado!!!\nCliente: " + cliente + "\nNumero ganador: " + num_premio.getText().toString() + "\n" + split[1] + " X " + paga.getSelectedItem().toString() + " = " + String.valueOf(Integer.parseInt(paga.getSelectedItem().toString()) * Integer.parseInt(split[1])) + " colones. \n################################\n";
-                        //Se debe des-comentar la siguiente linea cuando se tenga rollos.
-                        String cliente_print = cliente.replace("x_x"," ");
-                        contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + num_premio.getText().toString() + "\n\n" + split[1] + " X " + paga.getSelectedItem().toString() + " = " + String.valueOf(Integer.parseInt(paga.getSelectedItem().toString()) * Integer.parseInt(split[1])) + " colones. \n################################\n\n";
-                        total = total + Integer.parseInt(paga.getSelectedItem().toString()) * Integer.parseInt(split[1]);
-                    }
-                } else {
-                    if (loter.get("Tipo_juego").equals("Monazos")) {
-                        //Aqui se van a capturar todos los demas numeros que no calleron en el if del orden.
-                        //Primero que nada se debe verificar si hay algun premio en desorden.
-                        //Ahora vamos a separar el numero ganador en sus digitos.
-                        //boolean flag_1 = false, flag_2 = false, flag_3 = false, flag_11 = false, flag_12 = false, flag_13 = false, flag_21 = false, flag_22 = false, flag_23 = false;
-                        int Wdig_1 = -1, Wdig_2 = -1, Wdig_3 = -1;
-                        if (Winner_num < 10) {
-                            Wdig_1 = 0;
-                            Wdig_2 = 0;
-                            Wdig_3 = Winner_num;
-                        } else if (Winner_num > 10) {
-                            if (Winner_num < 100) {
-                                Wdig_1 = 0;
-                                Wdig_2 = Winner_num / 10;
-                                Wdig_3 = Winner_num % 10;
+                        for (int i = 0; i < largo_split; i++) {
+                            String[] split_numeros = split_info[i].split("_");
+                            String numero_jugado = split_numeros[0];
+
+
+                            if (loter.get("Tipo_juego").equals("Monazos")) {
+                                String orden_desorden = split_numeros[1];
+                                String monto_jugado = split_numeros[2];
+                                if (orden_desorden.equals("Orden")) {
+                                    pagar = Integer.parseInt(loter.get("Paga1"));
+                                } else if (orden_desorden.equals("Desorden")) {
+                                    pagar = Integer.parseInt(loter.get("Paga2"));
+                                } else {
+                                    //Do nothing. Nunca debe llegar aqui.
+                                }
                             } else {
-                                Wdig_1 = Winner_num / 100;
-                                Wdig_2 = (Winner_num / 10) % 10;
-                                Wdig_3 = Winner_num % 10;
+                                String monto_jugado = split_numeros[1];
+                                pagar = Integer.parseInt(paga.getSelectedItem().toString());
                             }
-                        }
-                        //Ahora vamos a separar en sus digitos el numero que se esta analizando en esta iteracion.
-                        int dig_1 = -1, dig_2 = -1, dig_3 = -1;
-                        int iter_num = Integer.parseInt(split[0]);//  split[0] es el numero jugado que gano!!!
-                        //Toast.makeText(this, "iter number: " + iter_num, Toast.LENGTH_LONG).show();
 
-
-                        if (iter_num < 10) {
-                            dig_1 = 0;
-                            dig_2 = 0;
-                            dig_3 = iter_num;
-                        } else {
-                            if (iter_num < 100) {
-                                dig_1 = 0;
-                                dig_2 = iter_num / 10;
-                                dig_3 = iter_num % 10;
-                            } else {
-                                dig_1 = iter_num / 100;
-                                dig_2 = (iter_num / 10) % 10;
-                                dig_3 = iter_num % 10;
-                            }
-                        }
-                        //Listo la separacion de los numeros en sus digitos. Ahora vamos a verificar si coinsiden en desorden.
-
-                        //Toast.makeText(this, "Vamos a revisar los digitos de los numeros, tanto el ganador como el jugado", Toast.LENGTH_LONG).show();
-                        //Toast.makeText(this, "\n" + "dig_1: " + dig_1 + "\ndig_2: " + dig_2 + "\ndig_3: " + dig_3, Toast.LENGTH_LONG).show();
-                        //Toast.makeText(this, "\n" + "Wdig_1: " + Wdig_1 + "\nWdig_2: " + Wdig_2 + "\nWdig_3: " + Wdig_3, Toast.LENGTH_LONG).show();
-
-
-                        if (dig_1 == Wdig_1) {
-                            flag_11 = true;
-                            flag_1 = true;
-                        } else if (dig_1 == Wdig_2) {
-                            flag_12 = true;
-                            flag_1 = true;
-                        } else if (dig_1 == Wdig_3) {
-                            flag_13 = true;
-                            flag_1 = true;
-                        } else {
-                            //Do nothing.
-                        }
-
-                        if (flag_11) {
-                            if (dig_2 == Wdig_2) { //Significa que de haber otra coinsidencia, esta seria orden. X
-                                //flag_22 = true;
-                                //flag_2 = true;
-                            } else if (dig_2 == Wdig_3) {
-                                flag_23 = true;
-                                flag_2 = true;
-                            } else {
+                            if (split[0].isEmpty()) {
                                 //Do nothing.
-                            }
-                        } else if (flag_12) {
-                            if (dig_2 == Wdig_1) {
-                                flag_21 = true;
-                                flag_2 = true;
-                            } else if (dig_2 == Wdig_3) {
-                                flag_23 = true;
-                                flag_2 = true;
-                            } else {
-                                //Do nothing.
-                            }
-                        } else if (flag_13) {
-                            if (dig_2 == Wdig_1) {
-                                flag_21 = true;
-                                flag_2 = true;
-                            } else if (dig_2 == Wdig_2) {
-                                flag_22 = true;
-                                flag_2 = true;
-                            } else {
-                                //Do nothing
-                            }
-                        } else {
-                            //Do nothing
-                        }
+                                //                      numero jugado    numero ganador
+                            } else if (Integer.parseInt(numero_jugado) == Winner_num) { //si numero jugado es igual a numero ganador, se ha ganado un premio
+                                if (loter.get("Tipo_juego").equals("Monazos")) {
+                                    //Toast.makeText(this, "Coinside monazos" + "\n" + "split[0]: " + split[0] + "\nSplit[1]: " + split[1] + "\nSplit[2]: " + split[2], Toast.LENGTH_LONG).show();
+                                    //Aqui captura los numeros que ganan en orden. Aunque tambien puede capturar numeros jugdos en desorden.
 
-                        if (flag_21) {
-                            if (flag_12) {
-                                if (dig_3 == Wdig_3) {
-                                    //flag_33 = true;
-                                    flag_3 = true;
+                                    //Se debe comentar la siguiente linea cuando se tenga rollos
+                                    //contenido = contenido + "###############################\nPremio encontrado!!!\nCliente: " + cliente + "\nNumero ganador: " + split[0] + " " + split[2] + "\n" + split[1] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split[1])) + " colones. \n###############################\n";
+                                    //Se debe des-comentar la siguiente linea cuando se tenga rollos.
+                                    String cliente_print = cliente.replace("x_x", " ");
+                                    contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + split_numeros[0] + " " + split_numeros[1] + "\n\n" + split_numeros[2] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split_numeros[2])) + " colones. \n################################\n\n";
+                                    total = total + (pagar * Integer.parseInt(split_numeros[2]));
                                 } else {
-                                    //Do nothing.
-                                }
-                            } else if (flag_13) {
-                                if (dig_3 == Wdig_2) {
-                                    //flag_32 = true;
-                                    flag_3 = true;
-                                } else {
-                                    //Do nothing.
+                                    //Toast.makeText(this, "Coinside otros que no son monazos!" + "\n" + "split[0]: " + split[0] + "\nSplit[1]: " + split[1], Toast.LENGTH_LONG).show();
+                                    //Se debe comentar la siguiente linea cuando se tenga rollos.
+                                    //contenido = contenido + "################################\nPremio encontrado!!!\nCliente: " + cliente + "\nNumero ganador: " + num_premio.getText().toString() + "\n" + split[1] + " X " + paga.getSelectedItem().toString() + " = " + String.valueOf(Integer.parseInt(paga.getSelectedItem().toString()) * Integer.parseInt(split[1])) + " colones. \n################################\n";
+                                    //Se debe des-comentar la siguiente linea cuando se tenga rollos.
+                                    String cliente_print = cliente.replace("x_x", " ");
+                                    contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + num_premio.getText().toString() + "\n\n" + split_numeros[1] + " X " + paga.getSelectedItem().toString() + " = " + String.valueOf(Integer.parseInt(paga.getSelectedItem().toString()) * Integer.parseInt(split_numeros[1])) + " colones. \n################################\n\n";
+                                    total = total + Integer.parseInt(paga.getSelectedItem().toString()) * Integer.parseInt(split_numeros[1]);
                                 }
                             } else {
-                                //Do nothing.
-                            }
-                        } else if (flag_22) {
-                            if (flag_11) {
-                                if (dig_3 == Wdig_3) {
-                                    //flag_33 = true;
-                                    //flag_3 = true; //Se comenta esta bandera porque representaria el orden, y eso se evaluo en la funcion anterior.
-                                } else {
-                                    //Do nothing.
-                                }
-                            } else if (flag_13) {
-                                if (dig_3 == Wdig_1) {
-                                    //flag_31 = true;
-                                    flag_3 = true;
-                                } else {
-                                    //Do nothing.
-                                }
-                            }
-                        } else if (flag_23) {
-                            if (flag_11) {
-                                if (dig_3 == Wdig_2) {
-                                    //flag_32 = true;
-                                    flag_3 = true;
-                                } else {
-                                    //Do nothing.
-                                }
-                            } else if (flag_12) {
-                                if (dig_3 == Wdig_1) {
-                                    //flag_31 = true;
-                                    flag_3 = true;
-                                } else {
-                                    //Do nothing.
-                                }
-                            }
-                        } else {
-                            //Do nothing.
-                        }
-                        //Aqui se agrega el numero ganador encontrado con el algoritmo de los if.
-                        if (flag_1) {
-                            if (flag_2) {
-                                if (flag_3) {
-                                    //Coinsidencia encontrada. Se debe verificar si la compra se hizo en desorden.
-                                    if (split[2].equals("Desorden")) {
-                                        //Se ha capturado un premio en desorden
+                                if (loter.get("Tipo_juego").equals("Monazos")) {
+                                    //Aqui se van a capturar todos los demas numeros que no calleron en el if del orden.
+                                    //Primero que nada se debe verificar si hay algun premio en desorden.
+                                    //Ahora vamos a separar el numero ganador en sus digitos.
+                                    //boolean flag_1 = false, flag_2 = false, flag_3 = false, flag_11 = false, flag_12 = false, flag_13 = false, flag_21 = false, flag_22 = false, flag_23 = false;
+                                    int Wdig_1 = -1, Wdig_2 = -1, Wdig_3 = -1;
+                                    if (Winner_num < 10) {
+                                        Wdig_1 = 0;
+                                        Wdig_2 = 0;
+                                        Wdig_3 = Winner_num;
+                                    } else if (Winner_num > 10) {
+                                        if (Winner_num < 100) {
+                                            Wdig_1 = 0;
+                                            Wdig_2 = Winner_num / 10;
+                                            Wdig_3 = Winner_num % 10;
+                                        } else {
+                                            Wdig_1 = Winner_num / 100;
+                                            Wdig_2 = (Winner_num / 10) % 10;
+                                            Wdig_3 = Winner_num % 10;
+                                        }
+                                    }
 
-                                        //Se debe comentar la siguiente linea cuando se tenga rollos.
-                                        //contenido = contenido + "###############################\nPremio encontrado!!!\nCliente: " + cliente + "\nNumero ganador: " + split[0] + " " + split[2] + "\n" + split[1] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split[1])) + " colones. \n###############################\n";
-                                        //Se debe des-comentar la siguiente linea cuando se tenga rollos.
-                                        String cliente_print = cliente.replace("x_x"," ");
-                                        contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + split[0] + " " + split[2] + "\n\n" + split[1] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split[1])) + " colones. \n################################\n\n";
-                                        total = total + (pagar * Integer.parseInt(split[1]));
+                                    //Ahora vamos a separar en sus digitos el numero que se esta analizando en esta iteracion.
+                                    int dig_1 = -1, dig_2 = -1, dig_3 = -1;
+                                    int iter_num = Integer.parseInt(split_numeros[0]);//  split[0] es el numero jugado que gano!!!
+
+                                    if (iter_num < 10) {
+                                        dig_1 = 0;
+                                        dig_2 = 0;
+                                        dig_3 = iter_num;
+                                    } else {
+                                        if (iter_num < 100) {
+                                            dig_1 = 0;
+                                            dig_2 = iter_num / 10;
+                                            dig_3 = iter_num % 10;
+                                        } else {
+                                            dig_1 = iter_num / 100;
+                                            dig_2 = (iter_num / 10) % 10;
+                                            dig_3 = iter_num % 10;
+                                        }
+                                    }
+
+                                    if (dig_1 == Wdig_1) {
+                                        flag_11 = true;
+                                        flag_1 = true;
+                                    } else if (dig_1 == Wdig_2) {
+                                        flag_12 = true;
+                                        flag_1 = true;
+                                    } else if (dig_1 == Wdig_3) {
+                                        flag_13 = true;
+                                        flag_1 = true;
+                                    } else {
+                                        //Do nothing.
+                                    }
+
+                                    if (flag_11) {
+                                        if (dig_2 == Wdig_2) { //Significa que de haber otra coinsidencia, esta seria orden. X
+                                            //flag_22 = true;
+                                            //flag_2 = true;
+                                        } else if (dig_2 == Wdig_3) {
+                                            flag_23 = true;
+                                            flag_2 = true;
+                                        } else {
+                                            //Do nothing.
+                                        }
+                                    } else if (flag_12) {
+                                        if (dig_2 == Wdig_1) {
+                                            flag_21 = true;
+                                            flag_2 = true;
+                                        } else if (dig_2 == Wdig_3) {
+                                            flag_23 = true;
+                                            flag_2 = true;
+                                        } else {
+                                            //Do nothing.
+                                        }
+                                    } else if (flag_13) {
+                                        if (dig_2 == Wdig_1) {
+                                            flag_21 = true;
+                                            flag_2 = true;
+                                        } else if (dig_2 == Wdig_2) {
+                                            flag_22 = true;
+                                            flag_2 = true;
+                                        } else {
+                                            //Do nothing
+                                        }
+                                    } else {
+                                        //Do nothing
+                                    }
+
+                                    if (flag_21) {
+                                        if (flag_12) {
+                                            if (dig_3 == Wdig_3) {
+                                                //flag_33 = true;
+                                                flag_3 = true;
+                                            } else {
+                                                //Do nothing.
+                                            }
+                                        } else if (flag_13) {
+                                            if (dig_3 == Wdig_2) {
+                                                //flag_32 = true;
+                                                flag_3 = true;
+                                            } else {
+                                                //Do nothing.
+                                            }
+                                        } else {
+                                            //Do nothing.
+                                        }
+                                    } else if (flag_22) {
+                                        if (flag_11) {
+                                            if (dig_3 == Wdig_3) {
+                                                //flag_33 = true;
+                                                //flag_3 = true; //Se comenta esta bandera porque representaria el orden, y eso se evaluo en la funcion anterior.
+                                            } else {
+                                                //Do nothing.
+                                            }
+                                        } else if (flag_13) {
+                                            if (dig_3 == Wdig_1) {
+                                                //flag_31 = true;
+                                                flag_3 = true;
+                                            } else {
+                                                //Do nothing.
+                                            }
+                                        }
+                                    } else if (flag_23) {
+                                        if (flag_11) {
+                                            if (dig_3 == Wdig_2) {
+                                                //flag_32 = true;
+                                                flag_3 = true;
+                                            } else {
+                                                //Do nothing.
+                                            }
+                                        } else if (flag_12) {
+                                            if (dig_3 == Wdig_1) {
+                                                //flag_31 = true;
+                                                flag_3 = true;
+                                            } else {
+                                                //Do nothing.
+                                            }
+                                        }
+                                    } else {
+                                        //Do nothing.
+                                    }
+                                    //Aqui se agrega el numero ganador encontrado con el algoritmo de los if.
+                                    if (flag_1) {
+                                        if (flag_2) {
+                                            if (flag_3) {
+                                                //Coinsidencia encontrada. Se debe verificar si la compra se hizo en desorden.
+                                                if (split_numeros[1].equals("Desorden")) {
+                                                    //Se ha capturado un premio en desorden
+                                                    String cliente_print = cliente.replace("x_x", " ");
+                                                    contenido = contenido + "\n\n################################\nPremio encontrado!!!\nCliente: " + cliente_print + "\nNumero ganador: " + split_numeros[0] + " " + split_numeros[1] + "\n\n" + split_numeros[2] + " X " + pagar + " = " + String.valueOf(pagar * Integer.parseInt(split_numeros[2])) + " colones. \n################################\n\n";
+                                                    total = total + (pagar * Integer.parseInt(split_numeros[2]));
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        //Do nothign. Continue...
                     }
                 }
                 linea = br24.readLine();
@@ -1331,18 +1344,11 @@ public class WinnersActivity extends AppCompatActivity {
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(nombre_archivo));//Se abre archivo
                 BufferedReader br = new BufferedReader(archivo);
-
-
                 String linea = br.readLine();//Se lee archivo
                 while (linea != null) {
                     contenido = contenido + linea + "\n";
                     linea = br.readLine();
-                    //return;
                 }
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
-                //Toast.makeText(this, contenido, Toast.LENGTH_LONG).show();
                 br.close();
                 archivo.close();
             } catch (IOException e) {
@@ -1351,10 +1357,7 @@ public class WinnersActivity extends AppCompatActivity {
         return contenido;
     }
 
-
-    public void buscar_numero_ganador(String lot) {//Premios premios
-        //Algoritmo que revisa la nube a ver si se subieron los numeros ganadores.
-        //msg("lot: " + lot);
+    public void buscar_numero_ganador(String lot) {////Algoritmo que revisa la nube a ver si se subieron los numeros ganadores.
         RequestQueue requestQueue;
 
         // Instantiate the cache
@@ -1390,9 +1393,22 @@ public class WinnersActivity extends AppCompatActivity {
 
                             //Se llena un HashMap con los premios, los cuales se bajan de la nube.
                             for (int i = 1; i < split.length; i++) {
+                                String[] split22 = split[i].split("\"");
+                                String horarito = "";
+                                if (split22[6].equals("noche")) {
+                                    horarito = "Noche";
+                                } else if (split22[6].equals("dia")) {
+                                    horarito = "Dia";
+                                } else if (split22[6].equals("tarde")) {
+                                    horarito = "Tarde";
+                                } else if (split22[6].equals("maniana")) {
+                                    horarito = "Maniana";
+                                } else {
+                                    horarito = split22[6];
+                                }
                                 String[] split2 = split[i].split("\"");
                                 //                       Ej.                    Tica                             Noche
-                                String loteria_actual = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + split2[6] + "ojo-rojo_ojo-rojo";
+                                String loteria_actual = "ojo-rojo_ojo-rojo" + split2[2] + "ojo-rojo_ojo-rojo" + horarito + "ojo-rojo_ojo-rojo";
                                 //                       Ej.                    03                                  no                                no                                 ID
                                 String premio_actual = "ojo-rojo_ojo-rojo" + split2[10] + "ojo-rojo_ojo-rojo" + split2[14] + "ojo-rojo_ojo-rojo" + split2[18] + "ojo-rojo_ojo-rojo" + split2[26] + "ojo-rojo_ojo-rojo";
                                 if (premios.containsKey(loteria_actual)) {
@@ -1481,10 +1497,7 @@ public class WinnersActivity extends AppCompatActivity {
     }
 
     public void tirar_reporte(View view){//Se deben de leer todos los tiquetes que se generaron dunrante el dia para cada loteria y cada horario elegidos
-
-
         String winner_number = "not_yet";
-
         if (loteria.getSelectedItem().toString().equals("Elija una loteria...")) {
             Toast.makeText(this, "Debe elejir una loteria", Toast.LENGTH_LONG).show();
             return;
@@ -1494,7 +1507,6 @@ public class WinnersActivity extends AppCompatActivity {
         } else {
             //Do nothing.
         }
-
         //msg("nume1: " + nume1);
         if (nume1.equals("not_asigned")){
             if (num_premio.getText().toString().isEmpty()) {
@@ -1509,7 +1521,7 @@ public class WinnersActivity extends AppCompatActivity {
                 } else if (horario.getSelectedItem().toString().equals("Noche")) {
                     horarito = "noche";
                 } else {
-                    //Never come here!!!
+                    horarito = horario.getSelectedItem().toString();
                 }
                 String lot = "ojo-rojo_ojo-rojo" + loteria.getSelectedItem().toString() + "ojo-rojo_ojo-rojo" + horarito + "ojo-rojo_ojo-rojo";
                 //msg("lot: " + lot);
@@ -1530,9 +1542,7 @@ public class WinnersActivity extends AppCompatActivity {
             }
             winner_number = nume1;
             numero_gana = nume1;
-            //num_premio.setText(nume1);//no es
         }
-
 
         if (loter.get("Tipo_juego").equals("Monazos")) {
             if (Integer.parseInt(num_premio.getText().toString()) > 999) {
@@ -1582,45 +1592,54 @@ public class WinnersActivity extends AppCompatActivity {
                     Winner_number = winner_number;
                 }
                 numero_gana = Winner_number;
-                //agregar_linea_archivo("premios" + "x_y" + Loteria + "x_y" + Horario + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt", Winner_number);
-
                 int Number_winner = Integer.parseInt(Winner_number);
-                String archivos[] = fileList();
                 contenido = "";
-
-                //Se debe des-comentar la siguente linea cuando se tengan rollos.
                 contenido = contenido + "\n    Reporte de ganadores\n\n    ----> " + Loteria + " " + Horario + " <----\n\n    " + fecha + "/" + mes + "/" + anio + "\n\n";
-                for (int i = 0; i < archivos.length; i++) {//TODO: Se debe pasar a un solo archivo.
-                    Pattern pattern = Pattern.compile(Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_", Pattern.CASE_INSENSITIVE);
-                    Matcher matcher = pattern.matcher(archivos[i]);
-                    boolean matchFound = matcher.find();
-                    String[] split_nombre = archivos[i].split("_separador_");
-                    String jugador_actual = "";
-                    if (matchFound) {
-                        //Se encuentra un archivo!!!
-                        String[] split_nom_parts = split_nombre[0].split("x_x");
-                        int size_nom_parts = split_nom_parts.length;
-                        for (int ii = 0; ii < size_nom_parts; ii++) {
-                            jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
-                        }
-                        String archivo = archivos[i];
-                        String[] split_nom_file = archivo.split("_separador_");
-                        Log.v("Tirar_reporte mona", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
-                        if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
-                            Log.v("Tirar_reporte mona2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
-                            //Creo que nada. TODO: ver que hacer.
-                        } else if (split_nom_file[14].equals("null.txt")) {
-                            generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                try {
+                    InputStreamReader archivot = new InputStreamReader(openFileInput(facturas_diarias));
+                    //imprimir_archivo("facturas_online.txt");  abajos2.get(key)
+                    BufferedReader brt = new BufferedReader(archivot);
+                    String linea = brt.readLine();
+                    while (linea != null) {
+                        if (linea.isEmpty()) {
+                            //Do nothing. Continue...
                         } else {
-                            //Do nothing.
+                            String[] split = linea.split("      ");
+                            Pattern pattern = Pattern.compile(Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_", Pattern.CASE_INSENSITIVE);
+                            Matcher matcher = pattern.matcher(split[3]);
+                            boolean matchFound = matcher.find();
+                            String[] split_nombre = split[3].split("_separador_");
+                            String jugador_actual = "";
+                            if (matchFound) {
+                                //Se encuentra un archivo!!!
+                                String[] split_nom_parts = split_nombre[0].split("x_x");
+                                int size_nom_parts = split_nom_parts.length;
+                                for (int ii = 0; ii < size_nom_parts; ii++) {
+                                    jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
+                                }
+                                String archivo = split[3];
+                                String[] split_nom_file = archivo.split("_separador_");
+                                Log.v("Tirar_reporte mona", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                                if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
+                                    Log.v("Tirar_reporte mona2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                                    //Creo que nada. TODO: ver que hacer.
+                                } else if (split_nom_file[14].equals("null.txt")) {
+                                    generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                                } else {
+                                    //Do nothing.
+                                }
+                            } else {
+                                //Do nothing.
+                            }
                         }
-
+                        linea = brt.readLine();
                     }
-                }
+                    brt.close();
+                    archivot.close();
+                } catch (IOException e) {}
                 contenido = contenido + "\n\n################################\nTotal de premios en \n" + Loteria + " " + Horario + ": " + String.valueOf(total) + " colones.\n################################\n\n\n\n\n";
                 printIt(contenido);
                 total = 0;
-
             } else {
                 //File file = new File("premios" + "x_y" + loteria.getSelectedItem().toString() + "x_y" + horario.getSelectedItem().toString() + "x_y" + fecha + "x_y" + mes + "x_y" + anio + "x_y.txt");
                 //file.delete();
@@ -1641,41 +1660,54 @@ public class WinnersActivity extends AppCompatActivity {
                 String archivos[] = fileList();
                 contenido = "";
                 contenido = contenido + "\n    Reporte de ganadores\n\n    ----> " + Loteria + " " + Horario + " <----\n\nFecha: " + fecha + "/" + mes + "/" + anio + "\n\n";
-
-                for (int i = 0; i < archivos.length; i++) {
-                    Pattern pattern = Pattern.compile(Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_", Pattern.CASE_INSENSITIVE);
-                    Matcher matcher = pattern.matcher(archivos[i]);
-                    boolean matchFound = matcher.find();
-                    String[] split_nombre = archivos[i].split("_separador_");
-                    String jugador_actual = "";
-                    if (matchFound) {
-                        //Se encuentra un archivo!!!
-                        String[] split_nom_parts = split_nombre[0].split("x_x");
-                        int size_nom_parts = split_nom_parts.length;
-                        for (int ii = 0; ii < size_nom_parts; ii++) {
-                            jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
-                        }
-                        String archivo = archivos[i];
-                        String[] split_nom_file = archivo.split("_separador_");
-                        Log.v("Tirar_reporte regu", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
-                        if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
-                            Log.v("Tirar_reporte regu2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[6] + "\n\n.");
-                            //Creo que nada. TODO: ver que hacer.
-                        } else if (split_nom_file[14].equals("null.txt")) {
-                            generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                try {
+                    InputStreamReader archivot = new InputStreamReader(openFileInput(facturas_diarias));
+                    //imprimir_archivo("facturas_online.txt");  abajos2.get(key)
+                    BufferedReader brt = new BufferedReader(archivot);
+                    String linea = brt.readLine();
+                    while (linea != null) {
+                        if (linea.isEmpty()) {
+                            //Do nothing. Continue...
                         } else {
-                            //Do nothing.
+                            String[] split = linea.split("      ");
+                            Pattern pattern = Pattern.compile(Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_", Pattern.CASE_INSENSITIVE);
+                            Matcher matcher = pattern.matcher(split[3]);
+                            boolean matchFound = matcher.find();
+                            String[] split_nombre = split[3].split("_separador_");
+                            String jugador_actual = "";
+                            if (matchFound) {
+                                //Se encuentra un archivo!!!
+                                String[] split_nom_parts = split_nombre[0].split("x_x");
+                                int size_nom_parts = split_nom_parts.length;
+                                for (int ii = 0; ii < size_nom_parts; ii++) {
+                                    jugador_actual = jugador_actual + split_nom_parts[ii] + " ";
+                                }
+                                String archivo = split[3];
+                                String[] split_nom_file = archivo.split("_separador_");
+                                Log.v("Tirar_reporte regu", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[7] + "\n\n.");
+                                if (split_nom_file[14].equals("equi.txt") || (Integer.parseInt(split_nom_file[6]) < 0)) {
+                                    Log.v("Tirar_reporte regu2", "Final del nombre: " + split_nom_file[14] + ".\n\nFactura numero: " + split_nom_file[6] + "\n\n.");
+                                    //Creo que nada. TODO: ver que hacer.
+                                } else if (split_nom_file[14].equals("null.txt")) {
+                                    generar_tiquete(archivo, Integer.parseInt(num_premio.getText().toString()), jugador_actual);
+                                } else {
+                                    //Do nothing.
+                                }
+                            } else {
+                                //Do nothing.
+                            }
                         }
+                        linea = brt.readLine();
                     }
-                }
-
+                    brt.close();
+                    archivot.close();
+                } catch (IOException e) {}
                 contenido = contenido + "\n\n################################\n Total de premios en \n" + Loteria + " " + Horario + ": " + String.valueOf(total) + " colones.\n################################\n\n\n\n\n";
                 printIt(contenido);
                 total = 0;
             }
         }
     }
-
 
     public void guardar (String Tcompleto, String nombre){
         try {
@@ -1687,12 +1719,11 @@ public class WinnersActivity extends AppCompatActivity {
         }
     }
 
-    private void guardar_pdf(){
-        //Respaldo digital del reporte contable.
-    }
-
-    private void borrar_archivo(String s){
-        //Se borra el archivo contable.
+    private void borrar_archivo(String file){
+        File archivo = new File(file);
+        String empty_string = "";
+        guardar(empty_string, file);
+        archivo.delete();
     }
 
     private String check_device() {

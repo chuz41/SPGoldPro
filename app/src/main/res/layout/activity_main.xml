@@ -24,7 +24,7 @@
         android:id="@+id/button_ventas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="176dp"
+        android:layout_marginTop="140dp"
         android:backgroundTint="@color/green"
         android:hint="@string/boton_ventas"
         android:onClick="ventas"
@@ -32,6 +32,7 @@
         android:textColor="@color/red"
         app:iconTint="@color/green"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_inicio" />
 
@@ -81,19 +82,6 @@
         android:text="@string/derechos_autor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/boton_admin"
-        android:layout_width="259dp"
-        android:layout_height="67dp"
-        android:layout_marginTop="36dp"
-        android:onClick="administrar"
-        android:text="@string/administrar"
-        app:layout_constraintBottom_toTopOf="@+id/button_ventas"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_inicio"
-        app:layout_constraintVertical_bias="0.273" />
 
     <TextView
         android:id="@+id/textView_esperar"
