@@ -24,7 +24,7 @@
         android:id="@+id/button_ventas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="148dp"
         android:backgroundTint="@color/green"
         android:hint="@string/boton_ventas"
         android:onClick="ventas"
@@ -36,10 +36,23 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_inicio" />
 
     <Button
+        android:id="@+id/button_reportes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:backgroundTint="@color/blue"
+        android:onClick="reportes"
+        android:text="@string/reportes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_ventas" />
+
+    <Button
         android:id="@+id/button_config"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="76dp"
         android:backgroundTint="@color/red"
         android:hint="@string/boton_config"
         android:onClick="config"
@@ -47,21 +60,9 @@
         android:textColor="@color/black"
         app:iconTint="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_reportes" />
-
-    <Button
-        android:id="@+id/button_reportes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:backgroundTint="@color/blue"
-        android:onClick="reportes"
-        android:text="@string/reportes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_ventas" />
 
     <EditText
         android:id="@+id/et_password"
@@ -96,21 +97,32 @@
         android:id="@+id/tv_active"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
         android:layout_marginBottom="8dp"
         android:text="@string/pedir_codigo_tv"
         app:layout_constraintBottom_toTopOf="@+id/et_ID"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/et_ID" />
 
     <EditText
         android:id="@+id/et_ID"
         android:layout_width="305dp"
         android:layout_height="48dp"
-        android:layout_marginStart="80dp"
         android:hint="@string/pedir_codigo_et"
         android:inputType="textPersonName|text|textCapWords"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.49" />
+
+    <Button
+        android:id="@+id/boton_admin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="administrar"
+        android:text="@string/administrar"
+        app:layout_constraintBottom_toTopOf="@+id/button_ventas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_inicio"
+        app:layout_constraintVertical_bias="0.53" />
 </androidx.constraintlayout.widget.ConstraintLayout>
