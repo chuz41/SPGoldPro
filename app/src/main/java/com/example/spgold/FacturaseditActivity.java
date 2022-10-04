@@ -100,7 +100,7 @@ public class FacturaseditActivity extends AppCompatActivity {
     private String contabilidad = "contabilidad.txt";
     private String nombre_dia;
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
 
@@ -120,7 +120,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

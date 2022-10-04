@@ -2,8 +2,8 @@
   <library name="Gradle: androidx.arch.core:core-runtime:2.1.0@aar">
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/0d304a484326baa263a900de069d66cb/transformed/core-runtime-2.1.0/res" />
-      <root url="file://$PROJECT_DIR$/../../TSC_DLL_SAMPLE/caches/transforms-3/0d304a484326baa263a900de069d66cb/transformed/core-runtime-2.1.0/AndroidManifest.xml" />
       <root url="file://$PROJECT_DIR$/../../TSC_DLL_SAMPLE/caches/transforms-3/0d304a484326baa263a900de069d66cb/transformed/core-runtime-2.1.0/res" />
+      <root url="file://$PROJECT_DIR$/../../TSC_DLL_SAMPLE/caches/transforms-3/0d304a484326baa263a900de069d66cb/transformed/core-runtime-2.1.0/AndroidManifest.xml" />
       <root url="jar://$PROJECT_DIR$/../../TSC_DLL_SAMPLE/caches/transforms-3/0d304a484326baa263a900de069d66cb/transformed/core-runtime-2.1.0/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />

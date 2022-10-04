@@ -57,7 +57,7 @@ public class ReportesActivity extends AppCompatActivity {
     private Map<String, Integer> meses = new HashMap<String, Integer>();
     private String fecha;
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
 
@@ -79,7 +79,7 @@ public class ReportesActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

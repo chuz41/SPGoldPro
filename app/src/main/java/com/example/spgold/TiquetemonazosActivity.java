@@ -275,14 +275,13 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 while (linea != null) {
 
                     String[] split = linea.split("      ");
-
+                    Log.v("Debug_contable_mona", ".\n\nLinea: " + "\n\n" + linea + "\n\n.");
                     if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
                         conte_file = conte_file + linea + "\n";
                     } else {
                         conte_file = conte_file + linea + "\n";
                     }
-
                     linea = br.readLine();
 
                 }
@@ -605,8 +604,8 @@ public class TiquetemonazosActivity extends AppCompatActivity {
                 archivo.close();
                 borrar_archivo(Loteria + "_" + Horario + "_.txt");
                 crear_archivo(Loteria + "_" + Horario + "_.txt");
-                Log.v("Ver_archivo++", ".\n\nTiquete contable:\n" + TiqueteContable + "\n\nArchivo:\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_.txt") + "\n\nLoteria: " + Loteria + "\nHorario: " + Horario + "\n\n.");
                 guardar(TiqueteContable, Loteria + "_" + Horario + "_.txt");
+                Log.v("Ver_archivo++", ".\n\nTiquete contable:\n" + TiqueteContable + "\n\nArchivo:\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_.txt") + "\n\nLoteria: " + Loteria + "\nHorario: " + Horario + "\n\n.");
             } catch (IOException e) {
             }
         }

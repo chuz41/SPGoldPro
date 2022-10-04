@@ -997,6 +997,7 @@ public class RepventasActivity extends AppCompatActivity {
         //Se verifica si el archivo contable del dia existe.
         String fichName = Loteria + "_" + Horario + "_.txt";
         if (comprobar_fichero(fichName)) {
+            Log.v("Tirar_reporte_inicio", ".\n\nArchivo contable: " + Loteria + "_" + Horario + "_txt\n\nContenido:\n\n" + imprimir_archivo(fichName) + "\n\n.");
             //Se limpia archivo contable de ventas viejas
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(fichName));
@@ -1008,20 +1009,37 @@ public class RepventasActivity extends AppCompatActivity {
 
                     String[] split = linea.split("      ");
 
-                    if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
+                    Log.v("Debuggin_monaz_", ".\n\nFecha actual: " + fecha + "\nFecha tiquete: " + split[2]);
+                    //if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                         if (loter.get("Tipo_juego").equals("Monazos")) {
-                            linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
+                            if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
+                                linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
+                            } else {
+                                conte_file = conte_file + linea + "\n";
+                            }
                         } else if (loter.get("Tipo_juego").equals("Parley")) {
-                            linea = split[0] + "      " + split[1] + "      0      " + fecha;
+                            if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
+                                linea = split[0] + "      " + split[1] + "      0      " + fecha;
+                            } else {
+                                conte_file = conte_file + linea + "\n";
+                            }
                         } else if (loter.get("Tipo_juego").equals("Reventados")) {
-                            linea = split[0] + "      0      " + fecha;
+                            if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
+                                linea = split[0] + "      0      " + fecha;
+                            } else {
+                                conte_file = conte_file + linea + "\n";
+                            }
                         } else if (loter.get("Tipo_juego").equals("Regular")) {
-                            linea = split[0] + "      0      " + fecha;
+                            if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
+                                linea = split[0] + "      0      " + fecha;
+                            } else {
+                                conte_file = conte_file + linea + "\n";
+                            }
                         }
-                        conte_file = conte_file + linea + "\n";
-                    } else {
-                        conte_file = conte_file + linea + "\n";
-                    }
+                        //conte_file = conte_file + linea + "\n";
+                    //} else {
+                    //    conte_file = conte_file + linea + "\n";
+                    //}
 
                     linea = br.readLine();
 

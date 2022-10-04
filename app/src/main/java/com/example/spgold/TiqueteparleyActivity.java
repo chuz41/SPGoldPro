@@ -278,7 +278,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                 while (linea != null) {
 
                     String[] split = linea.split("      ");
-                    Log.v("Ver_fechas", ".\n\nFecha: " + fecha + "\nsplit[3]: " + split[3]);
+                    Log.v("Debug_contable_par", ".\n\nLinea: " + "\n\n" + linea + "\n\n.");
                     if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      " + split[1] + "      0      " + fecha;
                         conte_file = conte_file + linea + "\n";
@@ -721,6 +721,7 @@ public class TiqueteparleyActivity extends AppCompatActivity {
                     borrar_archivo(Loteria + "_" + Horario + "_.txt");
                     crear_archivo(Loteria + "_" + Horario + "_.txt");
                     linea = String.valueOf(num1) + "      " + String.valueOf(num2) + "      " +  monto_act + "      " + fecha;
+                    Log.v("Debug_contar_par", ".\n\nLinea:\n\n" + linea + "\n\n.");
                     TiqueteContable = TiqueteContable + linea + "\n";
                     guardar(TiqueteContable, Loteria + "_" + Horario + "_.txt");
                 } catch (IOException e) {

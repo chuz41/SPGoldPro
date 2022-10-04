@@ -1,14 +1,5 @@
 package com.example.spgold;
-/*
-import static com.example.spgold.Util.FuncionesComunesUtil.imprimir_archivo;
-import static com.example.spgold.Util.FuncionesComunesUtil.check_device;
-import static com.example.spgold.Util.FuncionesComunesUtil.agregar_linea_archivo;
-import static com.example.spgold.Util.FuncionesComunesUtil.crear_archivo;
-import static com.example.spgold.Util.FuncionesComunesUtil.archivo_existe;
-import static com.example.spgold.Util.FuncionesComunesUtil.borrar_archivo;
-import static com.example.spgold.Util.FuncionesComunesUtil.get_impresora;
-import static com.example.spgold.Util.FuncionesComunesUtil.guardar;
-*/
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -88,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button_ventas;
     private Button button_config;
     private Button button_reportes;
-    private Button boton_admin;
+    //private Button boton_admin;
     private String dispositivo;
     private EditText passET;
     private HashMap<String, String> abajos2 = new HashMap<String, String>();
@@ -141,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         button_ventas = (Button) findViewById(R.id.button_ventas);
         button_config = (Button) findViewById(R.id.button_config);
         button_reportes = (Button) findViewById(R.id.button_reportes);
-        boton_admin = (Button) findViewById(R.id.boton_admin);
+        //boton_admin = (Button) findViewById(R.id.boton_admin);
         textView_esperar = (TextView) findViewById(R.id.textView_esperar);
         et_ID = (EditText) findViewById(R.id.et_ID);
         tv_active = (TextView) findViewById(R.id.tv_active);
@@ -163,13 +154,6 @@ public class MainActivity extends AppCompatActivity {
             String contenido = "";
             String linea = br.readLine();
             while (linea != null) {
-                /*
-                String fecha_invoice = anio + mes + fecha + "_" + nombre_dia;
-                String linea_escribir = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha;
-                String linea_escribir2 = linea_leida + "      " + SpreadSheet + "      " + Sheet + "      " + new_name + "      " + fecha_invoice;
-                agregar_linea_archivo(facturas_diarias, linea_escribir);
-                agregar_linea_archivo(historial_facturas, linea_escribir2);
-                 */
 
                 if (linea.isEmpty()) {
                     // Do nothing. Continue...
@@ -957,7 +941,7 @@ public class MainActivity extends AppCompatActivity {
         button_ventas.setVisibility(View.VISIBLE);
         button_config.setVisibility(View.VISIBLE);
         button_reportes.setVisibility(View.VISIBLE);
-        boton_admin.setVisibility(View.VISIBLE);
+        //boton_admin.setVisibility(View.VISIBLE);
         et_ID.setVisibility(View.INVISIBLE);
         tv_active.setVisibility(View.INVISIBLE);
 
@@ -973,7 +957,7 @@ public class MainActivity extends AppCompatActivity {
         button_ventas.setVisibility(View.INVISIBLE);
         button_config.setVisibility(View.INVISIBLE);
         button_reportes.setVisibility(View.INVISIBLE);
-        boton_admin.setVisibility(View.INVISIBLE);
+        //boton_admin.setVisibility(View.INVISIBLE);
         et_ID.setVisibility(View.VISIBLE);
         tv_active.setVisibility(View.VISIBLE);
 
@@ -990,7 +974,7 @@ public class MainActivity extends AppCompatActivity {
         button_ventas.setVisibility(View.VISIBLE);
         button_config.setVisibility(View.VISIBLE);
         button_reportes.setVisibility(View.VISIBLE);
-        boton_admin.setVisibility(View.VISIBLE);
+        //boton_admin.setVisibility(View.VISIBLE);
         tv_active.setVisibility(View.INVISIBLE);
         et_ID.setVisibility(View.INVISIBLE);
     }
@@ -1006,7 +990,7 @@ public class MainActivity extends AppCompatActivity {
         button_ventas.setVisibility(View.INVISIBLE);
         button_config.setVisibility(View.INVISIBLE);
         button_reportes.setVisibility(View.INVISIBLE);
-        boton_admin.setVisibility(View.INVISIBLE);
+        //boton_admin.setVisibility(View.INVISIBLE);
         tv_active.setVisibility(View.INVISIBLE);
         et_ID.setVisibility(View.INVISIBLE);
 
