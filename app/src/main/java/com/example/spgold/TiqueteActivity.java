@@ -1168,7 +1168,7 @@ public class TiqueteActivity extends AppCompatActivity {
         } else {
             //Nothing to do here!!!
         }
-//                            0                           1                         2                        3                        4                       5                         6                                7                     8                       9                         10                     11                        12                           13
+//                            0                           1                         2                        3                        4                       5                              6                           7                     8                       9                         10                     11                        12                           13
         String tempFile = jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hoora + "_separador_" + miinuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
         String lineaAgregar = "abajo " + tempFile + " " + SPREADSHEET_ID + " " + SHEET + " " + tipo_lot;
         agregar_linea_archivo("facturas_online.txt", lineaAgregar);

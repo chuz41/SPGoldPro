@@ -224,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
                 maqui = split[1];
                 sid_loterias = split[2];
                 sid_vendidas = split[3];
-                linea = br.readLine();
-                //ocultar_todito();
                 br.close();
                 archivo.close();
                 check_activation();
@@ -471,8 +469,9 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     msg("Vendedor no registrado!");
                                     tv_active.setText("Vendedor no registrado!");
-                                    et_ID.setText("");
+                                    et_ID.setEnabled(true);
                                     et_ID.setFocusableInTouchMode(true);
+                                    et_ID.setText("");
                                     et_ID.requestFocus();
                                     return;
                                 }
@@ -1644,9 +1643,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void boton_atras_active() {
         //ocultar_teclado();
-
-
-
         try {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
@@ -1679,8 +1675,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void crear_archivos_config() throws IOException {
 
-
-        ///////////////Se crea el archivo password.txt//////////
+        ///////////////Se crea el archivo password.txt///////////////
         String password = "password.txt";
         String archivos[] = fileList();
         if (archivo_existe(archivos, password)) {
@@ -1690,9 +1685,9 @@ public class MainActivity extends AppCompatActivity {
             String drowssap = "0144";
             agregar_linea_archivo(password, drowssap);
         }
-        ////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
 
-        ///////////////Se crea el archivo device.txt////////////
+        ///////////////Se crea el archivo device.txt//////////////////
         String device = "device.txt";
         //String archivos[] = fileList();
         if (archivo_existe(archivos, device)) {
@@ -1702,7 +1697,7 @@ public class MainActivity extends AppCompatActivity {
             String ecived = "Celular";
             agregar_linea_archivo(device, ecived);
         }
-        ////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////
 
         ///////////////Se crea el archivo facturas_online.txt//////////
         String facturas_online = "facturas_online.txt";
@@ -1711,7 +1706,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             crear_archivo(facturas_online);
         }
-        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
 
         ///////////////Se crea el archivo facturas_diarias.txt//////////
         String facturas_diarias = "facturas_diarias.txt";
@@ -1720,7 +1715,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             crear_archivo(facturas_diarias);
         }
-        ////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////
 
         ///////////////Se crea el archivo historial_facturas.txt//////////
         String historial_facturas = "historial_facturas.txt";
@@ -1729,16 +1724,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             crear_archivo(historial_facturas);
         }
-        ////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////
 
-        ///////////////Se crea el archivo contabilidad.txt//////////
+        ///////////////Se crea el archivo contabilidad.txt///////////////
         String contabilidad = "contabilidad.txt";
         if (archivo_existe(archivos, contabilidad)) {
             //Do nothing.
         } else {
             crear_archivo(contabilidad);
         }
-        ////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////
 
     }
 
@@ -1815,7 +1810,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         }
-
     }
 
     private void ocultar_teclado(){

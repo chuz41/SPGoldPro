@@ -141,6 +141,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         button_reimprimir = (Button) findViewById(R.id.button_reimprimir);
         textView_esperar = (TextView) findViewById(R.id.textView_esperar);
         //button_archivos = (Button) findViewById(R.id.button_archivos);
+        textView_esperar.setVisibility(View.INVISIBLE);
 
         llenar_mapa_meses();
 
@@ -172,22 +173,16 @@ public class FacturaseditActivity extends AppCompatActivity {
     }
 
     public void archivos(View view) {
-        //ocultar_todo();
-        //tv_aux.setVisibility(View.VISIBLE);
         String archivos[] = fileList();
         String ver = "";
         for (int i = 0; i < archivos.length; i++) {
             ver = ver + archivos[i] + "\n";
         }
-        //tv_aux.setText(ver);
-
     }
 
     private void mostrar_todo() {
-
         textView_esperar.setText("");
         textView_esperar.setVisibility(View.INVISIBLE);
-
         textView_facturas.setVisibility(View.VISIBLE);
         textView_fecha.setVisibility(View.VISIBLE);
         editText_listar_facturas.setVisibility(View.VISIBLE);
@@ -198,15 +193,11 @@ public class FacturaseditActivity extends AppCompatActivity {
         button_borrar_factura.setVisibility(View.VISIBLE);
         button_reimprimir.setVisibility(View.VISIBLE);
         //button_archivos.setVisibility(View.VISIBLE);
-
-
     }
 
     private void ocultar_todo() {
-
         textView_esperar.setVisibility(View.VISIBLE);
         textView_esperar.setText("   Conectando...\n\nPor favor espere...");
-
         textView_facturas.setVisibility(View.INVISIBLE);
         textView_fecha.setVisibility(View.INVISIBLE);
         editText_listar_facturas.setVisibility(View.INVISIBLE);
@@ -217,7 +208,6 @@ public class FacturaseditActivity extends AppCompatActivity {
         button_borrar_factura.setVisibility(View.INVISIBLE);
         button_reimprimir.setVisibility(View.INVISIBLE);
         //button_archivos.setVisibility(View.INVISIBLE);
-
     }
 
     private boolean verificar_internet() {
@@ -283,7 +273,6 @@ public class FacturaseditActivity extends AppCompatActivity {
             }
 
             if (flag) {
-                //mostrar_todo();
                 return;
             } else {
                 //Do nothing. Continue with the work
@@ -296,13 +285,16 @@ public class FacturaseditActivity extends AppCompatActivity {
         }
 
         abajiar();
-        //return objeto_json;
     }
 
     private void abajiar() throws JSONException {
 
-        //ocultar_todo();
-
+        ocultar_todo();
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         for (String key : abajos2.keySet()) {
             JSONObject objeto_json = new JSONObject();
             String SSHHEETT = "";
@@ -320,15 +312,15 @@ public class FacturaseditActivity extends AppCompatActivity {
                     String[] split = linea.split("      ");
                     if (file.equals(split[3])) {
                         String[] split_name = file.split("_separador_");
-                        Log.v("ERROR9001_facturas", "Linea leida: " + linea);
+                        Log.v("ERROR9001_facturas", ".\n\nLinea leida:\n" + linea + "\n\n.");
                         if (linea.equals("BORRADA")) {
-                            Log.v("abajiar_linea_borrada", "\n\nLinea: " + linea);
+                            Log.v("abajiar_linea_borrada", "\n\nLinea: " + linea + "\n\n.");
                             //Do nothing.
                         } else if (linea.isEmpty()) {
-                            Log.v("abajiar_linea_empty", "\n\nLinea: " + linea);
+                            Log.v("abajiar_linea_empty", "\n\nLinea: " + linea + "\n\n.");
                             //Do nothing.
                         } else if (split_name[14].equals("equi.txt")) {
-                            Log.v("abajiar_nombre_equi.txt", "\n\nLinea: " + linea);
+                            Log.v("abajiar_nombre_equi.txt", "\n\nLinea: " + linea + "\n\n.");
                             tipo_lot = split_name[9];
                             SSPPRREEAADDSSHHEETT = split[1];
                             SSHHEETT = split[2];
@@ -348,7 +340,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                             //file = abajos2.get(key);\n
                             Log.v("Error9003_pre", "\n\nTipo_lot: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\n\n.");
                             objeto_json = generar_Json_resagadas(file, factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lot);
-                            Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
+                            Log.v("Error9003_facturas", ".\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\nfile: " + file);
                             abajos2.remove(key);
                             br.close();
                             archivo.close();
@@ -368,7 +360,6 @@ public class FacturaseditActivity extends AppCompatActivity {
 
             }
         }
-        //mostrar_todo();
     }
 
     private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) throws IOException {//Este metodo revisa si se ha subido parte del tiquete a la nube.
@@ -601,8 +592,6 @@ public class FacturaseditActivity extends AppCompatActivity {
 
         String url = addRowURL;
 
-        //ocultar_todo();
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
 
@@ -619,12 +608,12 @@ public class FacturaseditActivity extends AppCompatActivity {
 
                                 //mensaje_confirma_subida("factura #" + factura_num + " se ha subido correctamente!");
                                 cambiar_bandera (factura_num, tag);
-                                //mostrar_todo();
-                                try {
+                                mostrar_todo();
+                                /*try {
                                     abajiar();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }
+                                }*/
                             } else {
                                 String factura_num = split[15];
                                 //mensaje_confirma_subida("Factura #" + factura_num + " no se ha subido!");
@@ -669,27 +658,31 @@ public class FacturaseditActivity extends AppCompatActivity {
                 String[] split = linea.split(" ");
                 String[] split_perreo = split[1].split("_separador_");
                 if (split_perreo[14].equals("equi.txt")) {
-                    Log.v("Cambiar_band_equi", " Se ha intentado cambiar bandera a archivo \"equi.txt\"\nLinea: " + linea + "\n\n               Tag: " + tag + "\n\n");
-                    //Do nothing for now!! maybe later do a TODO.
-                    if (tag.equals("equi")) {
-                        if (split[0].equals("BORRADA")) {
-                            //TODO: Pensar que hacer!!!
-                        } else if (split[0].equals("abajo")) {
-                            String[] split_name = split[1].split("_separador_");
-                            String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
-                            if (factura.equals(Consecutivo)) {
-                                linea = linea.replace("abajo", "arriba");
-                                contenido = contenido + linea + "\n";
-                            } else {
-                                contenido = contenido + linea + "\n";
-                            }
-                        } else if (split[0].equals("arriba")) {
-                            //No hacer nada garantiza que se borra la linea que ya esta arriba
-                        } else {
-                            //Do nothing. No deberia llegar aqui.
-                        }
+                    if (tag.equals("nada")) {
+                        //Do nothing.
                     } else {
-                        contenido = contenido + linea + "\n";
+                        Log.v("Cambiar_band_equi", " Se ha intentado cambiar bandera a archivo \"equi.txt\"\nLinea: " + linea + "\n\n               Tag: " + tag + "\n\n");
+                        //Do nothing for now!! maybe later do a TODO.
+                        if (tag.equals("equi")) {
+                            if (split[0].equals("BORRADA")) {
+                                //TODO: Pensar que hacer!!!
+                            } else if (split[0].equals("abajo")) {
+                                String[] split_name = split[1].split("_separador_");
+                                String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
+                                if (factura.equals(Consecutivo)) {
+                                    linea = linea.replace("abajo", "arriba");
+                                    contenido = contenido + linea + "\n";
+                                } else {
+                                    contenido = contenido + linea + "\n";
+                                }
+                            } else if (split[0].equals("arriba")) {
+                                //No hacer nada garantiza que se borra la linea que ya esta arriba
+                            } else {
+                                //Do nothing. No deberia llegar aqui.
+                            }
+                        } else {
+                            contenido = contenido + linea + "\n";
+                        }
                     }
 
                 } else {
@@ -707,14 +700,6 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 contenido = contenido + linea + "\n";
                             }
                         } else if (split[0].equals("arriba")) {
-                            /*String[] split_name = split[1].split("_separador_");
-                            String factura = split_name[6];// split_name[6] contiene el numero de la factura que se desea subir.
-                            if (factura.equals(Consecutivo)) {
-                                linea = linea.replace("arriba", tag);
-                                contenido = contenido + linea + "\n";
-                            } else {
-                                contenido = contenido + linea + "\n";
-                            }*/
                             //No hacer nada garantiza el borrado de la linea que contiene "arriba"
                         } else {
                             //Do nothing. No deberia llegar aqui.
@@ -744,6 +729,7 @@ public class FacturaseditActivity extends AppCompatActivity {
             br.close();
             archivo.close();
             borrar_archivo("facturas_online.txt");
+            crear_archivo("facturas_online.txt");
             //imprimir_archivo("facturas_online.txt");
             guardar(contenido, "facturas_online.txt");//Aqui se eliminan las lineas que corresponden a archivos que ya se han subido.
             Log.v("cambiar_band_result", "\n\nArchivo \"facturas_online.txt\":\n\n" + imprimir_archivo("facturas_online.txt"));
@@ -837,10 +823,8 @@ public class FacturaseditActivity extends AppCompatActivity {
         boolean flag_internet = verificar_internet();
         //JSONObject objeto_Json_a_subir = null;
         if (flag_internet) {
-            //ocultar_todo();
             obtener_Json_otras_facturas();
         } else {
-            //Toast.makeText(this, "Verifique su coneccion a Internet!!!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1520,7 +1504,10 @@ public class FacturaseditActivity extends AppCompatActivity {
                                     Toast.makeText(this, "Factura #" + coonsecut + " no se puede borrar!", Toast.LENGTH_SHORT);
                                 } else {
                                     borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);//Funcion que crea el anti-archivo.
+
                                     des_contar(file);
+
+
 
                                     //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
                                     //cambiar_bandera(String.valueOf(inv_number), "BORRADA");
@@ -1559,6 +1546,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                                     }
                                     //guardar("BORRADA", file);
                                     //break;
+
                                     cargar_facturas(fecha_selected, mes_selected, anio_selected);
                                 }
                             }
@@ -1571,6 +1559,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                     archivo.close();
 
                     guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
+                    Log.v("debugg_invoice.txt", ".\n\ninvoice.txt:\n\n" + imprimir_archivo("invoice.txt") + "\n\n.");
 
                     //imprimir_archivo("invoice.txt");
                 } catch (IOException e) {
@@ -1597,6 +1586,11 @@ public class FacturaseditActivity extends AppCompatActivity {
             edit_Text_numero_factura.setText("");
 
         }
+        try {
+            subir_facturas_resagadas();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void crear_archivo(String nombre_archivo) {
@@ -1611,9 +1605,7 @@ public class FacturaseditActivity extends AppCompatActivity {
     private void borrar_de_la_nube(String file, String spid, String sheet, String tip_lot) {
 
         //String estado_online = "emp";//TODO: No se puede consultar el estado online abajo, por fuerza hay que ver la nube.
-
-        String archivos[] = fileList();
-
+        ocultar_todo();
         String estado_online = "emp";
 
         try {
@@ -1629,24 +1621,36 @@ public class FacturaseditActivity extends AppCompatActivity {
                     if (split[0].equals("abajo")) {
                         String[] spliteo = split[1].split("_separador_");
                         if (spliteo[14].equals("null.txt")) {
-                            estado_online = "abajo";
-                            Log.v("Error99", "bandera estado_online: " + estado_online);
+                            if (Integer.parseInt(spliteo[6]) < 0) {
+                                //Do nothing.
+                            } else {
+                                estado_online = "abajo";
+                                Log.v("Error99", "bandera estado_online: " + estado_online);
+                            }
                         } else {
                             //Do nothing.
                         }
                     } else if (split[0].equals("arriba")) {
                         String[] spliteo = split[1].split("_separador_");
                         if (spliteo[14].equals("null.txt")) {
-                            estado_online = "arriba";
-                            Log.v("Error99", "bandera estado_online: " + estado_online);
+                            if (Integer.parseInt(spliteo[6]) < 0) {
+                                // Do nothing.
+                            } else {
+                                estado_online = "arriba";
+                                Log.v("Error99", "bandera estado_online: " + estado_online);
+                            }
                         } else {
                             //Do nothing.
                         }
                     } else if (split[0].equals("BORRADA")) {
                         String[] spliteo = split[1].split("_separador_");
                         if (spliteo[14].equals("null.txt")) {
-                            estado_online = "BORRADA";
-                            Log.v("Error99", "bandera estado_online: " + estado_online);
+                            if (Integer.parseInt(spliteo[6]) < 0) {
+                                //Do nothing.
+                            } else {
+                                estado_online = "BORRADA";
+                                Log.v("Error99", "bandera estado_online: " + estado_online);
+                            }
                         } else {
                             Log.v("Debugg borrar nube1", "No deberia estar aqui. \n\nSplit[0]: " + split[0] + " Deberia ser BOORADA");
                             //Do nothing.
@@ -1766,7 +1770,7 @@ public class FacturaseditActivity extends AppCompatActivity {
 
         } else if (estado_online.equals("arriba")) {
 
-            Log.v("facturas_diarias(arri):", ".\n\n.");
+            /*Log.v("facturas_diarias(arri):", ".\n\n.");
             try {
                 InputStreamReader archivow = new InputStreamReader(openFileInput(facturas_diarias));
                 BufferedReader brw = new BufferedReader(archivow);
@@ -1784,7 +1788,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             //Naming convention...
 
@@ -1897,6 +1901,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                 Log.v("Error702", "Spid: " + spid + ", sheet: " + sheet + ", tip_lot: " + tip_lot + "\n\n");
                 agregar_fact_online(anti_nombre, spid, sheet, tip_lot);
 
+
                 brw.close();
                 archivow.close();
 
@@ -1934,7 +1939,7 @@ public class FacturaseditActivity extends AppCompatActivity {
             String anti_nombre = awplayer + "_separador_" + awLoteria + "_separador_" + awHorario + "_separador_" + awfecha + "_separador_" + split_nombre_archivo[4] + "_separador_" + split_nombre_archivo[5] + "_separador_" + awnum_factura + "_separador_" + awdia + "_separador_" + awmes + "_separador_" + awtipo_lot + "_separador_" + awPaga1 + "_separador_" + awPaga2 + "_separador_" + awtotal + "_separador_" + awanio + "_separador_null.txt";
             Log.v("Error600_emp", "Antinombre:\n" + anti_nombre);
 
-            Log.v("facturas_diarias (emp):", ".\n\n.");
+            /*Log.v("facturas_diarias (emp):", ".\n\n.");
             try {
                 InputStreamReader archivow = new InputStreamReader(openFileInput(facturas_diarias));
                 BufferedReader brw = new BufferedReader(archivow);
@@ -1952,7 +1957,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
             //crear_archivo(anti_nombre);
 
             try {
@@ -2089,9 +2094,10 @@ public class FacturaseditActivity extends AppCompatActivity {
 
     private void agregar_fact_online(String file, String spid, String sheet, String tip_lot) {
         String linea_agrgar = "abajo " + file + " " + spid + " " + sheet + " " + tip_lot;//agregar_linea_archivo("facturas_online.txt", "abajo " + file + " " + SPREADSHEET_ID + " " + SHEET + " " + tipo_lot);
-        Log.v("Error800", "Agregar a facturas_online.txt :\n\n" + imprimir_archivo(file));
+
         agregar_linea_archivo("facturas_online.txt", linea_agrgar);
-        Log.v("Error111", "SpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
+        Log.v("Error800", ".\n\nAgregar a facturas_online.txt :\n\n" + imprimir_archivo(facturas_diarias) + "\n\n.");
+        Log.v("Error111", ".\n\nSpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
         //msg("Error111 SpreadSheet ID: " + spid + "\nSheet: " + sheet + "\nTipo lot: " + tip_lot + "\nFile name: " + file);
         //debug
         //imprimir_archivo(file);
