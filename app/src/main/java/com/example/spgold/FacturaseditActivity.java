@@ -62,7 +62,7 @@ public class FacturaseditActivity extends AppCompatActivity {
     //private TextView tv_aux;
     //private Button boton_aux;
     private HashMap<Integer, JSONObject> abajos = new HashMap<Integer, JSONObject>();
-    private HashMap<String, String> abajos2 = new HashMap<String, String>();
+    //private HashMap<String, String> abajos2 = new HashMap<String, String>();
     private TextView textView_fecha;
     private EditText editText_listar_facturas;
     private EditText edit_Text_numero_factura;
@@ -242,22 +242,24 @@ public class FacturaseditActivity extends AppCompatActivity {
 
     private void obtener_Json_otras_facturas() throws JSONException {
 
+        HashMap<String, String> abajos3 = new HashMap<String, String>();
         try {
             InputStreamReader archivo = new InputStreamReader(openFileInput("facturas_online.txt"));
             //imprimir_archivo("facturas_online.txt");
             BufferedReader br = new BufferedReader(archivo);
             String linea = br.readLine();
             //String contenido = "";
-            abajos2.clear();
+            //abajos2.clear();
             Integer countercito = 0;
             boolean flag = true;
+
             while (linea != null) {
                 countercito++;
                 String count = String.valueOf(countercito);
                 String[] split = linea.split(" ");
                 if (split[0].equals("abajo")) {
                     Log.v("OJOF_abajo: ", "\n\nLinea: " + linea + " Fin de linea!!!");
-                    abajos2.put(count, split[1]);
+                    abajos3.put(count, split[1]);
                     flag = false;
                 } else if (split[0].equals("BORRADA")) {
                     Log.v("OJOF_BORRADA: ", "\n\nLinea: " + linea + " Fin de linea!!!");
@@ -284,10 +286,10 @@ public class FacturaseditActivity extends AppCompatActivity {
         } catch (IOException e) {
         }
 
-        abajiar();
+        abajiar(abajos3);
     }
 
-    private void abajiar() throws JSONException {
+    private void abajiar(HashMap<String, String> abajos3) throws JSONException {
 
         ocultar_todo();
         try {
@@ -295,13 +297,13 @@ public class FacturaseditActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for (String key : abajos2.keySet()) {
+        for (String key : abajos3.keySet()) {
             JSONObject objeto_json = new JSONObject();
             String SSHHEETT = "";
             String SSPPRREEAADDSSHHEETT = "";
             String tipo_lot = "";
             String factura = "";
-            String file = abajos2.get(key);
+            String file = abajos3.get(key);
             try {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(facturas_diarias));
                 //imprimir_archivo("facturas_online.txt");
@@ -329,7 +331,7 @@ public class FacturaseditActivity extends AppCompatActivity {
                             Log.v("Errequilibrar_facturas", "\n\nFinal del nombre del archivo: " + split_name[14] + "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "file: " + file);
                             br.close();
                             archivo.close();
-                            equilibrar(SSPPRREEAADDSSHHEETT, SSHHEETT, file, factura, tipo_lot, key);
+                            equilibrar(SSPPRREEAADDSSHHEETT, SSHHEETT, file, factura, tipo_lot, key, abajos3);
                             break;
                         } else if (split_name[14].equals("null.txt")) {
                             Log.v("abajiar_nombre_null.txt", "\n\nLinea: " + linea);
@@ -341,10 +343,10 @@ public class FacturaseditActivity extends AppCompatActivity {
                             Log.v("Error9003_pre", "\n\nTipo_lot: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\n\n.");
                             objeto_json = generar_Json_resagadas(file, factura, SSHHEETT, SSPPRREEAADDSSHHEETT, tipo_lot);
                             Log.v("Error9003_facturas", ".\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SSPPRREEAADDSSHHEETT + "\nSheet: " + SSHHEETT + "\nFactura numero: " + factura + "\nfile: " + file);
-                            abajos2.remove(key);
+                            abajos3.remove(key);
                             br.close();
                             archivo.close();
-                            subir_factura_resagadas(objeto_json, "nothing");
+                            subir_factura_resagadas(objeto_json, "nothing", abajos3);
                             break;
                         } else {
                             Log.v("abajiar_ninguna_opcion", " Error!!! Nunca deberia llegar aqui!!!\n\nLinea: " + linea);
@@ -362,7 +364,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         }
     }
 
-    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key) throws IOException {//Este metodo revisa si se ha subido parte del tiquete a la nube.
+    private void equilibrar(String SpreadSheet, String Sheet, String file, String factura, String tipo_lot, String key, HashMap<String, String> abajos3) throws IOException {//Este metodo revisa si se ha subido parte del tiquete a la nube.
 
         boolean flag = true;
         try {
@@ -526,11 +528,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                                     //Aqui se crea un tiquete con algun tipo de id que sirva para equilibrar alguna factura que se subio de manera parcial.
                                     int factur = Integer.parseInt(factura) * -1;
                                     JSONObject objeto_json = generar_Json_resagadas(new_name, String.valueOf(factur), Sheet, SpreadSheet, tipo_lot);
-                                    abajos2.remove(key);
+                                    abajos3.remove(key);
                                     //cambiar_bandera(String.valueOf(factur), "equi");
                                     Log.v("Error9003_facturas", "\n\nTipo loteria: " + tipo_lot + "\nSpreadSheet: " + SpreadSheet + "\nSheet: " + Sheet + "\nFactura numero: " + factura + "file: " + new_name);
                                     try {
-                                        subir_factura_resagadas(objeto_json, "equi");
+                                        subir_factura_resagadas(objeto_json, "equi", abajos3);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -562,7 +564,7 @@ public class FacturaseditActivity extends AppCompatActivity {
         }
     }
 
-    private void subir_factura_resagadas(JSONObject jsonObject, String tag) throws JSONException {
+    private void subir_factura_resagadas(JSONObject jsonObject, String tag, HashMap<String, String> abajos3) throws JSONException {
         //flag_file_arriba = false;
 
         //msg("Json: 123 " + jsonObject);
@@ -609,11 +611,11 @@ public class FacturaseditActivity extends AppCompatActivity {
                                 //mensaje_confirma_subida("factura #" + factura_num + " se ha subido correctamente!");
                                 cambiar_bandera (factura_num, tag);
                                 mostrar_todo();
-                                /*try {
-                                    abajiar();
+                                try {
+                                    abajiar(abajos3);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }*/
+                                }
                             } else {
                                 String factura_num = split[15];
                                 //mensaje_confirma_subida("Factura #" + factura_num + " no se ha subido!");
@@ -1387,191 +1389,191 @@ public class FacturaseditActivity extends AppCompatActivity {
 
     public void borrar(View view) {//TODO: Verificar caducidad. Si la loteria ya caduco, entonces no se pueda borrar.
 
-        String numero_fact = edit_Text_numero_factura.getText().toString();
-        if (numero_fact.isEmpty()) {
-            Toast.makeText(this, "Debe indicar un numero de factura! ", Toast.LENGTH_LONG).show();
-            edit_Text_numero_factura.setText("");
-            return;
-            //Do nothing.
-        } else {
-            int inv_number = Integer.parseInt(numero_fact);//Numero de factura introducido por el usuario
-            if (numero_de_facturas.get(inv_number) == null) {
-                Toast.makeText(this, "Debe ingresar un numero de factura que se encuentre en la lista de arriba.", Toast.LENGTH_LONG).show();
+        if (verificar_internet()) {
+            String numero_fact = edit_Text_numero_factura.getText().toString();
+            if (numero_fact.isEmpty()) {
+                Toast.makeText(this, "Debe indicar un numero de factura! ", Toast.LENGTH_LONG).show();
                 edit_Text_numero_factura.setText("");
                 return;
-            } else if (inv_number < 0) {
-                Toast.makeText(this, "Debe ingresar un numero de factura valido.", Toast.LENGTH_LONG).show();
-                edit_Text_numero_factura.setText("");
-                return;
+                //Do nothing.
             } else {
+                int inv_number = Integer.parseInt(numero_fact);//Numero de factura introducido por el usuario
+                if (numero_de_facturas.get(inv_number) == null) {
+                    Toast.makeText(this, "Debe ingresar un numero de factura que se encuentre en la lista de arriba.", Toast.LENGTH_LONG).show();
+                    edit_Text_numero_factura.setText("");
+                    return;
+                } else if (inv_number < 0) {
+                    Toast.makeText(this, "Debe ingresar un numero de factura valido.", Toast.LENGTH_LONG).show();
+                    edit_Text_numero_factura.setText("");
+                    return;
+                } else {
 
-                //
+                    //
 
-                try {
-                    InputStreamReader archivo = new InputStreamReader(openFileInput("invoice.txt"));
-                    BufferedReader br = new BufferedReader(archivo);
-                    String linea = br.readLine();
-                    String linea_consecutivo = "";
+                    try {
+                        InputStreamReader archivo = new InputStreamReader(openFileInput("invoice.txt"));
+                        BufferedReader br = new BufferedReader(archivo);
+                        String linea = br.readLine();
+                        String linea_consecutivo = "";
 
-                    linea_consecutivo = linea_consecutivo + linea + "\n";
-                    linea = br.readLine();//Se lee la segunda linea del archivo
-                    Log.v("Linea invoice", ".\n\n" + linea + "\n\n.");
-                    while (linea != null) {
-                        if (linea.isEmpty()) {
-                            //Do nothing.
-                        } else {
-                            String[] split = linea.split(" ");
-                            if (Integer.parseInt(split[0]) == inv_number) {
+                        linea_consecutivo = linea_consecutivo + linea + "\n";
+                        linea = br.readLine();//Se lee la segunda linea del archivo
+                        Log.v("Linea invoice", ".\n\n" + linea + "\n\n.");
+                        while (linea != null) {
+                            if (linea.isEmpty()) {
+                                //Do nothing.
+                            } else {
+                                String[] split = linea.split(" ");
+                                if (Integer.parseInt(split[0]) == inv_number) {
 
-                                String[] split_nombre_archivo = split[1].split("_separador_");
-                                String file_name = split[1];
-                                Log.v("split_nombre_archivo", ".\n\n" + split[1] + "\n\n.");
+                                    String[] split_nombre_archivo = split[1].split("_separador_");
+                                    String file_name = split[1];
+                                    Log.v("split_nombre_archivo", ".\n\n" + split[1] + "\n\n.");
 
 //Nombre del archivo: jugador_act + "_separador_" + Loteria + "_separador_" + Horario + "_separador_" + fecha + "_separador_" + hora + "_separador_" + minuto + "_separador_" + consecutivo_str + "_separador_" + dia + "_separador_" + mes + "_separador_" + tipo_lot + "_separador_" + Paga1 + "_separador_" + Paga2 + "_separador_" + monto_venta + "_separador_" + anio + "_separador_null.txt";
 //                      split2[0]                  split2[1]                  split2[2]                 split2[3]               split2[4]              split2[5]                    split2[6]                    split2[7]              split2[8]              split2[9]                split2[10]               split2[11]             split2[12]                   split2[13]        split2[14]
 
-                                try {//Aqui cogemos el SPREADSHEET y el SHEET
-                                    InputStreamReader archivod = new InputStreamReader(openFileInput(facturas_diarias));
-                                    BufferedReader brr = new BufferedReader(archivod);
-                                    String linearr = brr.readLine();
-                                    while (linearr != null) {
-                                        String lot_tipo = split_nombre_archivo[9];
-                                        String[] splite = linearr.split("      ");
-                                        if (splite[3].equals(file_name)) {
-                                            Log.v("Error_borrar01", "Tipo lot: " + lot_tipo);
-                                            SPREADSHEET_ID = splite[1];
-                                            SHEET = splite[2];
-                                            Log.v("Error borrando 1 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\n.");
-                                        } else {
-                                            //Do nothing, finding continue!!
-                                        }
-                                        linearr = brr.readLine();
-                                    }
-                                    brr.close();
-                                    archivod.close();
-                                } catch (IOException e) {
-                                    //Handle the error!
-                                    Log.v("Error catch", "Error leyendo el SPREADSHEET_ID y/o el SHEET!");
-                                }
-
-                                //Se actualizan los parametros que se usaran para ir a los archivos correctos.
-                                Date now = Calendar.getInstance().getTime();
-                                String ahora = now.toString();
-                                //se separan los campos de la fecha y hora para verificar que si se pueda realizar la venta.
-                                separar_fechaYhora(ahora);
-                                int comp_hora_actual = Integer.parseInt(anio) - 2020;// queda solo el 22
-                                comp_hora_actual = comp_hora_actual * 100;
-                                comp_hora_actual = comp_hora_actual + Integer.parseInt(mes);
-                                comp_hora_actual = comp_hora_actual * 100;
-                                comp_hora_actual = comp_hora_actual + Integer.parseInt(dia);
-                                comp_hora_actual = comp_hora_actual * 100;
-                                comp_hora_actual = comp_hora_actual + Integer.parseInt(hora);
-                                comp_hora_actual = comp_hora_actual * 100;
-                                comp_hora_actual = comp_hora_actual + Integer.parseInt(minuto);
-                                Log.v("Debug_fecha_borrar", ".\nanio: " + anio + "\nmes: " + mes + "\ndia: " + dia + "\nhora: " + hora + "\nminuto: " + minuto);
-
-                                String file = split[1];
-                                Loteria = split_nombre_archivo[1];
-                                Horario = split_nombre_archivo[2];
-                                dia = split_nombre_archivo[3];
-                                mes = String.valueOf(meses.get(split_nombre_archivo[8]));
-                                tipo_lot = split_nombre_archivo[9];
-                                Paga1 = split_nombre_archivo[10];
-                                Paga2 = split_nombre_archivo[11];
-                                anio = split_nombre_archivo[13];
-                                String horita = split_nombre_archivo[4];
-                                String minutito = split_nombre_archivo[5];
-                                String coonsecut = split_nombre_archivo[6];
-
-                                int comp_hora_lote = Integer.parseInt(anio) - 2020;// queda solo el 22
-                                comp_hora_lote = comp_hora_lote * 100;
-                                comp_hora_lote = comp_hora_lote + Integer.parseInt(mes);
-                                comp_hora_lote = comp_hora_lote * 100;
-                                comp_hora_lote = comp_hora_lote + Integer.parseInt(dia);
-                                comp_hora_lote = comp_hora_lote * 100;
-                                comp_hora_lote = comp_hora_lote + Integer.parseInt(horita);
-                                comp_hora_lote = comp_hora_lote * 100;
-                                comp_hora_lote = comp_hora_lote + Integer.parseInt(minutito);
-
-                                Log.v("Debug_fecha_borrar", ".\nanio: " + anio + "\nmes: " + mes + "\ndia: " + dia + "\nhora: " + horita + "\nminuto: " + minutito);
-
-                                //Verificar caducidad de tiquete que se intenta borrar:
-
-                                Log.v("Error_caducidad", ".\nCom hora actual: " + comp_hora_actual + "\ncomp hora loteria: " + comp_hora_lote + "\n\n.");
-                                if (comp_hora_actual >= comp_hora_lote) {
-                                    Toast.makeText(this, "ERROR!!!", Toast.LENGTH_SHORT);
-                                    Toast.makeText(this, "Loteria ya ha jugado o se encuentra jugando!!", Toast.LENGTH_LONG);
-                                    Toast.makeText(this, "Factura #" + coonsecut + " no se puede borrar!", Toast.LENGTH_SHORT);
-                                } else {
-                                    borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);//Funcion que crea el anti-archivo.
-
-                                    des_contar(file);
-
-
-
-                                    //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
-                                    //cambiar_bandera(String.valueOf(inv_number), "BORRADA");
-                                    //borrar_archivo(file);
-                                    try {
+                                    try {//Aqui cogemos el SPREADSHEET y el SHEET
                                         InputStreamReader archivod = new InputStreamReader(openFileInput(facturas_diarias));
                                         BufferedReader brr = new BufferedReader(archivod);
                                         String linearr = brr.readLine();
-                                        String leer_escribir = "";
                                         while (linearr != null) {
                                             String lot_tipo = split_nombre_archivo[9];
                                             String[] splite = linearr.split("      ");
-                                            if (splite[3].equals(file)) {
-                                                Log.v("Error_borrar1111", ".\n\nLinea:\n\n" + linea + "\n\nTipo lot: " + lot_tipo);
+                                            if (splite[3].equals(file_name)) {
+                                                Log.v("Error_borrar01", "Tipo lot: " + lot_tipo);
                                                 SPREADSHEET_ID = splite[1];
                                                 SHEET = splite[2];
-                                                String information = splite[0];
-                                                Log.v("Error borrando 1111 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\nsplit[0]: " + splite[0] + " (Debe ser la information)\n\n.");
-                                                linearr = linearr.replace(information, "BORRADA");
-                                                Log.v("Error borrando 1111 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\ninformation: " + information + " (Debe ser la information)\n\n.");
-                                                leer_escribir = leer_escribir + linearr + "\n";
-                                                Log.v("leer_escribir", ".\n\n" + leer_escribir + "\n\n.");
+                                                Log.v("Error borrando 1 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\n.");
                                             } else {
-                                                leer_escribir = leer_escribir + linearr + "\n";
+                                                //Do nothing, finding continue!!
                                             }
                                             linearr = brr.readLine();
                                         }
-                                        archivod.close();
                                         brr.close();
-                                        borrar_archivo(facturas_diarias);
-                                        crear_archivo(facturas_diarias);
-                                        guardar(leer_escribir, facturas_diarias);
+                                        archivod.close();
                                     } catch (IOException e) {
                                         //Handle the error!
                                         Log.v("Error catch", "Error leyendo el SPREADSHEET_ID y/o el SHEET!");
                                     }
-                                    //guardar("BORRADA", file);
-                                    //break;
 
-                                    cargar_facturas(fecha_selected, mes_selected, anio_selected);
+                                    //Se actualizan los parametros que se usaran para ir a los archivos correctos.
+                                    Date now = Calendar.getInstance().getTime();
+                                    String ahora = now.toString();
+                                    //se separan los campos de la fecha y hora para verificar que si se pueda realizar la venta.
+                                    separar_fechaYhora(ahora);
+                                    int comp_hora_actual = Integer.parseInt(anio) - 2020;// queda solo el 22
+                                    comp_hora_actual = comp_hora_actual * 100;
+                                    comp_hora_actual = comp_hora_actual + Integer.parseInt(mes);
+                                    comp_hora_actual = comp_hora_actual * 100;
+                                    comp_hora_actual = comp_hora_actual + Integer.parseInt(dia);
+                                    comp_hora_actual = comp_hora_actual * 100;
+                                    comp_hora_actual = comp_hora_actual + Integer.parseInt(hora);
+                                    comp_hora_actual = comp_hora_actual * 100;
+                                    comp_hora_actual = comp_hora_actual + Integer.parseInt(minuto);
+                                    Log.v("Debug_fecha_borrar", ".\nanio: " + anio + "\nmes: " + mes + "\ndia: " + dia + "\nhora: " + hora + "\nminuto: " + minuto);
+
+                                    String file = split[1];
+                                    Loteria = split_nombre_archivo[1];
+                                    Horario = split_nombre_archivo[2];
+                                    dia = split_nombre_archivo[3];
+                                    mes = String.valueOf(meses.get(split_nombre_archivo[8]));
+                                    tipo_lot = split_nombre_archivo[9];
+                                    Paga1 = split_nombre_archivo[10];
+                                    Paga2 = split_nombre_archivo[11];
+                                    anio = split_nombre_archivo[13];
+                                    String horita = split_nombre_archivo[4];
+                                    String minutito = split_nombre_archivo[5];
+                                    String coonsecut = split_nombre_archivo[6];
+
+                                    int comp_hora_lote = Integer.parseInt(anio) - 2020;// queda solo el 22
+                                    comp_hora_lote = comp_hora_lote * 100;
+                                    comp_hora_lote = comp_hora_lote + Integer.parseInt(mes);
+                                    comp_hora_lote = comp_hora_lote * 100;
+                                    comp_hora_lote = comp_hora_lote + Integer.parseInt(dia);
+                                    comp_hora_lote = comp_hora_lote * 100;
+                                    comp_hora_lote = comp_hora_lote + Integer.parseInt(horita);
+                                    comp_hora_lote = comp_hora_lote * 100;
+                                    comp_hora_lote = comp_hora_lote + Integer.parseInt(minutito);
+
+                                    Log.v("Debug_fecha_borrar", ".\nanio: " + anio + "\nmes: " + mes + "\ndia: " + dia + "\nhora: " + horita + "\nminuto: " + minutito);
+
+                                    //Verificar caducidad de tiquete que se intenta borrar:
+
+                                    Log.v("Error_caducidad", ".\nCom hora actual: " + comp_hora_actual + "\ncomp hora loteria: " + comp_hora_lote + "\n\n.");
+                                    if (comp_hora_actual >= comp_hora_lote) {
+                                        Toast.makeText(this, "ERROR!!!", Toast.LENGTH_SHORT);
+                                        Toast.makeText(this, "Loteria ya ha jugado o se encuentra jugando!!", Toast.LENGTH_LONG);
+                                        Toast.makeText(this, "Factura #" + coonsecut + " no se puede borrar!", Toast.LENGTH_SHORT);
+                                    } else {
+                                        borrar_de_la_nube(file, SPREADSHEET_ID, SHEET, tipo_lot);//Funcion que crea el anti-archivo.
+
+                                        des_contar(file);
+
+
+                                        //Se escribe la palabra "BORRADA" en el tiquete o factura guardada (file) despues de haber descontado en las cuentas o archivo contable del dia
+                                        //cambiar_bandera(String.valueOf(inv_number), "BORRADA");
+                                        //borrar_archivo(file);
+                                        try {
+                                            InputStreamReader archivod = new InputStreamReader(openFileInput(facturas_diarias));
+                                            BufferedReader brr = new BufferedReader(archivod);
+                                            String linearr = brr.readLine();
+                                            String leer_escribir = "";
+                                            while (linearr != null) {
+                                                String lot_tipo = split_nombre_archivo[9];
+                                                String[] splite = linearr.split("      ");
+                                                if (splite[3].equals(file)) {
+                                                    Log.v("Error_borrar1111", ".\n\nLinea:\n\n" + linea + "\n\nTipo lot: " + lot_tipo);
+                                                    SPREADSHEET_ID = splite[1];
+                                                    SHEET = splite[2];
+                                                    String information = splite[0];
+                                                    Log.v("Error borrando 1111 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\nsplit[0]: " + splite[0] + " (Debe ser la information)\n\n.");
+                                                    linearr = linearr.replace(information, "BORRADA");
+                                                    Log.v("Error borrando 1111 ", ".\n\nSpreadSheet: " + SPREADSHEET_ID + "\nSheet: " + SHEET + "\ninformation: " + information + " (Debe ser la information)\n\n.");
+                                                    leer_escribir = leer_escribir + linearr + "\n";
+                                                    Log.v("leer_escribir", ".\n\n" + leer_escribir + "\n\n.");
+                                                } else {
+                                                    leer_escribir = leer_escribir + linearr + "\n";
+                                                }
+                                                linearr = brr.readLine();
+                                            }
+                                            archivod.close();
+                                            brr.close();
+                                            borrar_archivo(facturas_diarias);
+                                            crear_archivo(facturas_diarias);
+                                            guardar(leer_escribir, facturas_diarias);
+                                        } catch (IOException e) {
+                                            //Handle the error!
+                                            Log.v("Error catch", "Error leyendo el SPREADSHEET_ID y/o el SHEET!");
+                                        }
+                                        //guardar("BORRADA", file);
+                                        //break;
+
+                                        cargar_facturas(fecha_selected, mes_selected, anio_selected);
+                                    }
                                 }
                             }
+                            linea_consecutivo = linea_consecutivo + linea + "\n";
+                            linea = br.readLine();
                         }
-                        linea_consecutivo = linea_consecutivo + linea + "\n";
-                        linea = br.readLine();
+
+                        br.close();
+                        archivo.close();
+
+                        guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
+                        Log.v("debugg_invoice.txt", ".\n\ninvoice.txt:\n\n" + imprimir_archivo("invoice.txt") + "\n\n.");
+
+                        //imprimir_archivo("invoice.txt");
+                    } catch (IOException e) {
                     }
 
-                    br.close();
-                    archivo.close();
+                    //*** La siguiente linea se debe colocar despues de generar el nombre del archivo tiquete factura.
+                    //agregar_linea_archivo("invoice.txt", consecutivo_str + " " + tempFile);
 
-                    guardar(linea_consecutivo, "invoice.txt");//Se actualiza el contador de consecutivos.
-                    Log.v("debugg_invoice.txt", ".\n\ninvoice.txt:\n\n" + imprimir_archivo("invoice.txt") + "\n\n.");
+                    //##########################################################################################
 
-                    //imprimir_archivo("invoice.txt");
-                } catch (IOException e) {
+
                 }
-
-                //*** La siguiente linea se debe colocar despues de generar el nombre del archivo tiquete factura.
-                //agregar_linea_archivo("invoice.txt", consecutivo_str + " " + tempFile);
-
-                //##########################################################################################
-
-
-            }
 
             /*final Calendar c = Calendar.getInstance();
             mes_selected = (c.get(Calendar.MONTH)) + 1;
@@ -1580,16 +1582,20 @@ public class FacturaseditActivity extends AppCompatActivity {
             fecha_selected = c.get(Calendar.DAY_OF_MONTH);*/
 
 
-            Log.v("Error5000", "Justantes de cargar facturas!!!");
-            //numero_de_facturas.clear();
-            //cargar_facturas(fecha_selected, mes_selected, anio_selected);
-            edit_Text_numero_factura.setText("");
+                Log.v("Error5000", "Justantes de cargar facturas!!!");
+                //numero_de_facturas.clear();
+                //cargar_facturas(fecha_selected, mes_selected, anio_selected);
+                edit_Text_numero_factura.setText("");
 
-        }
-        try {
-            subir_facturas_resagadas();
-        } catch (JSONException e) {
-            e.printStackTrace();
+            }
+            try {
+                subir_facturas_resagadas();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "              ERROR!!!\nDebe estar conectado a internet", Toast.LENGTH_LONG).show();
+            return;
         }
     }
 
