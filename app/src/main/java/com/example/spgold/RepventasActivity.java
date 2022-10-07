@@ -1003,35 +1003,40 @@ public class RepventasActivity extends AppCompatActivity {
                 InputStreamReader archivo = new InputStreamReader(openFileInput(fichName));
                 BufferedReader br = new BufferedReader(archivo);
                 String linea = br.readLine();
-
                 String conte_file = "";
                 while (linea != null) {
 
                     String[] split = linea.split("      ");
-
-                    Log.v("Debuggin_monaz_", ".\n\nFecha actual: " + fecha + "\nFecha tiquete: " + split[2]);
                     //if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                         if (loter.get("Tipo_juego").equals("Monazos")) {
+                            Log.v("Debuggin_monaz_", ".\n\nFecha actual: " + fecha + "\nFecha tiquete: " + split[2]);
                             if (Integer.parseInt(split[4]) != Integer.parseInt(fecha)) {
                                 linea = split[0] + "      0      " + split[2] + "      " + split[3] + "      " + fecha;
+                                conte_file = conte_file + linea + "\n";
                             } else {
                                 conte_file = conte_file + linea + "\n";
                             }
                         } else if (loter.get("Tipo_juego").equals("Parley")) {
+                            Log.v("Debuggin_parley_", ".\n\nFecha actual: " + fecha + "\nFecha tiquete: " + split[2]);
                             if (Integer.parseInt(split[3]) != Integer.parseInt(fecha)) {
                                 linea = split[0] + "      " + split[1] + "      0      " + fecha;
+                                conte_file = conte_file + linea + "\n";
                             } else {
                                 conte_file = conte_file + linea + "\n";
                             }
                         } else if (loter.get("Tipo_juego").equals("Reventados")) {
+                            Log.v("Debuggin_rev", ".\n\nFecha actual: " + fecha + "\nFecha tiquete: " + split[2]);
                             if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                                 linea = split[0] + "      0      " + fecha;
+                                conte_file = conte_file + linea + "\n";
                             } else {
                                 conte_file = conte_file + linea + "\n";
                             }
                         } else if (loter.get("Tipo_juego").equals("Regular")) {
+                            Log.v("Debuggin_reg", ".\n\nFecha actual: " + fecha + "\nFecha tiquete: " + split[2]);
                             if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                                 linea = split[0] + "      0      " + fecha;
+                                conte_file = conte_file + linea + "\n";
                             } else {
                                 conte_file = conte_file + linea + "\n";
                             }
@@ -1049,6 +1054,7 @@ public class RepventasActivity extends AppCompatActivity {
                 archivo.close();
                 borrar_archivo(fichName);
                 guardar(conte_file, fichName);
+                Log.v("Degugg_rep_ventas", ".\n\nfichname:\n\n" + imprimir_archivo(fichName) + "\n\n.");
 
             } catch (IOException e) {
             }

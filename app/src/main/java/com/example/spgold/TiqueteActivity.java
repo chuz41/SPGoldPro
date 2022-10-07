@@ -275,7 +275,7 @@ public class TiqueteActivity extends AppCompatActivity {
                 while (linea != null) {
 
                     String[] split = linea.split("      ");
-
+                    Log.v("Archivo_contable_inicio", ".\n\nLinea: " + "\n\n" + linea + "\nFecha: " + fecha + "\n\n.");
                     if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      0      " + fecha;
                         conte_file = conte_file + linea + "\n";
@@ -550,7 +550,8 @@ public class TiqueteActivity extends AppCompatActivity {
 
                 String linea = br.readLine();//Se lee archivo contable
                 while (linea != null) {
-                    String[] split = linea.split("      ");//Se separa el monto del numero guardado.
+                    String[] split = linea.split("      ");//Se separa el monto del numero guardado
+                    Log.v("contar_debugg", ".\n\nLinea:\n\n" + linea + "\nFecha: " + fecha + "\n\n.");// .
                     if (Integer.parseInt(split[2]) != Integer.parseInt(fecha)) {
                         linea = split[0] + "      0      " + fecha;
                         //TiqueteContable = TiqueteContable + linea + "\n";
@@ -583,9 +584,10 @@ public class TiqueteActivity extends AppCompatActivity {
                 br.close();
                 archivo.close();
                 borrar_archivo(Loteria + "_" + Horario + "_.txt");
-                //crear_archivo(Loteria + "_" + Horario + "_.txt");
-                Log.v("Archivo_contable", ".\n\nArchivo:\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_.txt") + "\n\nLoteria: " + Loteria + "\nHorario: " + Horario + "\n\n.");
+                crear_archivo(Loteria + "_" + Horario + "_.txt");
+                Log.v("Archivo_contable_pre", ".\n\nArchivo:\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_.txt") + "\n\nLoteria: " + Loteria + "\nHorario: " + Horario + "\n\n.");
                 guardar(TiqueteContable, Loteria + "_" + Horario + "_.txt");
+                Log.v("Archivo_contable_post", ".\n\nArchivo:\n\n" + imprimir_archivo(Loteria + "_" + Horario + "_.txt") + "\n\nLoteria: " + Loteria + "\nHorario: " + Horario + "\n\n.");
             } catch (IOException e) {
             }
         }
